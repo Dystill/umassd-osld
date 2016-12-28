@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-12-28T15:33:23
+# Project created by QtCreator 2016-12-28T15:43:58
 #
 #-------------------------------------------------
 
@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = OSLD
+TARGET = Stimulator
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -24,16 +24,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        osldisplay.cpp \
-    block.cpp \
-    gate.cpp \
-    osldgraphicsengine.cpp \
-    descriptionfilereader.cpp
+        mainwindow.cpp \
+    stimulatorinterface.cpp \
+    stimulator.cpp
 
-HEADERS  += osldisplay.h \
-    block.h \
-    gate.h \
-    osldgraphicsengine.h \
-    descriptionfilereader.h
+HEADERS  += mainwindow.h \
+    stimulatorinterface.h \
+    stimulator.h
 
-FORMS    += osldisplay.ui
+FORMS    += mainwindow.ui
