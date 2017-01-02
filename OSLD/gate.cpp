@@ -1,6 +1,6 @@
 #include "gate.h"
 
-Gate::Gate(QObject *parent) : QObject(parent)
+Gate::Gate(QGraphicsItem *parent) : QGraphicsItem(parent)
 {
 
 }

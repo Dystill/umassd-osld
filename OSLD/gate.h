@@ -1,13 +1,13 @@
 #ifndef GATE_H
 #define GATE_H
 
-#include <QObject>
+#include <QPainter>
+#include <QGraphicsItem>
 
-class Gate : public QObject
+class Gate : public QGraphicsItem
 {
-    Q_OBJECT
 public:
-    explicit Gate(QObject *parent = 0);
+    explicit Gate(QGraphicsItem *parent = 0);
 
 signals:
 

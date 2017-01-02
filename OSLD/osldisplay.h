@@ -2,6 +2,8 @@
 #define OSLDISPLAY_H
 
 #include <QMainWindow>
+#include <QtCore>
+#include "block.h"  // testing block
 
 namespace Ui {
 class OSLDisplay;
@@ -17,6 +19,8 @@ public:
 
 private:
     Ui::OSLDisplay *ui;
+    QGraphicsScene *scene;  // testing block
+    Block *block;           // testing block
 };
 
 #endif // OSLDISPLAY_H
