@@ -2,9 +2,9 @@
 #define BLOCK_H
 
 #include <QPainter>
-#include <QGraphicsItem>
+#include <QGraphicsWidget>
 
-class Block : public QGraphicsItem
+class Block : public QGraphicsWidget
 {
 private:
     QString title;          // the name of the step this block represents
@@ -15,6 +15,10 @@ private:
     QColor textColor;       // the color of the text to make it readable with the color
     bool contains;          // whether or not the block contains a subdiagram
     bool negated;           // whether or not the block is connected to a NOT gate
+
+    // Block dimensions
+    const int WIDTH = 128;
+    const int HEIGHT = 32;
 
 public:
     // constants to represent each status
@@ -29,7 +33,7 @@ public:
     const QColor STATUS_PENDING_COLOR = QColor("#3949AB");
     const QColor STATUS_WARNING_COLOR = QColor("#EF6C00");
 
-    // constructor
+    // constructors
     Block(QString t  = "Default title",
           QString d  = "Default description",
           QString ht = "Default hovertext",

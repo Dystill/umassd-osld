@@ -23,7 +23,7 @@ Block::Block(QString t, QString d, QString ht,
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, 128, 32);
+    return QRectF(0, 0, WIDTH, HEIGHT);
 }
 
 // paint shapes in the block
@@ -32,17 +32,22 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // create a new rectangle space to draw in
     QRectF rect = boundingRect();
 
+    // create a color for the outline
+    QColor outlineColor = QColor("#212121");
+
     // create a brush to fill the block with a status color
     QBrush brush(this->color);
 
     // create a pen for the title text and border
-    QPen pen(textColor);
+    QPen pen(outlineColor);
+    pen.setWidth(2);
 
     // to set options for the title text
     QTextOption texto(Qt::AlignCenter);
 
     // set the pen for the painter
     painter->setPen(pen);
+    painter->setRenderHint(QPainter::Antialiasing);
 
     // fill the block with the brush color
     painter->fillRect(rect, brush);
@@ -51,6 +56,8 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawRect(rect);
 
     // add text with the block's title
+    pen.setColor(textColor);
+    painter->setPen(pen);
     painter->drawText(rect, this->title, texto);
 
 }

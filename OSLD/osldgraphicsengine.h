@@ -3,6 +3,8 @@
 
 #include <QtCore>
 #include <QGraphicsScene>
+#include <QGraphicsWidget>
+#include <QGraphicsLinearLayout>
 #include "block.h"
 #include "gate.h"
 
@@ -15,6 +17,7 @@ public:
 private:
     QGraphicsScene *scene;  // testing block
     Block *block;           // testing block
+    Gate *gate;
 };
 
 #endif // OSLDGRAPHICSENGINE_H
