@@ -4,25 +4,19 @@
  *  CONSTRUCTOR
  */
 
-Block::Block()
-{
-    title = "Default title";
-    description = "Default description";
-    hovertext = "Default hovertext";
-    status = STATUS_VALID;
-    contains = false;
-    negated = false;
-}
-
-Block::Block(QString t, QString d, QString ht,
+Block::Block(QString t  = "Default title",
+             QString d  = "Default description",
+             QString ht = "Default hovertext",
              int st = STATUS_VALID, bool c = false, bool n = true)
 {
-    title = t;
-    description = d;
-    hovertext = ht;
-    status = st;
-    contains = c;
-    negated = n;
+    this->setTitle(t);
+    this->setDescription(d);
+    this->setHovertext(ht);
+    this->setStatus(st);
+    this->setContains(c);
+    this->setNegated(n);
+
+    this->setFlag(ItemIsSelectable);
 }
 
 /*
@@ -31,17 +25,24 @@ Block::Block(QString t, QString d, QString ht,
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, 64, 256);
+    return QRectF(0, 0, 128, 32);
 }
 
+// paint shapes in the block
 void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QRectF rect = boundingRect();
 
     QBrush brush(this->color);
+    QPen pen(textColor);
+    QTextOption texto(Qt::AlignCenter);
+
+    painter->setPen(pen);
 
     painter->fillRect(rect, brush);
     painter->drawRect(rect);
+    painter->drawText(rect, this->title, texto);
+
 }
 
 void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -135,17 +136,26 @@ QColor Block::getColor() const
     return color;
 }
 
-void Block::setStatus(int value)
+void Block::setStatus(int value)    // sets the status and color for a block
 {
+    // set the status attribute to the value
     status = value;
-    if(value == STATUS_VALID)
+
+    // sets the block color and the text color depending on the value
+    if(value == STATUS_VALID) {
         color = QColor("#339933");
-    else if(value == STATUS_INVALID)
+        textColor = QColor("#F1F1F1");
+    } else if(value == STATUS_INVALID) {
         color = QColor("#CC3333");
-    else if(value == STATUS_PENDING)
+        textColor = QColor("#F1F1F1");
+    } else if(value == STATUS_PENDING) {
         color = QColor("#336699");
-    else if(value == STATUS_WARNING)
+        textColor = QColor("#F1F1F1");
+    } else if(value == STATUS_WARNING) {
         color = QColor("#CC6633");
-    else
+        textColor = QColor("#F1F1F1");
+    } else {
         color = QColor("#888888");
+        textColor = QColor("#F1F1F1");
+    }
 }

@@ -10,7 +10,8 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
-    block = new Block("title", "description", "hovertext", Block::STATUS_VALID, false, false);
+    block = new Block("title", "description", "hovertext", Block::STATUS_INVALID, false, false);
+    scene->addItem(block);
 }
 
 OSLDisplay::~OSLDisplay()

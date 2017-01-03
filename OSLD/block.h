@@ -11,7 +11,8 @@ private:
     QString description;    // the description of this block
     QString hovertext;      // the text that hsows when the user hovers over the block
     int status;             // the current status of the block
-    QColor color;           // the color of the block as determined y the status
+    QColor color;           // the color of the block as determined by the status
+    QColor textColor;       // the color of the text to make it readable with the color
     bool contains;          // whether or not the block contains a subdiagram
     bool negated;           // whether or not the block is connected to a NOT gate
 
@@ -21,7 +22,6 @@ public:
     static const int STATUS_PENDING = 3;
     static const int STATUS_WARNING = 4;
 
-    Block();
     Block(QString t, QString d, QString ht, int st, bool c, bool n);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
