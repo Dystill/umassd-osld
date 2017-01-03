@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QtCore>
-#include "block.h"  // testing block
+#include "osldgraphicsengine.h"
 
 namespace Ui {
 class OSLDisplay;
@@ -19,8 +19,7 @@ public:
 
 private:
     Ui::OSLDisplay *ui;
-    QGraphicsScene *scene;  // testing block
-    Block *block;           // testing block
+    QGraphicsScene *scene;
 };
 
 #endif // OSLDISPLAY_H

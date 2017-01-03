@@ -7,11 +7,15 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    scene = new QGraphicsScene(this);
-    ui->graphicsView->setScene(scene);
+    // create an instance of the graphics engine
+    OSLDGraphicsEngine osld(this);
 
-    block = new Block("title", "description", "hovertext", Block::STATUS_INVALID, false, false);
-    scene->addItem(block);
+    // get the full diagram scene from the graphics engine
+    scene = osld.getDiagramScene();
+
+    // display the scene in the window
+    ui->graphicsView->setBackgroundBrush(QBrush(QColor("#EEEEEE")));
+    ui->graphicsView->setScene(scene);
 }
 
 OSLDisplay::~OSLDisplay()

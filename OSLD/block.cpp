@@ -4,10 +4,8 @@
  *  CONSTRUCTOR
  */
 
-Block::Block(QString t  = "Default title",
-             QString d  = "Default description",
-             QString ht = "Default hovertext",
-             int st = STATUS_VALID, bool c = false, bool n = true)
+Block::Block(QString t, QString d, QString ht,
+             int st, bool c, bool n)
 {
     this->setTitle(t);
     this->setDescription(d);
@@ -16,7 +14,7 @@ Block::Block(QString t  = "Default title",
     this->setContains(c);
     this->setNegated(n);
 
-    this->setFlag(ItemIsSelectable);
+    this->setFlag(ItemIsMovable);
 }
 
 /*
@@ -31,20 +29,33 @@ QRectF Block::boundingRect() const
 // paint shapes in the block
 void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    // create a new rectangle space to draw in
     QRectF rect = boundingRect();
 
+    // create a brush to fill the block with a status color
     QBrush brush(this->color);
+
+    // create a pen for the title text and border
     QPen pen(textColor);
+
+    // to set options for the title text
     QTextOption texto(Qt::AlignCenter);
 
+    // set the pen for the painter
     painter->setPen(pen);
 
+    // fill the block with the brush color
     painter->fillRect(rect, brush);
+
+    // draw an outline around the block with the same color as the title
     painter->drawRect(rect);
+
+    // add text with the block's title
     painter->drawText(rect, this->title, texto);
 
 }
 
+// when the user clicks down on a block
 void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pressed = true;
@@ -52,6 +63,7 @@ void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mousePressEvent(event);
 }
 
+// when the user releases the mouse click
 void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     pressed = false;
@@ -59,6 +71,7 @@ void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mouseReleaseEvent(event);
 }
 
+// when the user double clicks
 void Block::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 
@@ -143,19 +156,23 @@ void Block::setStatus(int value)    // sets the status and color for a block
 
     // sets the block color and the text color depending on the value
     if(value == STATUS_VALID) {
-        color = QColor("#339933");
+        color = STATUS_VALID_COLOR;         // valid color green
         textColor = QColor("#F1F1F1");
-    } else if(value == STATUS_INVALID) {
-        color = QColor("#CC3333");
+    }
+    else if(value == STATUS_INVALID) {
+        color = STATUS_INVALID_COLOR;       // invalid color red
         textColor = QColor("#F1F1F1");
-    } else if(value == STATUS_PENDING) {
-        color = QColor("#336699");
+    }
+    else if(value == STATUS_PENDING) {
+        color = STATUS_PENDING_COLOR;       // pending color blue
         textColor = QColor("#F1F1F1");
-    } else if(value == STATUS_WARNING) {
-        color = QColor("#CC6633");
+    }
+    else if(value == STATUS_WARNING) {
+        color = STATUS_WARNING_COLOR;       // warning color orange
         textColor = QColor("#F1F1F1");
-    } else {
-        color = QColor("#888888");
+    }
+    else {
+        color = QColor("#888888");          // default color grey
         textColor = QColor("#F1F1F1");
     }
 }

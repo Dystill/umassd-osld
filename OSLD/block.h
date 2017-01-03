@@ -17,12 +17,25 @@ private:
     bool negated;           // whether or not the block is connected to a NOT gate
 
 public:
+    // constants to represent each status
     static const int STATUS_VALID = 1;
     static const int STATUS_INVALID = 2;
     static const int STATUS_PENDING = 3;
     static const int STATUS_WARNING = 4;
 
-    Block(QString t, QString d, QString ht, int st, bool c, bool n);
+    // the colors for each status
+    const QColor STATUS_VALID_COLOR = QColor("#43A047");
+    const QColor STATUS_INVALID_COLOR = QColor("#E53935");
+    const QColor STATUS_PENDING_COLOR = QColor("#3949AB");
+    const QColor STATUS_WARNING_COLOR = QColor("#EF6C00");
+
+    // constructor
+    Block(QString t  = "Default title",
+          QString d  = "Default description",
+          QString ht = "Default hovertext",
+          int st = STATUS_VALID, bool c = 0, bool n = 0);
+
+    // QGraphicsItem stuff
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
