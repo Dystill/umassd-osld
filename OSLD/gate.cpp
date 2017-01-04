@@ -49,31 +49,31 @@ QSizeF Gate::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 // draw the gate onto the screen (currently draws an AND cate)
 void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QRectF space = boundingRect();
+    prepareGeometryChange();
 
-    QPoint topLeft(0, 0);
-    QPoint topMid(space.width()/2, 0);
-    QPoint bottomLeft(0, space.height());
-    QPoint bottomMid(space.width()/2, space.height());
+    // very hackish way of aligning the gate properly
+    qreal downshift =
+            (Block::HEIGHT * 1.5) * (inputBlocks.count() / 2.0) - (HEIGHT / 2.0);
+    QRectF space = QRectF(0, downshift, WIDTH, HEIGHT);
 
-    QRectF rect = QRectF(topLeft, bottomMid);
-
+    // gate colors
     QColor fillColor = QColor("#bbdefb");
     QColor outlineColor = QColor("#212121");
 
+    // to draw the gate with
     QBrush brush(fillColor);
     QPen pen(outlineColor);
-    pen.setWidth(2);
+    pen.setWidth(2);    // outline thickness
 
+    // for antialiasing
     painter->setRenderHint(QPainter::Antialiasing);
 
+    // set the pen and brush
     painter->setPen(pen);
     painter->setBrush(brush);
+
+    // draw the gate
     painter->drawEllipse(space);
-    painter->fillRect(rect, brush);
-    painter->drawLine(topMid, topLeft);
-    painter->drawLine(topLeft, bottomLeft);
-    painter->drawLine(bottomLeft, bottomMid);
 }
 
 // add a block to the end of the block list

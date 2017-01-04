@@ -19,6 +19,8 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
                              "Block 3 Hovertext", Block::STATUS_WARNING));
     gate->addBlock(new Block("Block 4", "description",
                              "Block 4 Hovertext", Block::STATUS_PENDING));
+    gate->addBlock(new Block("Block 5", "description",
+                             "Block 5 Hovertext", Block::STATUS_VALID));
 
     // draw the gate and display it in the scene
     scene->addItem(drawGateGroup(gate));
