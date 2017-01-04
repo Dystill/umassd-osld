@@ -3,6 +3,7 @@
 
 #include <QPainter>
 #include <QGraphicsWidget>
+#include <QDebug>
 
 class Block : public QGraphicsWidget
 {
@@ -13,6 +14,7 @@ private:
     int status;             // the current status of the block
     QColor color;           // the color of the block as determined by the status
     QColor textColor;       // the color of the text to make it readable with the color
+    QFont textFont;
     bool contains;          // whether or not the block contains a subdiagram
     bool negated;           // whether or not the block is connected to a NOT gate
 
@@ -28,10 +30,10 @@ public:
     static const int STATUS_WARNING = 4;
 
     // the colors for each status
-    const QColor STATUS_VALID_COLOR = QColor("#43A047");
-    const QColor STATUS_INVALID_COLOR = QColor("#E53935");
-    const QColor STATUS_PENDING_COLOR = QColor("#3949AB");
-    const QColor STATUS_WARNING_COLOR = QColor("#EF6C00");
+    const QColor STATUS_VALID_COLOR = QColor("#8BC34A");
+    const QColor STATUS_INVALID_COLOR = QColor("#EF5350");
+    const QColor STATUS_PENDING_COLOR = QColor("#9575CD");
+    const QColor STATUS_WARNING_COLOR = QColor("#FF7043");
 
     // constructors
     Block(QString t  = "Default title",
@@ -41,6 +43,8 @@ public:
 
     // QGraphicsItem stuff
     QRectF boundingRect() const;
+    void setGeometry(const QRectF &rect);
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
     bool pressed;

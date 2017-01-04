@@ -14,7 +14,7 @@ Block::Block(QString t, QString d, QString ht,
     this->setContains(c);
     this->setNegated(n);
 
-    this->setFlag(ItemIsMovable);
+    this->textFont.setPointSize(12);
 }
 
 /*
@@ -24,6 +24,27 @@ Block::Block(QString t, QString d, QString ht,
 QRectF Block::boundingRect() const
 {
     return QRectF(0, 0, WIDTH, HEIGHT);
+}
+
+void Block::setGeometry(const QRectF &rect)
+{
+    prepareGeometryChange();
+    QGraphicsLayoutItem::setGeometry(rect);
+    setPos(rect.topLeft());
+}
+
+QSizeF Block::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
+{
+    switch (which) {
+    case Qt::MinimumSize:
+    case Qt::PreferredSize:
+        return QSize(WIDTH, HEIGHT) + QSize(0, HEIGHT / 2);
+    case Qt::MaximumSize:
+        return QSizeF(1000,1000);
+    default:
+        break;
+    }
+    return constraint;
 }
 
 // paint shapes in the block
@@ -44,6 +65,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     // to set options for the title text
     QTextOption texto(Qt::AlignCenter);
+    texto.setWrapMode(QTextOption::NoWrap);
 
     // set the pen for the painter
     painter->setPen(pen);
@@ -57,6 +79,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     // add text with the block's title
     pen.setColor(textColor);
+    painter->setFont(textFont);
     painter->setPen(pen);
     painter->drawText(rect, this->title, texto);
 
