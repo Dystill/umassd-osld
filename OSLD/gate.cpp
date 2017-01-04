@@ -3,7 +3,6 @@
 Gate::Gate(int type)
 {
     gateType = type;            // set the gate type
-    this->setFlag(ItemIsMovable);
 }
 
 Gate::Gate(QList<Block *> blocks, Block *output, int type)
@@ -18,13 +17,33 @@ Gate::Gate(QList<Block *> blocks, Block *output, int type)
     }
 
     this->updateOutputStatus();   // call the function to update the output status
-
-    this->setFlag(ItemIsMovable);
 }
 
 QRectF Gate::boundingRect() const
 {
-    return QRectF(0, 0, 128, 128);
+    return QRectF(0, 0, WIDTH, HEIGHT);
+}
+
+void Gate::setGeometry(const QRectF &rect)
+{
+    prepareGeometryChange();
+    QGraphicsLayoutItem::setGeometry(rect);
+    setPos(rect.topLeft());
+}
+
+QSizeF Gate::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
+{
+    switch (which) {
+    case Qt::MinimumSize:
+        return QSizeF(WIDTH, HEIGHT);
+    case Qt::PreferredSize:
+        return QSizeF(WIDTH, HEIGHT);
+    case Qt::MaximumSize:
+        return QSizeF(1000,1000);
+    default:
+        break;
+    }
+    return constraint;
 }
 
 // draw the gate onto the screen (currently draws an AND cate)
@@ -57,14 +76,31 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->drawLine(bottomLeft, bottomMid);
 }
 
+// add a block to the end of the block list
 void Gate::addBlock(Block *b)
 {
-
+    inputBlocks.append(b);
 }
 
+// remove the block at the passed position in the list
+void Gate::removeBlock(int pos)
+{
+    inputBlocks.removeAt(pos);
+}
+
+// remove the blocks with a title equal to the passed value
 void Gate::removeBlock(QString title)
 {
+    for (int i = 0; i < inputBlocks.count(); i++) {
+        if(!title.compare(inputBlocks.at(i)->getTitle())) {
+            inputBlocks.removeAt(i);
+        }
+    }
+}
 
+QList<Block *> Gate::getInputBlocks() const
+{
+    return inputBlocks;
 }
 
 Block *Gate::getOutputBlock() const
