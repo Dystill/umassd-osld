@@ -42,6 +42,9 @@ public:
     void updateOutputStatus();
     int sizeOfBlocks(QList<Block *> blocks);
 
+    QPainterPath *drawANDGatePath();
+    QPainterPath *drawORGatePath();
+
 signals:
 
 public slots:

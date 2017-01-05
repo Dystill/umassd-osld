@@ -22,6 +22,7 @@ public:
     // Block dimensions
     static const int WIDTH = 128;
     static const int HEIGHT = 32;
+    static const int MARGIN = 8;
 
     // constants to represent each status
     static const int STATUS_VALID = 1;

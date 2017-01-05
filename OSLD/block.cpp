@@ -23,7 +23,7 @@ Block::Block(QString t, QString d, QString ht,
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, WIDTH, HEIGHT);
+    return QRectF(0, 0, WIDTH, HEIGHT + MARGIN * 2);
 }
 
 void Block::setGeometry(const QRectF &rect)
@@ -38,9 +38,8 @@ QSizeF Block::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
     switch (which) {
     case Qt::MinimumSize:
     case Qt::PreferredSize:
-        return QSize(WIDTH, HEIGHT) + QSize(0, HEIGHT / 2);
     case Qt::MaximumSize:
-        return QSizeF(1000,1000);
+        return QSizeF(WIDTH, HEIGHT + MARGIN * 2);
     default:
         break;
     }
@@ -51,7 +50,7 @@ QSizeF Block::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     // create a new rectangle space to draw in
-    QRectF rect = boundingRect();
+    QRectF rect = QRectF(0, MARGIN, WIDTH, HEIGHT);
 
     // create a color for the outline
     QColor outlineColor = QColor("#212121");
@@ -74,7 +73,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // fill the block with the brush color
     painter->fillRect(rect, brush);
 
-    // draw an outline around the block with the same color as the title
+    // draw an outline around the block
     painter->drawRect(rect);
 
     // add text with the block's title
@@ -84,6 +83,10 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawText(rect, this->title, texto);
 
 }
+
+/*
+ * MOUSE EVENTS
+ */
 
 // when the user clicks down on a block
 void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -104,7 +107,8 @@ void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 // when the user double clicks
 void Block::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-
+    update();
+    QGraphicsItem::mouseDoubleClickEvent(event);
 }
 
 

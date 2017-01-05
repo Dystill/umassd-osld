@@ -35,11 +35,9 @@ QSizeF Gate::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
     switch (which) {
     case Qt::MinimumSize:
-        return QSizeF(WIDTH, HEIGHT);
     case Qt::PreferredSize:
-        return QSizeF(WIDTH, HEIGHT);
     case Qt::MaximumSize:
-        return QSizeF(1000,1000);
+        return QSizeF(WIDTH, HEIGHT);
     default:
         break;
     }
@@ -53,8 +51,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     // very hackish way of aligning the gate properly
     qreal downshift =
-            (Block::HEIGHT * 1.5) * (inputBlocks.count() / 2.0) - (HEIGHT / 2.0);
-    QRectF space = QRectF(0, downshift, WIDTH, HEIGHT);
+            ((inputBlocks.at(0)->preferredHeight() + 5.5) * (inputBlocks.count() / 2.0) - (HEIGHT / 2.0));
 
     // gate colors
     QColor fillColor = QColor("#bbdefb");
@@ -72,8 +69,68 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->setPen(pen);
     painter->setBrush(brush);
 
+
+    // create a path to outline the gate's shape
+    QPainterPath *gatePath;
+
+    // draw the path based on the type of gate that this gate was set to
+    switch(gateType) {
+    case AND:
+        gatePath = drawANDGatePath();   // draw an OR gate shape
+        break;
+    case OR:
+        gatePath = drawORGatePath();    // draw an OR gate shape
+        break;
+    default:
+        break;
+    }
+
+    // shift the gate down to allign it with the blocks it contains
+    gatePath->translate(0, downshift);
+
     // draw the gate
-    painter->drawEllipse(space);
+    painter->drawPath(*gatePath);
+}
+
+QPainterPath *Gate::drawANDGatePath() {
+    QPainterPath *path = new QPainterPath(QPoint(0,0));
+
+    // top edge
+    path->lineTo(WIDTH/2, 0);
+
+    // top-right curve
+    path->cubicTo((WIDTH*0.75), 0, WIDTH, HEIGHT*0.25, WIDTH, HEIGHT/2);
+
+    // bottom-right curve
+    path->cubicTo(WIDTH, HEIGHT*0.75, WIDTH*0.75, HEIGHT, WIDTH/2, HEIGHT);
+
+    // bottom edge
+    path->lineTo(0, HEIGHT);
+
+    // left edge
+    path->lineTo(0,0);
+
+    return path;
+}
+
+QPainterPath *Gate::drawORGatePath() {
+    QPainterPath *path = new QPainterPath(QPoint(0,0));
+
+    // top curve
+    path->cubicTo(WIDTH*0.25, 0, WIDTH*0.75, 0, WIDTH, HEIGHT/2);
+
+    // bottom curve
+    path->cubicTo(WIDTH*0.75, HEIGHT, WIDTH*0.25, HEIGHT, 0, HEIGHT);
+
+    // inner-bottom quarter curve
+    path->cubicTo(WIDTH*0.125, HEIGHT*0.90, WIDTH*0.25, HEIGHT*0.725, WIDTH*0.25, HEIGHT/2);
+
+    // inner-top quarter curve
+    path->cubicTo(WIDTH*0.25, HEIGHT*0.275, WIDTH*0.125, HEIGHT*0.10, 0, 0);
+
+    path->lineTo(0,0);
+
+    return path;
 }
 
 // add a block to the end of the block list
