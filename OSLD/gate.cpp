@@ -21,7 +21,7 @@ Gate::Gate(QList<Block *> blocks, Block *output, int type)
 
 QRectF Gate::boundingRect() const
 {
-    return QRectF(0, 0, WIDTH, HEIGHT);
+    return QRectF(0, 0, WIDTH + (LINE_LENGTH * 2), HEIGHT);
 }
 
 void Gate::setGeometry(const QRectF &rect)
@@ -37,7 +37,7 @@ QSizeF Gate::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
     case Qt::MinimumSize:
     case Qt::PreferredSize:
     case Qt::MaximumSize:
-        return QSizeF(WIDTH, HEIGHT);
+        return boundingRect().size();
     default:
         break;
     }
@@ -47,6 +47,9 @@ QSizeF Gate::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 // draw the gate onto the screen (currently draws an AND cate)
 void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
     prepareGeometryChange();
 
     // very hackish way of aligning the gate properly
@@ -69,6 +72,10 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->setPen(pen);
     painter->setBrush(brush);
 
+    // draw lines coming out of the gate
+    QPoint lineStart(boundingRect().left(), boundingRect().center().y() + downshift);
+    QPoint lineEnd(boundingRect().right(), boundingRect().center().y() + downshift);
+    painter->drawLine(lineStart, lineEnd);
 
     // create a path to outline the gate's shape
     QPainterPath *gatePath;
@@ -85,50 +92,67 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         break;
     }
 
-    // shift the gate down to allign it with the blocks it contains
+    // shift the gate down to align it with the blocks it contains
     gatePath->translate(0, downshift);
 
     // draw the gate
     painter->drawPath(*gatePath);
 }
 
-QPainterPath *Gate::drawANDGatePath() {
-    QPainterPath *path = new QPainterPath(QPoint(0,0));
+QPainterPath *Gate::drawANDGatePath()
+{
+    QPointF topLeft(LINE_LENGTH, 0);
+    QPointF bottomLeft(LINE_LENGTH, HEIGHT);
+    QPointF right(LINE_LENGTH + WIDTH, HEIGHT/2);
+    QPointF middleTop(LINE_LENGTH + (WIDTH/2), 0);
+    QPointF middleBottom(LINE_LENGTH + (WIDTH/2), HEIGHT);
+
+    QPainterPath *path = new QPainterPath(topLeft);
 
     // top edge
-    path->lineTo(WIDTH/2, 0);
+    path->lineTo(middleTop);
 
     // top-right curve
-    path->cubicTo((WIDTH*0.75), 0, WIDTH, HEIGHT*0.25, WIDTH, HEIGHT/2);
+    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.75), 0),
+                  QPointF(LINE_LENGTH + WIDTH, HEIGHT*0.25), right);
 
     // bottom-right curve
-    path->cubicTo(WIDTH, HEIGHT*0.75, WIDTH*0.75, HEIGHT, WIDTH/2, HEIGHT);
+    path->cubicTo(QPointF(LINE_LENGTH + WIDTH, HEIGHT*0.75),
+                  QPointF(LINE_LENGTH + (WIDTH*0.75), HEIGHT), middleBottom);
 
     // bottom edge
-    path->lineTo(0, HEIGHT);
+    path->lineTo(bottomLeft);
 
     // left edge
-    path->lineTo(0,0);
+    path->lineTo(topLeft);
 
     return path;
 }
 
-QPainterPath *Gate::drawORGatePath() {
-    QPainterPath *path = new QPainterPath(QPoint(0,0));
+QPainterPath *Gate::drawORGatePath()
+{
+    QPointF topLeft(LINE_LENGTH, 0);
+    QPointF bottomLeft(LINE_LENGTH, HEIGHT);
+    QPointF right(LINE_LENGTH + WIDTH, HEIGHT/2);
+    QPointF inner(LINE_LENGTH + WIDTH*0.25, HEIGHT/2);
+
+    QPainterPath *path = new QPainterPath(topLeft);
 
     // top curve
-    path->cubicTo(WIDTH*0.25, 0, WIDTH*0.75, 0, WIDTH, HEIGHT/2);
+    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.25), 0),
+                  QPointF(LINE_LENGTH + (WIDTH*0.75), 0), right);
 
     // bottom curve
-    path->cubicTo(WIDTH*0.75, HEIGHT, WIDTH*0.25, HEIGHT, 0, HEIGHT);
+    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.75), HEIGHT),
+                  QPointF(LINE_LENGTH + (WIDTH*0.25), HEIGHT), bottomLeft);
 
     // inner-bottom quarter curve
-    path->cubicTo(WIDTH*0.125, HEIGHT*0.90, WIDTH*0.25, HEIGHT*0.725, WIDTH*0.25, HEIGHT/2);
+    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.125), HEIGHT*0.90),
+                  QPointF(LINE_LENGTH + (WIDTH*0.25), HEIGHT*0.725), inner);
 
     // inner-top quarter curve
-    path->cubicTo(WIDTH*0.25, HEIGHT*0.275, WIDTH*0.125, HEIGHT*0.10, 0, 0);
-
-    path->lineTo(0,0);
+    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.25), HEIGHT*0.275),
+                  QPointF(LINE_LENGTH + (WIDTH*0.125), HEIGHT*0.10), topLeft);
 
     return path;
 }

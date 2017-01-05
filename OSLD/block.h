@@ -22,7 +22,8 @@ public:
     // Block dimensions
     static const int WIDTH = 128;
     static const int HEIGHT = 32;
-    static const int MARGIN = 8;
+    static const int TOP_MARGIN = 16;
+    static const int LINE_LENGTH = 48;
 
     // constants to represent each status
     static const int STATUS_VALID = 1;

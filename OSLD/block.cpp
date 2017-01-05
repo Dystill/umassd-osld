@@ -23,7 +23,7 @@ Block::Block(QString t, QString d, QString ht,
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, WIDTH, HEIGHT + MARGIN * 2);
+    return QRectF(0, 0, WIDTH + (LINE_LENGTH * 2), HEIGHT + (TOP_MARGIN * 2));
 }
 
 void Block::setGeometry(const QRectF &rect)
@@ -39,7 +39,7 @@ QSizeF Block::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
     case Qt::MinimumSize:
     case Qt::PreferredSize:
     case Qt::MaximumSize:
-        return QSizeF(WIDTH, HEIGHT + MARGIN * 2);
+        return boundingRect().size();
     default:
         break;
     }
@@ -49,8 +49,11 @@ QSizeF Block::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 // paint shapes in the block
 void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    // create a new rectangle space to draw in
-    QRectF rect = QRectF(0, MARGIN, WIDTH, HEIGHT);
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    // create a new rectangle space to draw the block in
+    QRectF rect = QRectF(LINE_LENGTH, TOP_MARGIN, WIDTH, HEIGHT);
 
     // create a color for the outline
     QColor outlineColor = QColor("#212121");
@@ -70,7 +73,12 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setPen(pen);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    // fill the block with the brush color
+    // draw lines coming out of the block
+    QPoint lineStart(boundingRect().left(), boundingRect().center().y());
+    QPoint lineEnd(boundingRect().right(), boundingRect().center().y());
+    painter->drawLine(lineStart, lineEnd);
+
+    // create a block with the brush color
     painter->fillRect(rect, brush);
 
     // draw an outline around the block
