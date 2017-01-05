@@ -50,8 +50,6 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    prepareGeometryChange();
-
     // very hackish way of aligning the gate properly
     qreal downshift =
             ((inputBlocks.at(0)->preferredHeight() + 5.5) * (inputBlocks.count() / 2.0) - (HEIGHT / 2.0));
