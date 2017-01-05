@@ -5,7 +5,7 @@
  */
 
 Block::Block(QString t, QString d, QString ht,
-             int st, bool c, bool n)
+             int st, bool n, bool c)
 {
     this->setTitle(t);
     this->setDescription(d);
@@ -13,8 +13,6 @@ Block::Block(QString t, QString d, QString ht,
     this->setStatus(st);
     this->setContains(c);
     this->setNegated(n);
-
-    this->textFont.setPointSize(12);
 }
 
 /*
@@ -52,11 +50,17 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+
+    /*
+     * initialize drawing tools
+     */
+
     // create a new rectangle space to draw the block in
     QRectF rect = QRectF(LINE_LENGTH, TOP_MARGIN, WIDTH, HEIGHT);
 
     // create a color for the outline
     QColor outlineColor = QColor("#212121");
+    QColor titleColor = QColor("#F1F1F1");
 
     // create a brush to fill the block with a status color
     QBrush brush(this->color);
@@ -64,32 +68,86 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // create a pen for the title text and border
     QPen pen(outlineColor);
     pen.setWidth(2);
-
-    // to set options for the title text
-    QTextOption texto(Qt::AlignCenter);
-    texto.setWrapMode(QTextOption::NoWrap);
-
-    // set the pen for the painter
-    painter->setPen(pen);
+    painter->setPen(pen);   // add the pen to the painter object
     painter->setRenderHint(QPainter::Antialiasing);
 
-    // draw lines coming out of the block
+    // create a text options object
+    QTextOption texto(Qt::AlignCenter);     // align the text to the center
+    texto.setWrapMode(QTextOption::NoWrap); // force no wrapping of the text
+
+    QFont titleFont;
+    titleFont.setPointSize(12);
+
+
+    /*
+     * drawing the shapes for the block
+     */
+
+    // draw lines coming out of the block's sides
     QPoint lineStart(boundingRect().left(), boundingRect().center().y());
     QPoint lineEnd(boundingRect().right(), boundingRect().center().y());
     painter->drawLine(lineStart, lineEnd);
 
-    // create a block with the brush color
+    // fill block with the status color
     painter->fillRect(rect, brush);
 
-    // draw an outline around the block
+    // draw a black outline around the block
     painter->drawRect(rect);
 
-    // add text with the block's title
-    pen.setColor(textColor);
-    painter->setFont(textFont);
+    // add text with the supplied block title
+    pen.setColor(titleColor);
+    painter->setFont(titleFont);
     painter->setPen(pen);
     painter->drawText(rect, this->title, texto);
 
+    // draw a NOT gate if necessary
+    if(this->negated) {
+        // set the gate's color
+        brush.setColor(QColor("#bbdefb"));
+        pen.setColor(outlineColor);
+        painter->setPen(pen);
+
+        // get the shape of the not gate
+        QPainterPath *path = drawNOTGatePath();
+
+        // move the gate to the correct position
+        path->translate(WIDTH + LINE_LENGTH * 1.35, HEIGHT);
+
+        // paint the gate
+        painter->fillPath(*path, brush);
+        painter->drawPath(*path);
+    }
+}
+
+QPainterPath *Block::drawNOTGatePath()
+{
+    int gateHeight = HEIGHT / 1.5;          // the height of the gate
+    int triangleWidth = gateHeight / 1.2;   // the width of the triangle
+
+    // defining corners for the triangle
+    QPointF topLeft(0, 0);
+    QPointF bottomLeft(0, gateHeight);
+    QPointF right(triangleWidth, (gateHeight / 2));
+
+    // create a painter path object to store the shape
+    QPainterPath *path = new QPainterPath(topLeft);
+
+    // create lines for the triangle
+    path->lineTo(right);
+    path->lineTo(bottomLeft);
+    path->lineTo(topLeft);
+
+    // create the circle dot at the tip
+    int dotRadius = gateHeight / 5; // the radius for the circle
+
+    // draw the circle
+    path->addEllipse(QPointF(right.x() + dotRadius, gateHeight / 2),
+                     dotRadius, dotRadius);
+
+    // align the path by the middle of the triangle
+    path->translate(0, -gateHeight/2);
+
+    return path;
 }
 
 /*
@@ -199,22 +257,17 @@ void Block::setStatus(int value)    // sets the status and color for a block
     // sets the block color and the text color depending on the value
     if(value == STATUS_VALID) {
         color = STATUS_VALID_COLOR;         // valid color green
-        textColor = QColor("#F1F1F1");
     }
     else if(value == STATUS_INVALID) {
         color = STATUS_INVALID_COLOR;       // invalid color red
-        textColor = QColor("#F1F1F1");
     }
     else if(value == STATUS_PENDING) {
         color = STATUS_PENDING_COLOR;       // pending color blue
-        textColor = QColor("#F1F1F1");
     }
     else if(value == STATUS_WARNING) {
         color = STATUS_WARNING_COLOR;       // warning color orange
-        textColor = QColor("#F1F1F1");
     }
     else {
         color = QColor("#888888");          // default color grey
-        textColor = QColor("#F1F1F1");
     }
 }

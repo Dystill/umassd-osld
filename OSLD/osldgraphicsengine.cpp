@@ -12,11 +12,11 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
 
     // add some blocks
     gate->addBlock(new Block("Block 1", "description",
-                             "Block 1 Hovertext", Block::STATUS_INVALID));
+                             "Block 1 Hovertext", Block::STATUS_INVALID, true));
     gate->addBlock(new Block("Block 2", "description",
                              "Block 2 Hovertext", Block::STATUS_VALID));
     gate->addBlock(new Block("Block 3", "description",
-                             "Block 3 Hovertext", Block::STATUS_WARNING));
+                             "Block 3 Hovertext", Block::STATUS_WARNING, true));
     gate->addBlock(new Block("Block 4", "description",
                              "Block 4 Hovertext", Block::STATUS_PENDING));
 

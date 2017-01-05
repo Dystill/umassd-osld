@@ -13,8 +13,6 @@ private:
     QString hovertext;      // the text that hsows when the user hovers over the block
     int status;             // the current status of the block
     QColor color;           // the color of the block as determined by the status
-    QColor textColor;       // the color of the text to make it readable with the color
-    QFont textFont;
     bool contains;          // whether or not the block contains a subdiagram
     bool negated;           // whether or not the block is connected to a NOT gate
 
@@ -23,7 +21,7 @@ public:
     static const int WIDTH = 128;
     static const int HEIGHT = 32;
     static const int TOP_MARGIN = 16;
-    static const int LINE_LENGTH = 48;
+    static const int LINE_LENGTH = 64;
 
     // constants to represent each status
     static const int STATUS_VALID = 1;
@@ -41,7 +39,7 @@ public:
     Block(QString t  = "Default title",
           QString d  = "Default description",
           QString ht = "Default hovertext",
-          int st = STATUS_VALID, bool c = 0, bool n = 0);
+          int st = STATUS_VALID, bool n = 0, bool c = 0);
 
     // QGraphicsItem stuff
     QRectF boundingRect() const;
@@ -50,6 +48,9 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
     bool pressed;
+
+    // for painting the not gate
+    QPainterPath *drawNOTGatePath();
 
     // get and set the block's title
     QString getTitle() const;
@@ -75,6 +76,7 @@ public:
     int getStatus() const;
     void setStatus(int value);
     QColor getColor() const;
+
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
