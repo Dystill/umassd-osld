@@ -52,7 +52,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     // very hackish way of aligning the gate properly
     qreal downshift =
-            ((inputBlocks.at(0)->preferredHeight() + 5.5) * (inputBlocks.count() / 2.0) - (HEIGHT / 2.0));
+            ((inputBlocks.at(0)->preferredHeight() + 5.6) * (inputBlocks.count() / 2.0) - (HEIGHT / 2.0) - 1);
 
     // gate colors
     QColor fillColor = QColor("#bbdefb");

@@ -11,14 +11,16 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
     Gate *gate = new Gate(Gate::OR);
 
     // add some blocks
-    gate->addBlock(new Block("Block 1", "description",
-                             "Block 1 Hovertext", Block::STATUS_INVALID, true));
-    gate->addBlock(new Block("Block 2", "description",
+    gate->addBlock(new Block("Interlocks Closed", "description",
+                             "Block 1 Hovertext", Block::STATUS_INVALID, false, true));
+    gate->addBlock(new Block("Standby", "description",
                              "Block 2 Hovertext", Block::STATUS_VALID));
-    gate->addBlock(new Block("Block 3", "description",
-                             "Block 3 Hovertext", Block::STATUS_WARNING, true));
-    gate->addBlock(new Block("Block 4", "description",
-                             "Block 4 Hovertext", Block::STATUS_PENDING));
+    gate->addBlock(new Block("Fire", "description",
+                             "Block 3 Hovertext", Block::STATUS_WARNING));
+    gate->addBlock(new Block("ITL", "description",
+                             "Block 4 Hovertext", Block::STATUS_PENDING, true));
+    gate->addBlock(new Block("Missile Enabled", "description",
+                             "Block 5 Hovertext", Block::STATUS_INVALID));
 
     // draw the gate and display it in the scene
     scene->addItem(drawGateGroup(gate));
@@ -40,11 +42,15 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate){
         blockLayout->addItem(gate->getInputBlocks().at(i));
     }
 
+    blockLayout->setContentsMargins(0,0,0,0);
     blockHolder->setLayout(blockLayout);
 
     QGraphicsLinearLayout *gateLayout
             = new QGraphicsLinearLayout(Qt::Vertical);
+
     gateLayout->addItem(gate);
+
+    gateLayout->setContentsMargins(0,0,0,0);
     gateHolder->setLayout(gateLayout);
 
     // create a widget to hold the blocks, connectors, and gate
@@ -57,7 +63,11 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate){
     groupLayout->addItem(blockHolder);
     groupLayout->addItem(gateHolder);
 
+    groupLayout->setContentsMargins(0,0,0,0);
+
     gateGroup->setLayout(groupLayout);
+
+    gateGroup->setFlag(QGraphicsItem::ItemIsMovable);
 
     return gateGroup;
 }

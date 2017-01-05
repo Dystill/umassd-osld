@@ -66,14 +66,13 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     QBrush brush(this->color);
 
     // create a pen for the title text and border
-    QPen pen(outlineColor);
+    QPen pen;
     pen.setWidth(2);
-    painter->setPen(pen);   // add the pen to the painter object
     painter->setRenderHint(QPainter::Antialiasing);
 
     // create a text options object
     QTextOption texto(Qt::AlignCenter);     // align the text to the center
-    texto.setWrapMode(QTextOption::NoWrap); // force no wrapping of the text
+    texto.setWrapMode(QTextOption::WordWrap); // force no wrapping of the text
 
     QFont titleFont;
     titleFont.setPointSize(12);
@@ -83,25 +82,41 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
      * drawing the shapes for the block
      */
 
-    // draw lines coming out of the block's sides
+    // segments for drawing lines coming out of the block's sides
     QPoint lineStart(boundingRect().left(), boundingRect().center().y());
+    QPoint lineMiddle(boundingRect().center().x(), boundingRect().center().y());
     QPoint lineEnd(boundingRect().right(), boundingRect().center().y());
-    painter->drawLine(lineStart, lineEnd);
+    // enter line
+    pen.setColor(outlineColor);
+    painter->setPen(pen);
+    painter->drawLine(lineStart, lineMiddle);
+    // line to end
+    pen.setColor(this->color);
+    painter->setPen(pen);
+    painter->drawLine(lineMiddle, lineEnd);
 
     // fill block with the status color
     painter->fillRect(rect, brush);
 
     // draw a black outline around the block
+    pen.setColor(outlineColor);
+    painter->setPen(pen);
     painter->drawRect(rect);
 
     // add text with the supplied block title
     pen.setColor(titleColor);
-    painter->setFont(titleFont);
     painter->setPen(pen);
+    painter->setFont(titleFont);
     painter->drawText(rect, this->title, texto);
 
     // draw a NOT gate if necessary
     if(this->negated) {
+        // draw a new line color to exit the gate
+        QPoint lineSplit(boundingRect().right() - (LINE_LENGTH / 2), boundingRect().center().y());
+        pen.setColor(outlineColor);
+        painter->setPen(pen);
+        painter->drawLine(lineSplit, lineEnd);
+
         // set the gate's color
         brush.setColor(QColor("#bbdefb"));
         pen.setColor(outlineColor);
@@ -111,7 +126,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         QPainterPath *path = drawNOTGatePath();
 
         // move the gate to the correct position
-        path->translate(WIDTH + LINE_LENGTH * 1.35, HEIGHT);
+        path->translate(WIDTH + LINE_LENGTH * 1.35, TOP_MARGIN + HEIGHT/2);
 
         // paint the gate
         painter->fillPath(*path, brush);

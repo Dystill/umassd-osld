@@ -18,9 +18,9 @@ private:
 
 public:
     // Block dimensions
-    static const int WIDTH = 128;
+    static const int WIDTH = 160;
     static const int HEIGHT = 32;
-    static const int TOP_MARGIN = 16;
+    static const int TOP_MARGIN = 12;
     static const int LINE_LENGTH = 64;
 
     // constants to represent each status
