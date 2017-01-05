@@ -18,11 +18,12 @@ private:
     bool contains;          // whether or not the block contains a subdiagram
     bool negated;           // whether or not the block is connected to a NOT gate
 
-    // Block dimensions
-    const int WIDTH = 128;
-    const int HEIGHT = 32;
-
 public:
+    // Block dimensions
+    static const int WIDTH = 128;
+    static const int HEIGHT = 32;
+    static const int MARGIN = 8;
+
     // constants to represent each status
     static const int STATUS_VALID = 1;
     static const int STATUS_INVALID = 2;

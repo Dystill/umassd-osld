@@ -8,7 +8,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
     // TEST: creating and displaying a gate group
 
     // create the gate
-    Gate *gate = new Gate(Gate::AND);
+    Gate *gate = new Gate(Gate::OR);
 
     // add some blocks
     gate->addBlock(new Block("Block 1", "description",
@@ -38,17 +38,13 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate){
     // add all of the gate's blocks to the blockLayout
     for (int i = 0; i < gate->getInputBlocks().count(); i++) {
         blockLayout->addItem(gate->getInputBlocks().at(i));
-        qDebug() << "Block" << i << gate->getInputBlocks().at(i)->preferredHeight();
     }
 
     blockHolder->setLayout(blockLayout);
 
-
     QGraphicsLinearLayout *gateLayout
             = new QGraphicsLinearLayout(Qt::Vertical);
-    gateLayout->setMinimumHeight(blockHolder->preferredHeight());
     gateLayout->addItem(gate);
-    gateLayout->setAlignment(gateLayout->itemAt(0), Qt::AlignCenter);
     gateHolder->setLayout(gateLayout);
 
     // create a widget to hold the blocks, connectors, and gate
@@ -60,14 +56,6 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate){
 
     groupLayout->addItem(blockHolder);
     groupLayout->addItem(gateHolder);
-
-
-    qDebug() << "gate layout" << gateLayout->preferredHeight();
-    qDebug() << "gate layout" << gateLayout->preferredWidth();
-    qDebug() << "block layout" << blockLayout->preferredHeight();
-    qDebug() << "block layout" << blockLayout->preferredWidth();
-    qDebug() << "group layout" << groupLayout->preferredHeight();
-    qDebug() << "group layout" << groupLayout->preferredWidth();
 
     gateGroup->setLayout(groupLayout);
 
