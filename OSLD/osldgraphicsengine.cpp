@@ -67,7 +67,7 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate){
 
     gateGroup->setLayout(groupLayout);
 
-    gateGroup->setFlag(QGraphicsItem::ItemIsMovable);
+    // gateGroup->setFlag(QGraphicsItem::ItemIsMovable);
 
     return gateGroup;
 }
