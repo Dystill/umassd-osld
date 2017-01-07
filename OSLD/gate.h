@@ -15,8 +15,8 @@ private:
     int outputStatus;
     int gateType;
 
-    const int WIDTH = 128;
-    const int HEIGHT = 128;
+    const int WIDTH = 64;
+    const int HEIGHT = 64;
     const int LINE_LENGTH = 48;
 
 public:
@@ -42,9 +42,11 @@ public:
     void setGateType(int value);
     void updateOutputStatus();
     int sizeOfBlocks(QList<Block *> blocks);
+    int getBlockCount();
 
     QPainterPath *drawANDGatePath();
     QPainterPath *drawORGatePath();
+
 
 signals:
 

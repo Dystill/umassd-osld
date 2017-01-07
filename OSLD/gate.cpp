@@ -50,10 +50,6 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    // very hackish way of aligning the gate properly
-    qreal downshift =
-            ((inputBlocks.at(0)->preferredHeight() + 5.6) * (inputBlocks.count() / 2.0) - (HEIGHT / 2.0) - 1);
-
     // gate colors
     QColor fillColor = QColor("#bbdefb");
     QColor outlineColor = QColor("#212121");
@@ -71,8 +67,8 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->setBrush(brush);
 
     // draw lines coming out of the gate
-    QPoint lineStart(boundingRect().left(), boundingRect().center().y() + downshift);
-    QPoint lineEnd(boundingRect().right(), boundingRect().center().y() + downshift);
+    QPoint lineStart(boundingRect().left(), boundingRect().center().y());
+    QPoint lineEnd(boundingRect().right(), boundingRect().center().y());
     painter->drawLine(lineStart, lineEnd);
 
     // create a path to outline the gate's shape
@@ -81,7 +77,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     // draw the path based on the type of gate that this gate was set to
     switch(gateType) {
     case AND:
-        gatePath = drawANDGatePath();   // draw an OR gate shape
+        gatePath = drawANDGatePath();   // draw an AND gate shape
         break;
     case OR:
         gatePath = drawORGatePath();    // draw an OR gate shape
@@ -89,9 +85,6 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     default:
         break;
     }
-
-    // shift the gate down to align it with the blocks it contains
-    gatePath->translate(0, downshift);
 
     // draw the gate
     painter->drawPath(*gatePath);
@@ -215,4 +208,9 @@ void Gate::updateOutputStatus()
 int Gate::sizeOfBlocks(QList<Block *> blocks)
 {
     return 0;
+}
+
+int Gate::getBlockCount()
+{
+    return inputBlocks.count();
 }

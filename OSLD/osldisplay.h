@@ -25,7 +25,7 @@ private slots:
 
 private:
     Ui::OSLDisplay *ui;
-    QGraphicsScene *scene;
+    OSLDGraphicsEngine *scene;
     void enterFullScreen();
     void exitFullScreen();
 };

@@ -9,12 +9,11 @@
 #include "block.h"
 #include "gate.h"
 
-class OSLDGraphicsEngine
+class OSLDGraphicsEngine : public QGraphicsScene
 {
 public:
     OSLDGraphicsEngine(QObject *parent);
     QGraphicsWidget *drawGateGroup(Gate *gate);
-    QGraphicsScene *getDiagramScene();
 
 
 private:
