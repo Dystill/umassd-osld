@@ -69,17 +69,28 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 
     if(type == FanOut) {
         QPointF start(0, 0);
-        if(numOfLines > 1) {
-            start.setY(Block::HEIGHT/2);
-        }
-        else {
+        if(numOfLines % 2 == 1) {
             start.setY(endPoint.y());
         }
-        qDebug() << "Number of lines to draw:" << numOfLines;
+        else {
+            start.setY(endPoint.y() + ((Block::HEIGHT + Block::V_MARGIN * 1.25) / 2));
+        }
+        painter->drawLine(start, endPoint);
+        for(int i = 1; i < numOfLines; i++) {
+            if(i % 2 == 1) {
+                start.setY(start.y() - ((Block::HEIGHT + Block::V_MARGIN * 1.25) * i));
+            }
+            else {
+                start.setY(start.y() + ((Block::HEIGHT + Block::V_MARGIN * 1.25) * i));
+            }
+            painter->drawLine(start, endPoint);
+        }
+        /*
         for(int i = 0; i < numOfLines; i++) {
             painter->drawLine(start, endPoint);
-            start.setY(start.y() + Block::V_MARGIN*1.1 + Block::HEIGHT);
+            start.setY(start.y() + Block::V_MARGIN + 4 + Block::HEIGHT);
         }
+        */
     }
 
     pen.setStyle(Qt::DotLine);

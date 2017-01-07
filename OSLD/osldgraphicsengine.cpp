@@ -14,6 +14,24 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
     gate->addBlock(new Block("Fire", "description",
                              "Block 3 Hovertext", Warning));
     gate->addBlock(new Block("ITL", "description",
+                             "Block 4 Hovertext", Pending, true));/*
+    gate->addBlock(new Block("Standby", "description",
+                             "Block 2 Hovertext", Invalid));
+    gate->addBlock(new Block("Fire", "description",
+                             "Block 3 Hovertext", Warning));
+    gate->addBlock(new Block("ITL", "description",
+                             "Block 4 Hovertext", Pending, true));
+    gate->addBlock(new Block("Standby", "description",
+                             "Block 2 Hovertext", Invalid));
+    gate->addBlock(new Block("Fire", "description",
+                             "Block 3 Hovertext", Warning));
+    gate->addBlock(new Block("ITL", "description",
+                             "Block 4 Hovertext", Pending, true));
+    gate->addBlock(new Block("Standby", "description",
+                             "Block 2 Hovertext", Invalid));
+    gate->addBlock(new Block("Fire", "description",
+                             "Block 3 Hovertext", Warning));
+    gate->addBlock(new Block("ITL", "description",
                              "Block 4 Hovertext", Pending, true));/**/
 
     QGraphicsWidget *gateGroup = drawGateGroup(gate);
@@ -29,10 +47,6 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
     QGraphicsGridLayout *itemLayout
             = new QGraphicsGridLayout(itemHolder);
 
-    itemLayout->setHorizontalSpacing(0);
-    itemLayout->setVerticalSpacing(Block::V_MARGIN);
-    itemLayout->setContentsMargins(0,0,0,0);
-
     // add all of the gate's blocks to the blockLayout
     int numOfBlocks = gate->getInputBlocks().count();
     qDebug() << numOfBlocks;
@@ -40,10 +54,10 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
         qDebug() << "test";
         Block *block = gate->getInputBlocks().at(i);
         itemLayout->addItem(block, i, 1, Qt::AlignCenter);
-        qDebug() << block->mapFromScene(0,0);
-        qDebug() << block->mapToScene(0,0);
-        qDebug() << block->pos();
     }
+
+    itemLayout->setSpacing(0);
+    itemLayout->setVerticalSpacing(Block::V_MARGIN);
 
     // add gate to the second column
     itemLayout->addItem(gate, 0, 3, numOfBlocks, 1, Qt::AlignCenter);
