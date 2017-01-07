@@ -14,19 +14,14 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
     gate->addBlock(new Block("Fire", "description",
                              "Block 3 Hovertext", Warning));
     gate->addBlock(new Block("ITL", "description",
-                             "Block 4 Hovertext", Pending, true));
-    gate->addBlock(new Block("Missile Enabled", "description",
-                             "Block 5 Hovertext", Invalid));
+                             "Block 4 Hovertext", Pending, true));/**/
 
     QGraphicsWidget *gateGroup = drawGateGroup(gate);
     this->addItem(gateGroup);
-
-    qDebug() << gate->getInputBlocks().at(1)->pos();
 }
 
 QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
 {
-
     // create a widget to hold all of the blocks of the gate
     QGraphicsWidget *itemHolder = new QGraphicsWidget;
 
@@ -36,20 +31,26 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
 
     itemLayout->setHorizontalSpacing(0);
     itemLayout->setVerticalSpacing(Block::V_MARGIN);
+    itemLayout->setContentsMargins(0,0,0,0);
 
     // add all of the gate's blocks to the blockLayout
-    for (int i = 0; i < gate->getInputBlocks().count(); i++) {
+    int numOfBlocks = gate->getInputBlocks().count();
+    qDebug() << numOfBlocks;
+    for (int i = 0; i < numOfBlocks; i++) {
+        qDebug() << "test";
         Block *block = gate->getInputBlocks().at(i);
-        itemLayout->addItem(block, i, 0, Qt::AlignCenter);
+        itemLayout->addItem(block, i, 1, Qt::AlignCenter);
         qDebug() << block->mapFromScene(0,0);
         qDebug() << block->mapToScene(0,0);
         qDebug() << block->pos();
     }
 
-    itemLayout->addItem(gate, 0, 2, gate->getInputBlocks().count(), 1, Qt::AlignCenter);
+    // add gate to the second column
+    itemLayout->addItem(gate, 0, 3, numOfBlocks, 1, Qt::AlignCenter);
 
-    // gateGroup->setFlag(QGraphicsItem::ItemIsMovable);
+    Connector *blockToGate = new Connector(numOfBlocks);
 
+    itemLayout->addItem(blockToGate, 0, 2, numOfBlocks, 1, Qt::AlignCenter);
 
     qDebug() << itemHolder->preferredHeight();
 

@@ -8,6 +8,7 @@
 #include <QGraphicsGridLayout>
 #include "block.h"
 #include "gate.h"
+#include "connector.h"
 
 class OSLDGraphicsEngine : public QGraphicsScene
 {

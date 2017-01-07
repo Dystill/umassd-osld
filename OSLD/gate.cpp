@@ -59,9 +59,6 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     QPen pen(outlineColor);
     pen.setWidth(2);    // outline thickness
 
-    // for antialiasing
-    painter->setRenderHint(QPainter::Antialiasing);
-
     // set the pen and brush
     painter->setPen(pen);
     painter->setBrush(brush);

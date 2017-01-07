@@ -67,7 +67,6 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // create a pen for the title text and border
     QPen pen;
     pen.setWidth(2);
-    painter->setRenderHint(QPainter::Antialiasing);
 
     // create a text options object
     QTextOption texto(Qt::AlignCenter);     // align the text to the center
