@@ -17,7 +17,7 @@ private:
 
     const int WIDTH = 64;
     const int HEIGHT = 64;
-    const int LINE_LENGTH = 48;
+    const int LINE_LENGTH = 24;
 
 public:
     static const int AND = 1;

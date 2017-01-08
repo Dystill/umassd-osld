@@ -21,7 +21,7 @@ Block::Block(QString t, QString d, QString ht,
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, WIDTH, HEIGHT);
+    return QRectF(0, 0, WIDTH + LINE_LENGTH, HEIGHT);
 }
 
 void Block::setGeometry(const QRectF &rect)
@@ -57,6 +57,14 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // create a new rectangle space to draw the block in
     QRectF rect = QRectF(0, 0, WIDTH, HEIGHT);
 
+    // create the line exiting the rectangle
+    QPointF lineStart = boundingRect().center();
+    QPointF lineToNOT = QPointF(WIDTH + (LINE_LENGTH/2), boundingRect().center().y());
+    QPointF lineEnd = QPointF(boundingRect().right(), boundingRect().center().y());
+
+    QLineF line1(lineStart, lineToNOT);
+    QLineF line2(lineStart, lineEnd);
+
     // create a color for the outline
     QColor outlineColor = QColor("#212121");
     QColor titleColor = QColor("#F1F1F1");
@@ -79,7 +87,35 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
      * drawing the shapes for the block
      */
 
+    // draw the line exiting the block
+    if(this->negated) {
+        // draw the full line
+        pen.setColor(outlineColor);
+        painter->setPen(pen);
+        painter->drawLine(line2);
+
+        // draw the line before the NOT gate
+        pen.setColor(this->color);
+        painter->setPen(pen);
+        painter->drawLine(line1);
+
+        QPainterPath *gatePath = drawNOTGatePath();
+        gatePath->translate(lineToNOT);
+        pen.setColor(outlineColor);
+        brush.setColor(QColor("#bbdefb"));
+        painter->setPen(pen);
+        painter->setBrush(brush);
+        painter->drawPath(*gatePath);
+    }
+    else {
+        pen.setColor(this->color);
+        painter->setPen(pen);
+        painter->drawLine(line2);
+    }
+
     // fill block with the status color
+    brush.setColor(this->color);
+    painter->setBrush(brush);
     painter->fillRect(rect, brush);
 
     // draw an outline around the block
@@ -92,12 +128,14 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setPen(pen);
     painter->setFont(titleFont);
     painter->drawText(rect, this->title, texto);
+
 }
 
 QPainterPath *Block::drawNOTGatePath()
 {
-    int gateHeight = HEIGHT / 1.5;          // the height of the gate
-    int triangleWidth = HEIGHT / 2;   // the width of the triangle
+    int gateHeight = HEIGHT / 1.8;      // the height of the gate
+    int triangleWidth = gateHeight / 1.2;     // the width of the triangle
+    int dotRadius = gateHeight / 5;         // the radius for the circle
 
     // defining corners for the triangle
     QPointF topLeft(0, 0);
@@ -113,14 +151,11 @@ QPainterPath *Block::drawNOTGatePath()
     path->lineTo(topLeft);
 
     // create the circle dot at the tip
-    int dotRadius = gateHeight / 5; // the radius for the circle
-
-    // draw the circle
     path->addEllipse(QPointF(right.x() + dotRadius, gateHeight / 2),
                      dotRadius, dotRadius);
 
     // align the path by the middle of the triangle
-    path->translate(0, -gateHeight/2);
+    path->translate(-triangleWidth/2, -gateHeight/2);
 
     return path;
 }

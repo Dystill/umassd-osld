@@ -52,15 +52,19 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
 
 void OSLDisplay::wheelEvent(QWheelEvent *event)
 {
-    if(event->modifiers() == Qt::ControlModifier) {
-        QPoint pixels = event->angleDelta();
+    QPoint pixels = event->angleDelta();
 
+    if(event->modifiers() == Qt::ControlModifier) {
         if(pixels.y() > 0) {
             ui->graphicsView->scale(1.1, 1.1);
         }
         else if (pixels.y() < 0) {
             ui->graphicsView->scale(0.90, 0.90);
         }
+    }
+    else {
+        QScrollBar *vBar = ui->graphicsView->verticalScrollBar();
+        vBar->setValue(vBar->value() - (pixels.y() / 2));
     }
 }
 

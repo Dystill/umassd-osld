@@ -14,25 +14,9 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
     gate->addBlock(new Block("Fire", "description",
                              "Block 3 Hovertext", Warning));
     gate->addBlock(new Block("ITL", "description",
-                             "Block 4 Hovertext", Pending, true));/*
-    gate->addBlock(new Block("Standby", "description",
-                             "Block 2 Hovertext", Invalid));
-    gate->addBlock(new Block("Fire", "description",
-                             "Block 3 Hovertext", Warning));
-    gate->addBlock(new Block("ITL", "description",
                              "Block 4 Hovertext", Pending, true));
-    gate->addBlock(new Block("Standby", "description",
-                             "Block 2 Hovertext", Invalid));
-    gate->addBlock(new Block("Fire", "description",
-                             "Block 3 Hovertext", Warning));
-    gate->addBlock(new Block("ITL", "description",
-                             "Block 4 Hovertext", Pending, true));
-    gate->addBlock(new Block("Standby", "description",
-                             "Block 2 Hovertext", Invalid));
-    gate->addBlock(new Block("Fire", "description",
-                             "Block 3 Hovertext", Warning));
-    gate->addBlock(new Block("ITL", "description",
-                             "Block 4 Hovertext", Pending, true));/**/
+    gate->addBlock(new Block("Missile Enabled", "description",
+                             "Block 5 Hovertext", Invalid));
 
     QGraphicsWidget *gateGroup = drawGateGroup(gate);
     this->addItem(gateGroup);

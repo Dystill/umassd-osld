@@ -65,27 +65,38 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 
     QPen pen;
     pen.setWidth(2);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setColor(QColor("#212121"));
     painter->setPen(pen);
 
     if(type == FanOut) {
+        // create a starting point for the lines to draw
         QPointF start(0, 0);
+
+        // draw the centermost line
         if(numOfLines % 2 == 1) {
+            // a straight line if an odd number of blocks
             start.setY(endPoint.y());
         }
         else {
-            start.setY(endPoint.y() + ((Block::HEIGHT + Block::V_MARGIN * 1.25) / 2));
+            // draw to the block below if there's an even number of blocks
+            start.setY(endPoint.y() + ((Block::HEIGHT + Block::V_MARGIN + 2) / 2));
         }
-        painter->drawLine(start, endPoint);
+        painter->drawLine(start, endPoint); // draw the line
+
+        // a loop to draw the rest of the lines
         for(int i = 1; i < numOfLines; i++) {
-            if(i % 2 == 1) {
-                start.setY(start.y() - ((Block::HEIGHT + Block::V_MARGIN * 1.25) * i));
+            // alternate between drawing a line above and a line below the middle line
+            if(i % 2 == 1) {    // below = subtract from y value
+                start.setY(start.y() - ((Block::HEIGHT + Block::V_MARGIN + 1+ 4/numOfLines) * i));
             }
-            else {
-                start.setY(start.y() + ((Block::HEIGHT + Block::V_MARGIN * 1.25) * i));
+            else {              // above = add to y value
+                start.setY(start.y() + ((Block::HEIGHT + Block::V_MARGIN + 1+ 4/numOfLines) * i));
             }
-            painter->drawLine(start, endPoint);
+            painter->drawLine(start, endPoint); // draw each line
         }
-        /*
+
+        /* old code
         for(int i = 0; i < numOfLines; i++) {
             painter->drawLine(start, endPoint);
             start.setY(start.y() + Block::V_MARGIN + 4 + Block::HEIGHT);
@@ -93,6 +104,7 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         */
     }
 
+    // testing purposes - draw a dotted line around the connector container
     pen.setStyle(Qt::DotLine);
     painter->setPen(pen);
     painter->drawRect(boundingRect());

@@ -2,6 +2,7 @@
 #define OSLDISPLAY_H
 
 #include <QMainWindow>
+#include <QScrollBar>
 #include <QtCore>
 #include "osldgraphicsengine.h"
 
