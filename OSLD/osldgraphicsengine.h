@@ -8,13 +8,13 @@
 #include <QGraphicsGridLayout>
 #include "block.h"
 #include "gate.h"
+#include "connector.h"
 
-class OSLDGraphicsEngine
+class OSLDGraphicsEngine : public QGraphicsScene
 {
 public:
     OSLDGraphicsEngine(QObject *parent);
     QGraphicsWidget *drawGateGroup(Gate *gate);
-    QGraphicsScene *getDiagramScene();
 
 
 private:

@@ -5,41 +5,43 @@
 #include <QGraphicsWidget>
 #include <QDebug>
 
+enum BlockStatus {
+    Valid,
+    Invalid,
+    Pending,
+    Warning
+};
+
 class Block : public QGraphicsWidget
 {
 private:
     QString title;          // the name of the step this block represents
     QString description;    // the description of this block
-    QString hovertext;      // the text that hsows when the user hovers over the block
-    int status;             // the current status of the block
+    QString hovertext;      // the text that shows when the user hovers over the block
+    BlockStatus status;     // the current status of the block
     QColor color;           // the color of the block as determined by the status
     bool contains;          // whether or not the block contains a subdiagram
     bool negated;           // whether or not the block is connected to a NOT gate
 
+    // Block colors
+    const QColor validColor = QColor("#8BC34A");
+    const QColor invalidColor = QColor("#EF5350");
+    const QColor pendingColor = QColor("#9575CD");
+    const QColor warningColor = QColor("#FF7043");
+
 public:
+
     // Block dimensions
     static const int WIDTH = 160;
-    static const int HEIGHT = 32;
-    static const int TOP_MARGIN = 12;
+    static const int HEIGHT = 40;
     static const int LINE_LENGTH = 64;
-
-    // constants to represent each status
-    static const int STATUS_VALID = 1;
-    static const int STATUS_INVALID = 2;
-    static const int STATUS_PENDING = 3;
-    static const int STATUS_WARNING = 4;
-
-    // the colors for each status
-    const QColor STATUS_VALID_COLOR = QColor("#8BC34A");
-    const QColor STATUS_INVALID_COLOR = QColor("#EF5350");
-    const QColor STATUS_PENDING_COLOR = QColor("#9575CD");
-    const QColor STATUS_WARNING_COLOR = QColor("#FF7043");
+    static const int V_MARGIN = 8;
 
     // constructors
     Block(QString t  = "Default title",
           QString d  = "Default description",
           QString ht = "Default hovertext",
-          int st = STATUS_VALID, bool n = 0, bool c = 0);
+          BlockStatus st = Valid, bool n = 0, bool c = 0);
 
     // QGraphicsItem stuff
     QRectF boundingRect() const;
@@ -47,10 +49,6 @@ public:
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
-    bool pressed;
-
-    // for painting the not gate
-    QPainterPath *drawNOTGatePath();
 
     // get and set the block's title
     QString getTitle() const;
@@ -74,11 +72,14 @@ public:
 
     // get and set the block's status
     int getStatus() const;
-    void setStatus(int value);
+    void setStatus(BlockStatus value);
     QColor getColor() const;
 
+    // for painting the not gate
+    QPainterPath *drawNOTGatePath();
 
 protected:
+
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);

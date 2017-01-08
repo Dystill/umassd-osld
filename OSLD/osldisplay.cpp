@@ -8,23 +8,18 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     ui->setupUi(this);
 
     // create an instance of the graphics engine
-    OSLDGraphicsEngine osld(this);
-
-    // get the full diagram scene from the graphics engine
-    scene = osld.getDiagramScene();
+    scene = new OSLDGraphicsEngine(this);
 
     // display the scene in the window
     ui->graphicsView->setBackgroundBrush(QBrush(QColor("#EEEEEE")));
     ui->graphicsView->setScene(scene);
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
-    ui->graphicsView->scale(.5, .5);
-    ui->graphicsView->scale(2, 2);
+    ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     ui->graphicsView->viewport()->installEventFilter(this);
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // starts the application in full screen mode
-    QMainWindow::showFullScreen();
+    // enterFullScreen();
     QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
 }
 
@@ -57,15 +52,19 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
 
 void OSLDisplay::wheelEvent(QWheelEvent *event)
 {
-    if(event->modifiers() == Qt::ControlModifier) {
-        QPoint pixels = event->angleDelta();
+    QPoint pixels = event->angleDelta();
 
+    if(event->modifiers() == Qt::ControlModifier) {
         if(pixels.y() > 0) {
             ui->graphicsView->scale(1.1, 1.1);
         }
         else if (pixels.y() < 0) {
             ui->graphicsView->scale(0.90, 0.90);
         }
+    }
+    else {
+        QScrollBar *vBar = ui->graphicsView->verticalScrollBar();
+        vBar->setValue(vBar->value() - (pixels.y() / 2));
     }
 }
 
@@ -81,15 +80,13 @@ bool OSLDisplay::eventFilter(QObject *object, QEvent *event)
 void OSLDisplay::enterFullScreen()
 {
     QMainWindow::showFullScreen();
-    ui->actionFullScreen->setText("Exit Full Screen");
-    ui->actionFullScreen->setToolTip("Exit Full Screen");
+    ui->actionFullScreen->setChecked(true);
 }
 
 void OSLDisplay::exitFullScreen()
 {
     QMainWindow::showNormal();
-    ui->actionFullScreen->setText("Enter Full Screen");
-    ui->actionFullScreen->setToolTip("Enter Full Screen");
+    ui->actionFullScreen->setChecked(false);
 }
 
 

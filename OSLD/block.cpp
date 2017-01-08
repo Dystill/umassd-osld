@@ -5,7 +5,7 @@
  */
 
 Block::Block(QString t, QString d, QString ht,
-             int st, bool n, bool c)
+             BlockStatus st, bool n, bool c)
 {
     this->setTitle(t);
     this->setDescription(d);
@@ -21,7 +21,7 @@ Block::Block(QString t, QString d, QString ht,
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, WIDTH + (LINE_LENGTH * 2), HEIGHT + (TOP_MARGIN * 2));
+    return QRectF(0, 0, WIDTH + LINE_LENGTH, HEIGHT);
 }
 
 void Block::setGeometry(const QRectF &rect)
@@ -50,13 +50,20 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-
     /*
      * initialize drawing tools
      */
 
     // create a new rectangle space to draw the block in
-    QRectF rect = QRectF(LINE_LENGTH, TOP_MARGIN, WIDTH, HEIGHT);
+    QRectF rect = QRectF(0, 0, WIDTH, HEIGHT);
+
+    // create the line exiting the rectangle
+    QPointF lineStart = boundingRect().center();
+    QPointF lineToNOT = QPointF(WIDTH + (LINE_LENGTH/2), boundingRect().center().y());
+    QPointF lineEnd = QPointF(boundingRect().right(), boundingRect().center().y());
+
+    QLineF line1(lineStart, lineToNOT);
+    QLineF line2(lineStart, lineEnd);
 
     // create a color for the outline
     QColor outlineColor = QColor("#212121");
@@ -68,37 +75,50 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // create a pen for the title text and border
     QPen pen;
     pen.setWidth(2);
-    painter->setRenderHint(QPainter::Antialiasing);
 
     // create a text options object
     QTextOption texto(Qt::AlignCenter);     // align the text to the center
     texto.setWrapMode(QTextOption::WordWrap); // force no wrapping of the text
 
     QFont titleFont;
-    titleFont.setPointSize(12);
 
 
     /*
      * drawing the shapes for the block
      */
 
-    // segments for drawing lines coming out of the block's sides
-    QPoint lineStart(boundingRect().left(), boundingRect().center().y());
-    QPoint lineMiddle(boundingRect().center().x(), boundingRect().center().y());
-    QPoint lineEnd(boundingRect().right(), boundingRect().center().y());
-    // enter line
-    pen.setColor(outlineColor);
-    painter->setPen(pen);
-    painter->drawLine(lineStart, lineMiddle);
-    // line to end
-    pen.setColor(this->color);
-    painter->setPen(pen);
-    painter->drawLine(lineMiddle, lineEnd);
+    // draw the line exiting the block
+    if(this->negated) {
+        // draw the full line
+        pen.setColor(outlineColor);
+        painter->setPen(pen);
+        painter->drawLine(line2);
+
+        // draw the line before the NOT gate
+        pen.setColor(this->color);
+        painter->setPen(pen);
+        painter->drawLine(line1);
+
+        QPainterPath *gatePath = drawNOTGatePath();
+        gatePath->translate(lineToNOT);
+        pen.setColor(outlineColor);
+        brush.setColor(QColor("#bbdefb"));
+        painter->setPen(pen);
+        painter->setBrush(brush);
+        painter->drawPath(*gatePath);
+    }
+    else {
+        pen.setColor(this->color);
+        painter->setPen(pen);
+        painter->drawLine(line2);
+    }
 
     // fill block with the status color
+    brush.setColor(this->color);
+    painter->setBrush(brush);
     painter->fillRect(rect, brush);
 
-    // draw a black outline around the block
+    // draw an outline around the block
     pen.setColor(outlineColor);
     painter->setPen(pen);
     painter->drawRect(rect);
@@ -109,35 +129,13 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setFont(titleFont);
     painter->drawText(rect, this->title, texto);
 
-    // draw a NOT gate if necessary
-    if(this->negated) {
-        // draw a new line color to exit the gate
-        QPoint lineSplit(boundingRect().right() - (LINE_LENGTH / 2), boundingRect().center().y());
-        pen.setColor(outlineColor);
-        painter->setPen(pen);
-        painter->drawLine(lineSplit, lineEnd);
-
-        // set the gate's color
-        brush.setColor(QColor("#bbdefb"));
-        pen.setColor(outlineColor);
-        painter->setPen(pen);
-
-        // get the shape of the not gate
-        QPainterPath *path = drawNOTGatePath();
-
-        // move the gate to the correct position
-        path->translate(WIDTH + LINE_LENGTH * 1.35, TOP_MARGIN + HEIGHT/2);
-
-        // paint the gate
-        painter->fillPath(*path, brush);
-        painter->drawPath(*path);
-    }
 }
 
 QPainterPath *Block::drawNOTGatePath()
 {
-    int gateHeight = HEIGHT / 1.5;          // the height of the gate
-    int triangleWidth = gateHeight / 1.2;   // the width of the triangle
+    int gateHeight = HEIGHT / 1.8;      // the height of the gate
+    int triangleWidth = gateHeight / 1.2;     // the width of the triangle
+    int dotRadius = gateHeight / 5;         // the radius for the circle
 
     // defining corners for the triangle
     QPointF topLeft(0, 0);
@@ -153,14 +151,11 @@ QPainterPath *Block::drawNOTGatePath()
     path->lineTo(topLeft);
 
     // create the circle dot at the tip
-    int dotRadius = gateHeight / 5; // the radius for the circle
-
-    // draw the circle
     path->addEllipse(QPointF(right.x() + dotRadius, gateHeight / 2),
                      dotRadius, dotRadius);
 
     // align the path by the middle of the triangle
-    path->translate(0, -gateHeight/2);
+    path->translate(-triangleWidth/2, -gateHeight/2);
 
     return path;
 }
@@ -172,7 +167,6 @@ QPainterPath *Block::drawNOTGatePath()
 // when the user clicks down on a block
 void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    pressed = true;
     update();
     QGraphicsItem::mousePressEvent(event);
 }
@@ -180,7 +174,6 @@ void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
 // when the user releases the mouse click
 void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    pressed = false;
     update();
     QGraphicsItem::mouseReleaseEvent(event);
 }
@@ -264,23 +257,23 @@ QColor Block::getColor() const
     return color;
 }
 
-void Block::setStatus(int value)    // sets the status and color for a block
+void Block::setStatus(BlockStatus value)    // sets the status and color for a block
 {
     // set the status attribute to the value
     status = value;
 
     // sets the block color and the text color depending on the value
-    if(value == STATUS_VALID) {
-        color = STATUS_VALID_COLOR;         // valid color green
+    if(value == Valid) {
+        color = validColor;         // valid color green
     }
-    else if(value == STATUS_INVALID) {
-        color = STATUS_INVALID_COLOR;       // invalid color red
+    else if(value == Invalid) {
+        color = invalidColor;       // invalid color red
     }
-    else if(value == STATUS_PENDING) {
-        color = STATUS_PENDING_COLOR;       // pending color blue
+    else if(value == Pending) {
+        color = pendingColor;       // pending color blue
     }
-    else if(value == STATUS_WARNING) {
-        color = STATUS_WARNING_COLOR;       // warning color orange
+    else if(value == Warning) {
+        color = warningColor;       // warning color orange
     }
     else {
         color = QColor("#888888");          // default color grey

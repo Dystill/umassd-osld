@@ -6,6 +6,11 @@
 #include <QList>
 #include <block.h>
 
+enum GateType {
+    AndGate,
+    OrGate
+};
+
 class Gate : public QGraphicsWidget
 {
 private:
@@ -13,24 +18,21 @@ private:
     QList<int> blockStatuses;
     Block *outputBlock;
     int outputStatus;
-    int gateType;
+    GateType gateType;
 
-    const int WIDTH = 128;
-    const int HEIGHT = 128;
-    const int LINE_LENGTH = 48;
+    const int WIDTH = 64;
+    const int HEIGHT = 64;
+    const int LINE_LENGTH = 24;
 
 public:
-    static const int AND = 1;
-    static const int OR = 2;
-
     QRectF boundingRect() const;
     void setGeometry(const QRectF &rect);
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
-    Gate(int type = AND);
-    Gate(QList<Block *> blocks, Block *outputBlock, int type = AND);
+    Gate(GateType type = AndGate);
+    Gate(QList<Block *> blocks, Block *outputBlock, GateType type = AndGate);
     void addBlock(Block *b);
     void removeBlock(int pos);
     void removeBlock(QString title);
@@ -38,13 +40,15 @@ public:
     Block *getOutputBlock() const;
     int getGateStatus();
     QString getGateStatusAsString();
-    int getGateType() const;
-    void setGateType(int value);
+    GateType getGateType() const;
+    void setGateType(GateType value);
     void updateOutputStatus();
     int sizeOfBlocks(QList<Block *> blocks);
+    int getBlockCount();
 
     QPainterPath *drawANDGatePath();
     QPainterPath *drawORGatePath();
+
 
 signals:
 

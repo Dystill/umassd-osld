@@ -62,10 +62,16 @@
     <bool>true</bool>
    </property>
    <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Exit Full Screen</string>
+    <string>Full Screen</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Full Screen</string>
    </property>
   </action>
  </widget>

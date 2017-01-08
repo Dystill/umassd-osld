@@ -2,80 +2,57 @@
 
 OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
 {
-    // create a new instance of QGraphicsScene
-    scene = new QGraphicsScene(parent);
-
-    // TEST: creating and displaying a gate group
 
     // create the gate
-    Gate *gate = new Gate(Gate::OR);
+    Gate *gate = new Gate(AndGate);
 
     // add some blocks
     gate->addBlock(new Block("Interlocks Closed", "description",
-                             "Block 1 Hovertext", Block::STATUS_INVALID, false, true));
+                             "Block 1 Hovertext", Valid, false, true));
     gate->addBlock(new Block("Standby", "description",
-                             "Block 2 Hovertext", Block::STATUS_VALID));
+                             "Block 2 Hovertext", Invalid));
     gate->addBlock(new Block("Fire", "description",
-                             "Block 3 Hovertext", Block::STATUS_WARNING));
+                             "Block 3 Hovertext", Warning));
     gate->addBlock(new Block("ITL", "description",
-                             "Block 4 Hovertext", Block::STATUS_PENDING, true));
+                             "Block 4 Hovertext", Pending, true));
     gate->addBlock(new Block("Missile Enabled", "description",
-                             "Block 5 Hovertext", Block::STATUS_INVALID));
+                             "Block 5 Hovertext", Invalid));
 
-    // draw the gate and display it in the scene
-    scene->addItem(drawGateGroup(gate));
-
+    QGraphicsWidget *gateGroup = drawGateGroup(gate);
+    this->addItem(gateGroup);
 }
 
-QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate){
-
+QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
+{
     // create a widget to hold all of the blocks of the gate
-    QGraphicsWidget *blockHolder = new QGraphicsWidget;
-    QGraphicsWidget *gateHolder = new QGraphicsWidget;
+    QGraphicsWidget *itemHolder = new QGraphicsWidget;
 
     // create a layout for the widget to align the blocks vertically
-    QGraphicsLinearLayout *blockLayout
-            = new QGraphicsLinearLayout(Qt::Vertical);
+    QGraphicsGridLayout *itemLayout
+            = new QGraphicsGridLayout(itemHolder);
 
     // add all of the gate's blocks to the blockLayout
-    for (int i = 0; i < gate->getInputBlocks().count(); i++) {
-        blockLayout->addItem(gate->getInputBlocks().at(i));
+    int numOfBlocks = gate->getInputBlocks().count();
+    qDebug() << numOfBlocks;
+    for (int i = 0; i < numOfBlocks; i++) {
+        qDebug() << "test";
+        Block *block = gate->getInputBlocks().at(i);
+        itemLayout->addItem(block, i, 1, Qt::AlignCenter);
     }
 
-    blockLayout->setContentsMargins(0,0,0,0);
-    blockHolder->setLayout(blockLayout);
+    itemLayout->setSpacing(0);
+    itemLayout->setVerticalSpacing(Block::V_MARGIN);
 
-    QGraphicsLinearLayout *gateLayout
-            = new QGraphicsLinearLayout(Qt::Vertical);
+    // add gate to the second column
+    itemLayout->addItem(gate, 0, 3, numOfBlocks, 1, Qt::AlignCenter);
 
-    gateLayout->addItem(gate);
+    Connector *blockToGate = new Connector(numOfBlocks);
 
-    gateLayout->setContentsMargins(0,0,0,0);
-    gateHolder->setLayout(gateLayout);
+    itemLayout->addItem(blockToGate, 0, 2, numOfBlocks, 1, Qt::AlignCenter);
 
-    // create a widget to hold the blocks, connectors, and gate
-    QGraphicsWidget *gateGroup = new QGraphicsWidget;
+    qDebug() << itemHolder->preferredHeight();
 
-    // create a layout to align them horizontally
-    QGraphicsLinearLayout *groupLayout
-            = new QGraphicsLinearLayout(Qt::Horizontal);
-
-    groupLayout->addItem(blockHolder);
-    groupLayout->addItem(gateHolder);
-
-    groupLayout->setContentsMargins(0,0,0,0);
-
-    gateGroup->setLayout(groupLayout);
-
-    // gateGroup->setFlag(QGraphicsItem::ItemIsMovable);
-
-    return gateGroup;
-}
-
-// return the generated diagram scene
-QGraphicsScene *OSLDGraphicsEngine::getDiagramScene()
-{
-    return scene;
+    return itemHolder;
 }
 
 

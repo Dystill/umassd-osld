@@ -2,6 +2,7 @@
 #define OSLDISPLAY_H
 
 #include <QMainWindow>
+#include <QScrollBar>
 #include <QtCore>
 #include "osldgraphicsengine.h"
 
@@ -25,7 +26,7 @@ private slots:
 
 private:
     Ui::OSLDisplay *ui;
-    QGraphicsScene *scene;
+    OSLDGraphicsEngine *scene;
     void enterFullScreen();
     void exitFullScreen();
 };
