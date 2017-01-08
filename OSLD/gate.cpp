@@ -1,11 +1,11 @@
 #include "gate.h"
 
-Gate::Gate(int type)
+Gate::Gate(GateType type)
 {
     gateType = type;            // set the gate type
 }
 
-Gate::Gate(QList<Block *> blocks, Block *output, int type)
+Gate::Gate(QList<Block *> blocks, Block *output, GateType type)
 {
     inputBlocks = blocks;   // set the input blocks
     outputBlock = output;   // set the output block
@@ -73,10 +73,10 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     // draw the path based on the type of gate that this gate was set to
     switch(gateType) {
-    case AND:
+    case AndGate:
         gatePath = drawANDGatePath();   // draw an AND gate shape
         break;
-    case OR:
+    case OrGate:
         gatePath = drawORGatePath();    // draw an OR gate shape
         break;
     default:
@@ -187,12 +187,12 @@ QString Gate::getGateStatusAsString()
     return "test";
 }
 
-int Gate::getGateType() const
+GateType Gate::getGateType() const
 {
     return gateType;
 }
 
-void Gate::setGateType(int value)
+void Gate::setGateType(GateType value)
 {
     gateType = value;
 }

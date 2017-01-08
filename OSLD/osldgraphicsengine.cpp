@@ -4,7 +4,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
 {
 
     // create the gate
-    Gate *gate = new Gate(Gate::OR);
+    Gate *gate = new Gate(AndGate);
 
     // add some blocks
     gate->addBlock(new Block("Interlocks Closed", "description",

@@ -19,7 +19,7 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     ui->graphicsView->viewport()->installEventFilter(this);
 
     // starts the application in full screen mode
-    //QMainWindow::showFullScreen();
+    // enterFullScreen();
     QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
 }
 
@@ -80,15 +80,13 @@ bool OSLDisplay::eventFilter(QObject *object, QEvent *event)
 void OSLDisplay::enterFullScreen()
 {
     QMainWindow::showFullScreen();
-    ui->actionFullScreen->setText("Exit Full Screen");
-    ui->actionFullScreen->setToolTip("Exit Full Screen");
+    ui->actionFullScreen->setChecked(true);
 }
 
 void OSLDisplay::exitFullScreen()
 {
     QMainWindow::showNormal();
-    ui->actionFullScreen->setText("Enter Full Screen");
-    ui->actionFullScreen->setToolTip("Enter Full Screen");
+    ui->actionFullScreen->setChecked(false);
 }
 
 
