@@ -46,23 +46,18 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
 QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
 {
     // create a widget to hold all of the blocks of the gate
-    QGraphicsWidget *itemHolder = new QGraphicsWidget;
-
     // create a layout for the widget to align the blocks vertically
+    QGraphicsWidget *itemHolder = new QGraphicsWidget;
     QGraphicsGridLayout *itemLayout
             = new QGraphicsGridLayout(itemHolder);
 
-    // get the number of blocks connected to this gate
+    // store the number of blocks connected to the gate in this subdiagram
+    // store the status color of each block leading into the gate
     int numOfBlocks = gate->getInputBlocks().count();
-
-    // holds the colors to use for the connectors
     QList<QColor> connColors;
-
-    qDebug() << numOfBlocks;
 
     // loop through each block to draw and record the status color for the connectors
     for (int i = 0; i < numOfBlocks; i++) {
-        qDebug() << "test";
         Block *block = gate->getInputBlocks().at(i);                // get each block
         connColors.append(Block::parseColor(block->getBroadcastStatus()));   // record the status color
         itemLayout->addItem(block, i, 1, Qt::AlignCenter);          // draw the block
@@ -72,18 +67,18 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
     itemLayout->setSpacing(0);
     itemLayout->setVerticalSpacing(Block::V_MARGIN);
 
-    // add the gate to the theird column
+    // add the gate to the third column
     itemLayout->addItem(gate, 0, 3, numOfBlocks, 1, Qt::AlignCenter);
 
-    // create the connections between the gate and blocks
+    // create and draw the connections between the gate and blocks in the second column
     Connector *blockToGate = new Connector(connColors);
-
-    // draw the connections
     itemLayout->addItem(blockToGate, 0, 2, numOfBlocks, 1, Qt::AlignCenter);
 
-    qDebug() << itemHolder->preferredHeight();
+    // add the gate's output block in the fourth column
+    itemLayout->addItem(gate->getOutputBlock(), 0, 4, numOfBlocks, 1, Qt::AlignCenter);
 
-    return itemHolder;
+
+    return itemHolder;  // return the widget holding the entire drawn subdiagram
 }
 
 

@@ -29,7 +29,7 @@ public:
     // Block dimensions
     static const int WIDTH = 160;
     static const int HEIGHT = 40;
-    static const int LINE_LENGTH = 64;
+    static const int LINE_LENGTH = 48;
     static const int V_MARGIN = 8;
 
     // constructors

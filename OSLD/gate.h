@@ -23,7 +23,7 @@ private:
 
     const int WIDTH = 64;
     const int HEIGHT = 64;
-    const int LINE_LENGTH = 24;
+    const int LINE_LENGTH = 48;
 
 public:
     QRectF boundingRect() const;
