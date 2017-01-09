@@ -29,6 +29,7 @@ private:
     OSLDGraphicsEngine *scene;
     void enterFullScreen();
     void exitFullScreen();
+    void zoom(int px);
 };
 
 #endif // OSLDISPLAY_H

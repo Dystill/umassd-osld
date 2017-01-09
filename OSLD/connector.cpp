@@ -116,7 +116,7 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         }
         else {
             // draw to the block below if there's an even number of blocks
-            start.setY(endPoint.y() + ((Block::HEIGHT + Block::V_MARGIN + 2) / 2));
+            start.setY(endPoint.y() + ((Block::HEIGHT + Block::V_MARGIN + 1.5) / 2));
         }
         pen.setColor(colors.at(block));
         painter->setPen(pen);

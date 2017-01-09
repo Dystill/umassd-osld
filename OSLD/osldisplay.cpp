@@ -40,31 +40,44 @@ void OSLDisplay::on_actionFullScreen_triggered()
 
 void OSLDisplay::keyPressEvent(QKeyEvent *event)
 {
-    if(this->isFullScreen() &&
-            (event->key() == Qt::Key_Escape ||
-             (event->key() == Qt::Key_Return && event->modifiers() == Qt::AltModifier))) {
-        exitFullScreen();
-    }
-    else if (event->key() == Qt::Key_Return && event->modifiers() == Qt::AltModifier) {
-        enterFullScreen();
+    int key = event->key();
+    int mod = event->modifiers();
+
+    switch(key) {
+    case Qt::Key_Escape:
+        if(this->isFullScreen())
+            exitFullScreen();
+        else
+            enterFullScreen();
+        break;
+    case Qt::Key_Return:
+        if(mod == Qt::AltModifier) {
+            if(this->isFullScreen())
+                exitFullScreen();
+            else
+                enterFullScreen();
+        }
+        break;
+    case Qt::Key_Equal:
+        if(mod == Qt::ControlModifier){zoom(1);zoom(1);}
+        break;
+    case Qt::Key_Minus:
+        if(mod == Qt::ControlModifier){zoom(-1);zoom(-1);}
+        break;
     }
 }
 
 void OSLDisplay::wheelEvent(QWheelEvent *event)
 {
     QPoint pixels = event->angleDelta();
+    int delta = pixels.y();
 
     if(event->modifiers() == Qt::ControlModifier) {
-        if(pixels.y() > 0) {
-            ui->graphicsView->scale(1.1, 1.1);
-        }
-        else if (pixels.y() < 0) {
-            ui->graphicsView->scale(0.90, 0.90);
-        }
+        this->zoom(delta);
     }
     else {
         QScrollBar *vBar = ui->graphicsView->verticalScrollBar();
-        vBar->setValue(vBar->value() - (pixels.y() / 2));
+        vBar->setValue(vBar->value() - (delta / 2));
     }
 }
 
@@ -87,6 +100,15 @@ void OSLDisplay::exitFullScreen()
 {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
+}
+
+void OSLDisplay::zoom(int px) {
+    if(px > 0) {
+        ui->graphicsView->scale(1.1, 1.1);
+    }
+    else if (px < 0) {
+        ui->graphicsView->scale(0.90, 0.90);
+    }
 }
 
 

@@ -21,11 +21,11 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
     blocks2.append(new Block("Launcher Ready", "description",
                              "Block 1 Hovertext", Valid, false, true));
     blocks2.append(new Block("Within Limits", "description",
-                             "Block 2 Hovertext", Invalid));
+                             "Block 2 Hovertext", Invalid, true));
     blocks2.append(new Block("Tube Selected", "description",
                              "Block 3 Hovertext", Warning));
     blocks2.append(new Block("Inputs Matched", "description",
-                             "Block 4 Hovertext", Pending, true));
+                             "Block 4 Hovertext", Pending));
     blocks2.append(new Block("Booster Prearmed", "description",
                              "Block 5 Hovertext", Invalid));
     blocks2.append(new Block("CSPL Prearmed (Vertical Only)", "description",
@@ -33,12 +33,12 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
 
     // create the gate
     Gate *gate1 = new Gate(blocks1, output, AndGate);
-    Gate *gate2 = new Gate(blocks1, output, OrGate);
+    Gate *gate2 = new Gate(blocks2, output, OrGate);
 
     gates.append(gate1);
     gates.append(gate2);
 
-    QGraphicsWidget *gateGroup1 = drawGateGroup(gates.at(0));
+    QGraphicsWidget *gateGroup1 = drawGateGroup(gates.at(1));
 
     this->addItem(gateGroup1);
 }
@@ -67,12 +67,12 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
     itemLayout->setSpacing(0);
     itemLayout->setVerticalSpacing(Block::V_MARGIN);
 
-    // add the gate to the third column
-    itemLayout->addItem(gate, 0, 3, numOfBlocks, 1, Qt::AlignCenter);
-
     // create and draw the connections between the gate and blocks in the second column
     Connector *blockToGate = new Connector(connColors);
     itemLayout->addItem(blockToGate, 0, 2, numOfBlocks, 1, Qt::AlignCenter);
+
+    // add the gate to the third column
+    itemLayout->addItem(gate, 0, 3, numOfBlocks, 1, Qt::AlignCenter);
 
     // add the gate's output block in the fourth column
     itemLayout->addItem(gate->getOutputBlock(), 0, 4, numOfBlocks, 1, Qt::AlignCenter);
