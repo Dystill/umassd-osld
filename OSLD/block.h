@@ -9,7 +9,8 @@ enum BlockStatus {
     Valid,
     Invalid,
     Pending,
-    Warning
+    Warning,
+    Unknown
 };
 
 class Block : public QGraphicsWidget
@@ -23,12 +24,6 @@ private:
     bool contains;          // whether or not the block contains a subdiagram
     bool negated;           // whether or not the block is connected to a NOT gate
 
-    // Block colors
-    const QColor validColor = QColor("#8BC34A");
-    const QColor invalidColor = QColor("#EF5350");
-    const QColor pendingColor = QColor("#9575CD");
-    const QColor warningColor = QColor("#FF7043");
-
 public:
 
     // Block dimensions
@@ -41,7 +36,7 @@ public:
     Block(QString t  = "Default title",
           QString d  = "Default description",
           QString ht = "Default hovertext",
-          BlockStatus st = Valid, bool n = 0, bool c = 0);
+          BlockStatus st = Unknown, bool n = 0, bool c = 0);
 
     // QGraphicsItem stuff
     QRectF boundingRect() const;
@@ -49,6 +44,9 @@ public:
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
+
+    // for painting the not gate
+    QPainterPath *drawNOTGatePath();
 
     // get and set the block's title
     QString getTitle() const;
@@ -71,12 +69,14 @@ public:
     void setNegated(bool value);
 
     // get and set the block's status
-    int getStatus() const;
-    void setStatus(BlockStatus value);
+    BlockStatus getOriginalStatus() const;
+    BlockStatus getBroadcastStatus() const;
+    void setOriginalStatus(BlockStatus value);
     QColor getColor() const;
 
-    // for painting the not gate
-    QPainterPath *drawNOTGatePath();
+    // return a color from a status
+    QColor static parseColor(BlockStatus value);
+
 
 protected:
 

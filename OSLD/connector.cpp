@@ -1,19 +1,54 @@
 #include "connector.h"
 
-Connector::Connector(QPointF start, QPointF end)
+Connector::Connector(QPointF start, QPointF end, QColor color)
 {
     startPoint = start;
     endPoint = end;
+    colors.append(color);
 }
 
-// constructor for drawing a fan of lines (going into a gate)
-Connector::Connector(int lines)
+// constructor for drawing a fan of lines (going into a gate) with a single color
+Connector::Connector(int lines, QColor color)
 {
     numOfLines = lines; // the number of lines needed to be drawn
     // the point that all lines will fan into
     endPoint = QPointF(WIDTH, ((Block::HEIGHT + Block::V_MARGIN) * numOfLines)/2);
-    // letting the object know what type of line to draw
+    // what type of line to draw
     type = FanOut;
+
+    for (int i = 0; i < lines; i++) {
+        colors.append(color);
+    }
+}
+
+// constructor for drawing a draw a fan of lines, each with a different color supplied by a QColor list
+Connector::Connector(QList<QColor> color)
+{
+    numOfLines = color.count();
+
+    // the point that all lines will fan into
+    endPoint = QPointF(WIDTH, ((Block::HEIGHT + Block::V_MARGIN) * numOfLines)/2);
+
+    // what type of line to draw
+    type = FanOut;
+
+    colors = color;
+}
+
+// same a previous, but by parsing a BlockStatus list, added for convenience
+Connector::Connector(QList<BlockStatus> status)
+{
+    numOfLines = status.count();
+
+    // the point that all lines will fan into
+    endPoint = QPointF(WIDTH, ((Block::HEIGHT + Block::V_MARGIN) * numOfLines)/2);
+
+    // what type of line to draw
+    type = FanOut;
+
+    for (int i = 0; i < status.count(); i++) {
+        colors.append(Block::parseColor(status.at(i)));
+    }
 }
 
 // creating the containing rectangle to hold the lines
@@ -66,12 +101,13 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     QPen pen;
     pen.setWidth(2);
     pen.setCapStyle(Qt::RoundCap);
-    pen.setColor(QColor("#212121"));
-    painter->setPen(pen);
 
     if(type == FanOut) {
         // create a starting point for the lines to draw
         QPointF start(0, 0);
+
+        // to keep track of the current block connector being drawn
+        int block = numOfLines / 2;
 
         // draw the centermost line
         if(numOfLines % 2 == 1) {
@@ -82,32 +118,40 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             // draw to the block below if there's an even number of blocks
             start.setY(endPoint.y() + ((Block::HEIGHT + Block::V_MARGIN + 2) / 2));
         }
+        pen.setColor(colors.at(block));
+        painter->setPen(pen);
         painter->drawLine(start, endPoint); // draw the line
 
         // a loop to draw the rest of the lines
         for(int i = 1; i < numOfLines; i++) {
             // alternate between drawing a line above and a line below the middle line
             if(i % 2 == 1) {    // below = subtract from y value
-                start.setY(start.y() - ((Block::HEIGHT + Block::V_MARGIN + 1+ 4/numOfLines) * i));
+                block -= i;
+                start.setY(start.y() - ((Block::HEIGHT + Block::V_MARGIN + 1 + 4/numOfLines) * i));
             }
             else {              // above = add to y value
-                start.setY(start.y() + ((Block::HEIGHT + Block::V_MARGIN + 1+ 4/numOfLines) * i));
+                block += i;
+                start.setY(start.y() + ((Block::HEIGHT + Block::V_MARGIN + 1 + 4/numOfLines) * i));
             }
+            qDebug() << block;
+            pen.setColor(colors.at(block));
+            painter->setPen(pen);
             painter->drawLine(start, endPoint); // draw each line
         }
 
-        /* old code
+        #if 0   // old code
         for(int i = 0; i < numOfLines; i++) {
             painter->drawLine(start, endPoint);
             start.setY(start.y() + Block::V_MARGIN + 4 + Block::HEIGHT);
         }
-        */
+        #endif
     }
 
-    // testing purposes - draw a dotted line around the connector container
+    #if 0   // draw a rectangle around the coontaining space
     pen.setStyle(Qt::DotLine);
     painter->setPen(pen);
     painter->drawRect(boundingRect());
+    #endif
 
 }
 

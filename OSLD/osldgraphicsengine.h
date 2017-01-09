@@ -19,6 +19,7 @@ public:
 
 private:
     QGraphicsScene *scene;  // holds the entire diagram
+    QList<Gate *> gates;    // holds all of the gates
 };
 
 #endif // OSLDGRAPHICSENGINE_H

@@ -8,15 +8,25 @@ Gate::Gate(GateType type)
 Gate::Gate(QList<Block *> blocks, Block *output, GateType type)
 {
     inputBlocks = blocks;   // set the input blocks
+
+    // loop through the inputBlocks to get their statuses
+    for (int i = 0; i < blocks.count(); i++) {          // for each block in inputBlocks
+        Block *block = inputBlocks.at(i);
+        blockStatuses.insert(i, block->getOriginalStatus());    // insert that blocks status value to the corresponding spot in blockStatuses
+        if(block->isContaining()) {
+            containingIndex.append(i);                  // record the index of blocks with subdiagrams
+        }
+    }
+
     outputBlock = output;   // set the output block
     gateType = type;        // set the gate type
 
-    // loop through the inputBlocks to get their statuses
-    for (int i = 0; i < blocks.count(); i++) {    // for each block in inputBlocks
-        blockStatuses.insert(i, inputBlocks.at(i)->getStatus());     // insert that blocks status value to the corresponding spot in blockStatuses
-    }
-
     this->updateOutputStatus();   // call the function to update the output status
+}
+
+QList<int> Gate::getContainingIndex() const
+{
+    return containingIndex;
 }
 
 QRectF Gate::boundingRect() const
@@ -58,6 +68,8 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     QBrush brush(fillColor);
     QPen pen(outlineColor);
     pen.setWidth(2);    // outline thickness
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
 
     // set the pen and brush
     painter->setPen(pen);

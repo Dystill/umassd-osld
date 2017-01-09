@@ -15,9 +15,10 @@ class Gate : public QGraphicsWidget
 {
 private:
     QList<Block *> inputBlocks;
-    QList<int> blockStatuses;
+    QList<BlockStatus> blockStatuses;
+    QList<int> containingIndex;
     Block *outputBlock;
-    int outputStatus;
+    BlockStatus outputStatus;
     GateType gateType;
 
     const int WIDTH = 64;
@@ -30,6 +31,9 @@ public:
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
+
+    QPainterPath *drawANDGatePath();
+    QPainterPath *drawORGatePath();
 
     Gate(GateType type = AndGate);
     Gate(QList<Block *> blocks, Block *outputBlock, GateType type = AndGate);
@@ -45,10 +49,7 @@ public:
     void updateOutputStatus();
     int sizeOfBlocks(QList<Block *> blocks);
     int getBlockCount();
-
-    QPainterPath *drawANDGatePath();
-    QPainterPath *drawORGatePath();
-
+    QList<int> getContainingIndex() const;
 
 signals:
 

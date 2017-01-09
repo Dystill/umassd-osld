@@ -10,7 +10,7 @@ Block::Block(QString t, QString d, QString ht,
     this->setTitle(t);
     this->setDescription(d);
     this->setHovertext(ht);
-    this->setStatus(st);
+    this->setOriginalStatus(st);
     this->setContains(c);
     this->setNegated(n);
 }
@@ -75,6 +75,8 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     // create a pen for the title text and border
     QPen pen;
     pen.setWidth(2);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
 
     // create a text options object
     QTextOption texto(Qt::AlignCenter);     // align the text to the center
@@ -88,9 +90,9 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
      */
 
     // draw the line exiting the block
-    if(this->negated) {
-        // draw the full line
-        pen.setColor(outlineColor);
+    if(this->negated) {                 // draw two lines separated by a NOT gate if the block is negated
+        // draw the line after the NOT gate
+        pen.setColor(this->parseColor(this->getBroadcastStatus()));
         painter->setPen(pen);
         painter->drawLine(line2);
 
@@ -99,6 +101,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         painter->setPen(pen);
         painter->drawLine(line1);
 
+        // draw the NOT gate
         QPainterPath *gatePath = drawNOTGatePath();
         gatePath->translate(lineToNOT);
         pen.setColor(outlineColor);
@@ -107,7 +110,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
         painter->setBrush(brush);
         painter->drawPath(*gatePath);
     }
-    else {
+    else {                              // draw a single line if not negated
         pen.setColor(this->color);
         painter->setPen(pen);
         painter->drawLine(line2);
@@ -247,35 +250,71 @@ void Block::setNegated(bool value)
 }
 
 // status and color
-int Block::getStatus() const
+BlockStatus Block::getOriginalStatus() const    // get the orginal status for the block
 {
     return status;
 }
 
-QColor Block::getColor() const
+BlockStatus Block::getBroadcastStatus() const   // get the status after applying NOT, if applicable
 {
-    return color;
+    BlockStatus temp = this->status;
+
+    if(this->negated) {
+        switch(this->status) {
+        case Valid:
+            temp = Invalid;
+            break;
+        case Invalid:
+            temp = Valid;
+            break;
+        case Pending:
+            temp = Warning;
+            break;
+        case Warning:
+            temp = Pending;
+            break;
+        default:
+            break;
+        }
+
+        // perform NOT logic here
+    }
+
+    return temp;
 }
 
-void Block::setStatus(BlockStatus value)    // sets the status and color for a block
+void Block::setOriginalStatus(BlockStatus value)    // sets the status and color for a block
 {
     // set the status attribute to the value
     status = value;
 
     // sets the block color and the text color depending on the value
-    if(value == Valid) {
-        color = validColor;         // valid color green
+    color = this->parseColor(value);
+}
+
+QColor Block::getColor() const  // get the color for this block
+{
+    return color;
+}
+
+// static function to get the color for a status
+QColor Block::parseColor(BlockStatus value)
+{
+    QColor validColor = QColor("#8BC34A");
+    QColor invalidColor = QColor("#EF5350");
+    QColor pendingColor = QColor("#9575CD");
+    QColor warningColor = QColor("#FF7043");
+
+    switch(value) {
+    case Valid:
+        return validColor;         // valid color green
+    case Invalid:
+        return invalidColor;       // invalid color red
+    case Pending:
+        return pendingColor;       // pending color blue
+    case Warning:
+        return warningColor;       // warning color orange
     }
-    else if(value == Invalid) {
-        color = invalidColor;       // invalid color red
-    }
-    else if(value == Pending) {
-        color = pendingColor;       // pending color blue
-    }
-    else if(value == Warning) {
-        color = warningColor;       // warning color orange
-    }
-    else {
-        color = QColor("#888888");          // default color grey
-    }
+
+    return QColor("#888888");  // default color grey
 }

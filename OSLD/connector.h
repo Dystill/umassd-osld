@@ -16,13 +16,16 @@ private:
     QPointF startPoint;
     QPointF endPoint;
     int numOfLines;
+    QList<QColor> colors;
     ConnectType type;
 
 public:
-    static const int WIDTH = 128;
+    static const int WIDTH = 32;
 
-    Connector(QPointF start, QPointF end);
-    Connector(int lines);
+    Connector(QPointF start, QPointF end, QColor color = QColor("#212121"));
+    Connector(int lines, QColor color = QColor("#212121"));
+    Connector(QList<BlockStatus> status);
+    Connector(QList<QColor> color);
 
     QRectF boundingRect() const;
     void setGeometry(const QRectF &rect);
