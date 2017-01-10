@@ -80,7 +80,12 @@ void OSLDisplay::wheelEvent(QWheelEvent *event)
     if(event->modifiers() == Qt::ControlModifier) {
         this->zoom(delta);
     }
-    else {
+    else if(event->modifiers() == Qt::ShiftModifier ||
+            event->modifiers() == Qt::AltModifier) {
+        QScrollBar *hBar = ui->graphicsView->horizontalScrollBar();
+        hBar->setValue(hBar->value() - (delta / 2));
+    }
+    else if(event->modifiers() == Qt::NoModifier){
         QScrollBar *vBar = ui->graphicsView->verticalScrollBar();
         vBar->setValue(vBar->value() - (delta / 2));
     }

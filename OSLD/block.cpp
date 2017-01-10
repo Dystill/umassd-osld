@@ -78,12 +78,6 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
 
-    // create a text options object
-    QTextOption texto(Qt::AlignCenter);     // align the text to the center
-    texto.setWrapMode(QTextOption::WordWrap); // force no wrapping of the text
-
-    QFont titleFont;
-
 
     /*
      * drawing the shapes for the block
@@ -126,11 +120,17 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setPen(pen);
     painter->drawRect(rect);
 
-    // add text with the supplied block title
+    // set pen for the title of the block
+    QFont titleFont = QFont();
+
     pen.setColor(titleColor);
     painter->setPen(pen);
     painter->setFont(titleFont);
-    painter->drawText(rect, this->title, texto);
+
+    // add the title to the block, truncate if necessary
+    QFontMetrics metrics = QFontMetrics(titleFont);
+    QString temp = metrics.elidedText(this->title, Qt::ElideRight, rect.width()*0.9);
+    painter->drawText(rect, Qt::AlignCenter, temp);
 
 }
 
@@ -260,6 +260,7 @@ BlockStatus Block::getBroadcastStatus() const   // get the status after applying
     BlockStatus temp = this->status;
 
     if(this->negated) {
+        // perform NOT logic here
         switch(this->status) {
         case Valid:
             temp = Invalid;
@@ -276,8 +277,6 @@ BlockStatus Block::getBroadcastStatus() const   // get the status after applying
         default:
             break;
         }
-
-        // perform NOT logic here
     }
 
     return temp;
@@ -314,6 +313,8 @@ QColor Block::parseColor(BlockStatus value)
         return pendingColor;       // pending color blue
     case Warning:
         return warningColor;       // warning color orange
+    default:
+        break;
     }
 
     return QColor("#888888");  // default color grey

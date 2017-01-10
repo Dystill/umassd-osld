@@ -116,7 +116,7 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         }
         else {
             // draw to the block below if there's an even number of blocks
-            start.setY(endPoint.y() + ((Block::HEIGHT + Block::V_MARGIN + 1.5) / 2));
+            start.setY(endPoint.y() + ((Block::HEIGHT + Block::V_MARGIN + 1.4) / 2));
         }
         pen.setColor(colors.at(block));
         painter->setPen(pen);
@@ -127,11 +127,11 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
             // alternate between drawing a line above and a line below the middle line
             if(i % 2 == 1) {    // below = subtract from y value
                 block -= i;
-                start.setY(start.y() - ((Block::HEIGHT + Block::V_MARGIN + 1 + 4/numOfLines) * i));
+                start.setY(start.y() - ((Block::HEIGHT + Block::V_MARGIN + 0.6 + 4/numOfLines) * i));
             }
             else {              // above = add to y value
                 block += i;
-                start.setY(start.y() + ((Block::HEIGHT + Block::V_MARGIN + 1 + 4/numOfLines) * i));
+                start.setY(start.y() + ((Block::HEIGHT + Block::V_MARGIN + 0.6 + 4/numOfLines) * i));
             }
             qDebug() << block;
             pen.setColor(colors.at(block));

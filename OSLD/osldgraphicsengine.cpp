@@ -15,7 +15,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
                              "Block 5 Hovertext", Invalid));
 
     Block *output = new Block("Missile Away", "description",
-                             "Block 5 Hovertext");
+                             "Block Out Hovertext", Unknown);
 
     QList<Block *> blocks2;
     blocks2.append(new Block("Launcher Ready", "description",
@@ -38,7 +38,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
     gates.append(gate1);
     gates.append(gate2);
 
-    QGraphicsWidget *gateGroup1 = drawGateGroup(gates.at(1));
+    QGraphicsWidget *gateGroup1 = drawGateGroup(gates.at(0));
 
     this->addItem(gateGroup1);
 }
