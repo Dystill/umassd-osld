@@ -44,13 +44,18 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
     int mod = event->modifiers();
 
     switch(key) {
-    case Qt::Key_Escape:
+    case Qt::Key_Escape:                // esc
         if(this->isFullScreen())
             exitFullScreen();
-        else
-            enterFullScreen();
         break;
-    case Qt::Key_Return:
+    case Qt::Key_F11:                   // f11
+        if(mod == Qt::NoModifier) {
+            if(this->isFullScreen())
+                exitFullScreen();
+            else
+                enterFullScreen();
+        }
+    case Qt::Key_Return:                // enter
         if(mod == Qt::AltModifier) {
             if(this->isFullScreen())
                 exitFullScreen();
@@ -58,10 +63,10 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
                 enterFullScreen();
         }
         break;
-    case Qt::Key_Equal:
+    case Qt::Key_Equal:                 // =
         if(mod == Qt::ControlModifier){zoom(1);zoom(1);}
         break;
-    case Qt::Key_Minus:
+    case Qt::Key_Minus:                 // -
         if(mod == Qt::ControlModifier){zoom(-1);zoom(-1);}
         break;
     }
