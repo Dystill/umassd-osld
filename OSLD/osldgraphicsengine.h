@@ -18,7 +18,7 @@ public:
 
 
 private:
-    QGraphicsScene *scene;  // holds the entire diagram
+    QWidget *parent;  // holds the entire diagram
     QList<Gate *> gates;    // holds all of the gates
 };
 

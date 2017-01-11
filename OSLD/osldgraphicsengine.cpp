@@ -2,39 +2,41 @@
 
 OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
+    this->parent = parent;
+
     QList<Block *> blocks1;
 
     blocks1.append(new Block(parent, "Interlocks Closed", "description",
-                             "Block 1 Hovertext", Valid, false, true));
+                             "Block 1 Hovertext", Invalid, false, true));
     blocks1.append(new Block(parent, "Standby", "description",
-                             "Block 2 Hovertext", Invalid));
+                             "Block 2 Hovertext", Valid));
     blocks1.append(new Block(parent, "Fire", "description",
                              "Block 3 Hovertext", Warning));
     blocks1.append(new Block(parent, "ITL", "description",
                              "Block 4 Hovertext", Pending, true));
     blocks1.append(new Block(parent, "Missile Enabled", "description",
-                             "Block 5 Hovertext", Invalid));
+                             "Block 5 Hovertext", Valid));
 
     Block *output = new Block(parent, "Missile Away", "description",
                              "Block Out Hovertext", Unknown);
 
     QList<Block *> blocks2;
     blocks2.append(new Block(parent, "Launcher Ready", "description",
-                             "Block 1 Hovertext", Valid, false, true));
+                             "Block 1 Hovertext", Valid));
     blocks2.append(new Block(parent, "Within Limits", "description",
                              "Block 2 Hovertext", Invalid, true));
     blocks2.append(new Block(parent, "Tube Selected", "description",
-                             "Block 3 Hovertext", Warning));
+                             "Block 3 Hovertext", Pending));
     blocks2.append(new Block(parent, "Inputs Matched", "description",
-                             "Block 4 Hovertext", Pending));
+                             "Block 4 Hovertext", Invalid));
     blocks2.append(new Block(parent, "Booster Prearmed", "description",
-                             "Block 5 Hovertext", Invalid));
+                             "Block 5 Hovertext", Valid));
     blocks2.append(new Block(parent, "CSPL Prearmed (Vertical Only)", "description",
-                             "Block 6 Hovertext", Invalid));
+                             "Block 6 Hovertext", Warning));
 
     // create the gate
     Gate *gate1 = new Gate(parent, blocks1, output, AndGate);
-    Gate *gate2 = new Gate(parent, blocks2, output, OrGate);
+    Gate *gate2 = new Gate(parent, blocks2, gate1->getInputBlocks().at(0), OrGate);
 
     gates.append(gate1);
     gates.append(gate2);
@@ -68,10 +70,10 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
 
     // space out all drawn items properly
     itemLayout->setSpacing(0);
-    itemLayout->setVerticalSpacing(Block::V_MARGIN);
+    itemLayout->setVerticalSpacing(0);
 
     // create and draw the connections between the gate and blocks in the second column
-    Connector *blockToGate = new Connector(connColors, blockSpacing);
+    Connector *blockToGate = new Connector(parent, blockSpacing, connColors);
     itemLayout->addItem(blockToGate, 0, 2, numOfBlocks, 1, Qt::AlignCenter);
 
     // add the gate to the third column

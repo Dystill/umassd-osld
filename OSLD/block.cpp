@@ -29,7 +29,7 @@ void Block::setBlockSizing(QWidget *parent)
     this->blockWidth = dpiX * 2;
     this->blockHeight = dpiY / 2;
     this->lineLength = dpiX / 1.5;
-    this->vMargin = dpiY / 4;
+    this->vMargin = dpiY / 8;
 }
 
 /*
