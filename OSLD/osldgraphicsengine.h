@@ -13,7 +13,7 @@
 class OSLDGraphicsEngine : public QGraphicsScene
 {
 public:
-    OSLDGraphicsEngine(QObject *parent);
+    OSLDGraphicsEngine(QWidget *parent);
     QGraphicsWidget *drawGateGroup(Gate *gate);
 
 

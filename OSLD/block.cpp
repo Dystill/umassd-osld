@@ -4,7 +4,7 @@
  *  CONSTRUCTOR
  */
 
-Block::Block(QString t, QString d, QString ht,
+Block::Block(QWidget *parent, QString t, QString d, QString ht,
              BlockStatus st, bool n, bool c)
 {
     this->setTitle(t);
@@ -13,15 +13,61 @@ Block::Block(QString t, QString d, QString ht,
     this->setOriginalStatus(st);
     this->setContains(c);
     this->setNegated(n);
+    this->setParent(parent);
+    this->setBlockSizing(parent);
 }
 
 /*
- *  BLOCK DRAWING FUNCTIONS
+ *  Block Sizing and Dimensions
+ */
+
+void Block::setBlockSizing(QWidget *parent)
+{
+    int dpiX = parent->logicalDpiX();
+    int dpiY = parent->logicalDpiY();
+
+    this->blockWidth = dpiX * 2;
+    this->blockHeight = dpiY / 2;
+    this->lineLength = dpiX / 1.5;
+    this->vMargin = dpiY / 4;
+}
+
+/*
+ *  Static Functions
+ */
+
+// get the color for a specific block status
+QColor Block::parseColor(BlockStatus value)
+{
+    QColor validColor = QColor("#8BC34A");
+    QColor invalidColor = QColor("#EF5350");
+    QColor pendingColor = QColor("#9575CD");
+    QColor warningColor = QColor("#FF7043");
+
+    switch(value) {
+    case Valid:
+        return validColor;         // valid color green
+    case Invalid:
+        return invalidColor;       // invalid color red
+    case Pending:
+        return pendingColor;       // pending color blue
+    case Warning:
+        return warningColor;       // warning color orange
+    default:
+        break;
+    }
+
+    return QColor("#888888");  // default color grey
+}
+
+
+/*
+ *  Block QGraphicsWidget Functions
  */
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, WIDTH + LINE_LENGTH, HEIGHT);
+    return QRectF(0, 0, blockWidth + lineLength, blockHeight);
 }
 
 void Block::setGeometry(const QRectF &rect)
@@ -55,11 +101,11 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
      */
 
     // create a new rectangle space to draw the block in
-    QRectF rect = QRectF(0, 0, WIDTH, HEIGHT);
+    QRectF rect = QRectF(0, 0, blockWidth, blockHeight);
 
     // create the line exiting the rectangle
     QPointF lineStart = boundingRect().center();
-    QPointF lineToNOT = QPointF(WIDTH + (LINE_LENGTH/2), boundingRect().center().y());
+    QPointF lineToNOT = QPointF(blockWidth + (lineLength/2), boundingRect().center().y());
     QPointF lineEnd = QPointF(boundingRect().right(), boundingRect().center().y());
 
     QLineF line1(lineStart, lineToNOT);
@@ -136,7 +182,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 QPainterPath *Block::drawNOTGatePath()
 {
-    int gateHeight = HEIGHT / 1.8;      // the height of the gate
+    int gateHeight = blockHeight / 1.8;      // the height of the gate
     int triangleWidth = gateHeight / 1.2;     // the width of the triangle
     int dotRadius = gateHeight / 5;         // the radius for the circle
 
@@ -163,6 +209,7 @@ QPainterPath *Block::drawNOTGatePath()
     return path;
 }
 
+
 /*
  * MOUSE EVENTS
  */
@@ -187,6 +234,7 @@ void Block::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     update();
     QGraphicsItem::mouseDoubleClickEvent(event);
 }
+
 
 
 /*
@@ -228,14 +276,14 @@ void Block::setHovertext(const QString &value)
 }
 
 // contains
-bool Block::isContaining() const
+bool Block::contains() const
 {
-    return contains;
+    return containsSub;
 }
 
 void Block::setContains(bool value)
 {
-    contains = value;
+    containsSub = value;
 }
 
 // negated
@@ -296,26 +344,17 @@ QColor Block::getColor() const  // get the color for this block
     return color;
 }
 
-// static function to get the color for a status
-QColor Block::parseColor(BlockStatus value)
+int Block::width() const
 {
-    QColor validColor = QColor("#8BC34A");
-    QColor invalidColor = QColor("#EF5350");
-    QColor pendingColor = QColor("#9575CD");
-    QColor warningColor = QColor("#FF7043");
+    return blockWidth;
+}
 
-    switch(value) {
-    case Valid:
-        return validColor;         // valid color green
-    case Invalid:
-        return invalidColor;       // invalid color red
-    case Pending:
-        return pendingColor;       // pending color blue
-    case Warning:
-        return warningColor;       // warning color orange
-    default:
-        break;
-    }
+int Block::height() const
+{
+    return blockHeight;
+}
 
-    return QColor("#888888");  // default color grey
+int Block::verticalMargin() const
+{
+    return vMargin;
 }

@@ -1,19 +1,26 @@
 #include "gate.h"
 
-Gate::Gate(GateType type)
+/*
+ *  CONSTRUCTOR
+ */
+
+Gate::Gate(QWidget *parent, GateType type)
 {
     gateType = type;            // set the gate type
 }
 
-Gate::Gate(QList<Block *> blocks, Block *output, GateType type)
+Gate::Gate(QWidget *parent, QList<Block *> blocks, Block *output, GateType type)
 {
+    this->setParent(parent);
+    this->setGateSizing(parent);
+
     inputBlocks = blocks;   // set the input blocks
 
     // loop through the inputBlocks to get their statuses
     for (int i = 0; i < blocks.count(); i++) {          // for each block in inputBlocks
         Block *block = inputBlocks.at(i);
         blockStatuses.insert(i, block->getOriginalStatus());    // insert that blocks status value to the corresponding spot in blockStatuses
-        if(block->isContaining()) {
+        if(block->contains()) {
             containingIndex.append(i);                  // record the index of blocks with subdiagrams
         }
     }
@@ -24,24 +31,37 @@ Gate::Gate(QList<Block *> blocks, Block *output, GateType type)
     this->updateOutputStatus();   // call the function to update the output status
 }
 
-QList<int> Gate::getContainingIndex() const
+/*
+ *  Gate Sizing and Dimensions
+ */
+
+void Gate::setGateSizing(QWidget *parent)
 {
-    return containingIndex;
+    int dpiX = parent->logicalDpiX();
+    int dpiY = parent->logicalDpiY();
+
+    this->gateWidth = dpiX;
+    this->gateHeight = dpiY;
+    this->lineLength = dpiX / 1.5;
 }
 
-QRectF Gate::boundingRect() const
+/*
+ *  Gate QGraphicsWidget Functions
+ */
+
+QRectF Gate::boundingRect() const   // returns the dimensions of the containing rectangle
 {
-    return QRectF(0, 0, WIDTH + (LINE_LENGTH * 2), HEIGHT);
+    return QRectF(0, 0, gateWidth + (lineLength * 2), gateHeight);
 }
 
-void Gate::setGeometry(const QRectF &rect)
+void Gate::setGeometry(const QRectF &rect)  // i don't know. don't touch this.
 {
     prepareGeometryChange();
     QGraphicsLayoutItem::setGeometry(rect);
     setPos(rect.topLeft());
 }
 
-QSizeF Gate::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
+QSizeF Gate::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const   // returns the Qt size policy dimensions
 {
     switch (which) {
     case Qt::MinimumSize:
@@ -54,7 +74,7 @@ QSizeF Gate::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
     return constraint;
 }
 
-// draw the gate onto the screen (currently draws an AND cate)
+// draw the gate onto the screen
 void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);
@@ -101,11 +121,11 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 QPainterPath *Gate::drawANDGatePath()
 {
-    QPointF topLeft(LINE_LENGTH, 0);
-    QPointF bottomLeft(LINE_LENGTH, HEIGHT);
-    QPointF right(LINE_LENGTH + WIDTH, HEIGHT/2);
-    QPointF middleTop(LINE_LENGTH + (WIDTH/2), 0);
-    QPointF middleBottom(LINE_LENGTH + (WIDTH/2), HEIGHT);
+    QPointF topLeft(lineLength, 0);
+    QPointF bottomLeft(lineLength, gateHeight);
+    QPointF right(lineLength + gateWidth, gateHeight/2);
+    QPointF middleTop(lineLength + (gateWidth/2), 0);
+    QPointF middleBottom(lineLength + (gateWidth/2), gateHeight);
 
     QPainterPath *path = new QPainterPath(topLeft);
 
@@ -113,12 +133,12 @@ QPainterPath *Gate::drawANDGatePath()
     path->lineTo(middleTop);
 
     // top-right curve
-    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.75), 0),
-                  QPointF(LINE_LENGTH + WIDTH, HEIGHT*0.25), right);
+    path->cubicTo(QPointF(lineLength + (gateWidth*0.75), 0),
+                  QPointF(lineLength + gateWidth, gateHeight*0.25), right);
 
     // bottom-right curve
-    path->cubicTo(QPointF(LINE_LENGTH + WIDTH, HEIGHT*0.75),
-                  QPointF(LINE_LENGTH + (WIDTH*0.75), HEIGHT), middleBottom);
+    path->cubicTo(QPointF(lineLength + gateWidth, gateHeight*0.75),
+                  QPointF(lineLength + (gateWidth*0.75), gateHeight), middleBottom);
 
     // bottom edge
     path->lineTo(bottomLeft);
@@ -131,28 +151,28 @@ QPainterPath *Gate::drawANDGatePath()
 
 QPainterPath *Gate::drawORGatePath()
 {
-    QPointF topLeft(LINE_LENGTH, 0);
-    QPointF bottomLeft(LINE_LENGTH, HEIGHT);
-    QPointF right(LINE_LENGTH + WIDTH, HEIGHT/2);
-    QPointF inner(LINE_LENGTH + WIDTH*0.25, HEIGHT/2);
+    QPointF topLeft(lineLength, 0);
+    QPointF bottomLeft(lineLength, gateHeight);
+    QPointF right(lineLength + gateWidth, gateHeight/2);
+    QPointF inner(lineLength + gateWidth*0.25, gateHeight/2);
 
     QPainterPath *path = new QPainterPath(topLeft);
 
     // top curve
-    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.25), 0),
-                  QPointF(LINE_LENGTH + (WIDTH*0.75), 0), right);
+    path->cubicTo(QPointF(lineLength + (gateWidth*0.25), 0),
+                  QPointF(lineLength + (gateWidth*0.75), 0), right);
 
     // bottom curve
-    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.75), HEIGHT),
-                  QPointF(LINE_LENGTH + (WIDTH*0.25), HEIGHT), bottomLeft);
+    path->cubicTo(QPointF(lineLength + (gateWidth*0.75), gateHeight),
+                  QPointF(lineLength + (gateWidth*0.25), gateHeight), bottomLeft);
 
     // inner-bottom quarter curve
-    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.125), HEIGHT*0.90),
-                  QPointF(LINE_LENGTH + (WIDTH*0.25), HEIGHT*0.725), inner);
+    path->cubicTo(QPointF(lineLength + (gateWidth*0.125), gateHeight*0.90),
+                  QPointF(lineLength + (gateWidth*0.25), gateHeight*0.725), inner);
 
     // inner-top quarter curve
-    path->cubicTo(QPointF(LINE_LENGTH + (WIDTH*0.25), HEIGHT*0.275),
-                  QPointF(LINE_LENGTH + (WIDTH*0.125), HEIGHT*0.10), topLeft);
+    path->cubicTo(QPointF(lineLength + (gateWidth*0.25), gateHeight*0.275),
+                  QPointF(lineLength + (gateWidth*0.125), gateHeight*0.10), topLeft);
 
     return path;
 }
@@ -209,6 +229,16 @@ void Gate::setGateType(GateType value)
     gateType = value;
 }
 
+int Gate::width() const
+{
+    return gateWidth;
+}
+
+int Gate::height() const
+{
+    return gateHeight;
+}
+
 void Gate::updateOutputStatus()
 {
 
@@ -222,4 +252,9 @@ int Gate::sizeOfBlocks(QList<Block *> blocks)
 int Gate::getBlockCount()
 {
     return inputBlocks.count();
+}
+
+QList<int> Gate::getContainingIndex() const
+{
+    return containingIndex;
 }

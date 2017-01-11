@@ -21,9 +21,16 @@ private:
     BlockStatus outputStatus;
     GateType gateType;
 
+    int gateWidth;
+    int gateHeight;
+    int lineLength;
+
     const int WIDTH = 64;
     const int HEIGHT = 64;
     const int LINE_LENGTH = 48;
+
+    QPainterPath *drawANDGatePath();
+    QPainterPath *drawORGatePath();
 
 public:
     QRectF boundingRect() const;
@@ -32,11 +39,8 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
-    QPainterPath *drawANDGatePath();
-    QPainterPath *drawORGatePath();
-
-    Gate(GateType type = AndGate);
-    Gate(QList<Block *> blocks, Block *outputBlock, GateType type = AndGate);
+    Gate(QWidget *parent, GateType type = AndGate);
+    Gate(QWidget *parent, QList<Block *> blocks, Block *outputBlock, GateType type = AndGate);
     void addBlock(Block *b);
     void removeBlock(int pos);
     void removeBlock(QString title);
@@ -50,6 +54,11 @@ public:
     int sizeOfBlocks(QList<Block *> blocks);
     int getBlockCount();
     QList<int> getContainingIndex() const;
+
+    int width() const;
+    int height() const;
+
+    void setGateSizing(QWidget *parent);
 
 signals:
 

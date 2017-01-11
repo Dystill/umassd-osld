@@ -1,39 +1,40 @@
 #include "osldgraphicsengine.h"
 
-OSLDGraphicsEngine::OSLDGraphicsEngine(QObject *parent)
+OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
     QList<Block *> blocks1;
-    blocks1.append(new Block("Interlocks Closed", "description",
+
+    blocks1.append(new Block(parent, "Interlocks Closed", "description",
                              "Block 1 Hovertext", Valid, false, true));
-    blocks1.append(new Block("Standby", "description",
+    blocks1.append(new Block(parent, "Standby", "description",
                              "Block 2 Hovertext", Invalid));
-    blocks1.append(new Block("Fire", "description",
+    blocks1.append(new Block(parent, "Fire", "description",
                              "Block 3 Hovertext", Warning));
-    blocks1.append(new Block("ITL", "description",
+    blocks1.append(new Block(parent, "ITL", "description",
                              "Block 4 Hovertext", Pending, true));
-    blocks1.append(new Block("Missile Enabled", "description",
+    blocks1.append(new Block(parent, "Missile Enabled", "description",
                              "Block 5 Hovertext", Invalid));
 
-    Block *output = new Block("Missile Away", "description",
+    Block *output = new Block(parent, "Missile Away", "description",
                              "Block Out Hovertext", Unknown);
 
     QList<Block *> blocks2;
-    blocks2.append(new Block("Launcher Ready", "description",
+    blocks2.append(new Block(parent, "Launcher Ready", "description",
                              "Block 1 Hovertext", Valid, false, true));
-    blocks2.append(new Block("Within Limits", "description",
+    blocks2.append(new Block(parent, "Within Limits", "description",
                              "Block 2 Hovertext", Invalid, true));
-    blocks2.append(new Block("Tube Selected", "description",
+    blocks2.append(new Block(parent, "Tube Selected", "description",
                              "Block 3 Hovertext", Warning));
-    blocks2.append(new Block("Inputs Matched", "description",
+    blocks2.append(new Block(parent, "Inputs Matched", "description",
                              "Block 4 Hovertext", Pending));
-    blocks2.append(new Block("Booster Prearmed", "description",
+    blocks2.append(new Block(parent, "Booster Prearmed", "description",
                              "Block 5 Hovertext", Invalid));
-    blocks2.append(new Block("CSPL Prearmed (Vertical Only)", "description",
+    blocks2.append(new Block(parent, "CSPL Prearmed (Vertical Only)", "description",
                              "Block 6 Hovertext", Invalid));
 
     // create the gate
-    Gate *gate1 = new Gate(blocks1, output, AndGate);
-    Gate *gate2 = new Gate(blocks2, output, OrGate);
+    Gate *gate1 = new Gate(parent, blocks1, output, AndGate);
+    Gate *gate2 = new Gate(parent, blocks2, output, OrGate);
 
     gates.append(gate1);
     gates.append(gate2);
@@ -53,12 +54,14 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
 
     // store the number of blocks connected to the gate in this subdiagram
     // store the status color of each block leading into the gate
-    int numOfBlocks = gate->getInputBlocks().count();
+    QList<Block *> inputBlocks = gate->getInputBlocks();
+    int numOfBlocks = inputBlocks.count();
     QList<QColor> connColors;
+    int blockSpacing = inputBlocks.at(0)->height() + inputBlocks.at(0)->verticalMargin();
 
     // loop through each block to draw and record the status color for the connectors
     for (int i = 0; i < numOfBlocks; i++) {
-        Block *block = gate->getInputBlocks().at(i);                // get each block
+        Block *block = inputBlocks.at(i);                // get each block
         connColors.append(Block::parseColor(block->getBroadcastStatus()));   // record the status color
         itemLayout->addItem(block, i, 1, Qt::AlignCenter);          // draw the block
     }
@@ -68,7 +71,7 @@ QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
     itemLayout->setVerticalSpacing(Block::V_MARGIN);
 
     // create and draw the connections between the gate and blocks in the second column
-    Connector *blockToGate = new Connector(connColors);
+    Connector *blockToGate = new Connector(connColors, blockSpacing);
     itemLayout->addItem(blockToGate, 0, 2, numOfBlocks, 1, Qt::AlignCenter);
 
     // add the gate to the third column

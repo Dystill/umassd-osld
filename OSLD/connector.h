@@ -18,14 +18,15 @@ private:
     int numOfLines;
     QList<QColor> colors;
     ConnectType type;
+    int blockSpacing;
 
 public:
     static const int WIDTH = 48;
 
-    Connector(QPointF start, QPointF end, QColor color = QColor("#212121"));
-    Connector(int lines, QColor color = QColor("#212121"));
-    Connector(QList<BlockStatus> status);
-    Connector(QList<QColor> color);
+    Connector(QPointF start, QPointF end, int spacing, QColor color = QColor("#212121"));
+    Connector(int lines, int spacing, QColor color = QColor("#212121"));
+    Connector(QList<BlockStatus> status, int spacing);
+    Connector(QList<QColor> color, int spacing);
 
     QRectF boundingRect() const;
     void setGeometry(const QRectF &rect);

@@ -8,7 +8,7 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     ui->setupUi(this);
 
     // create an instance of the graphics engine
-    scene = new OSLDGraphicsEngine(this);
+    scene = new OSLDGraphicsEngine(parent);
 
     // display the scene in the window
     ui->graphicsView->setBackgroundBrush(QBrush(QColor("#EEEEEE")));
