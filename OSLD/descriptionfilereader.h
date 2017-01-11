@@ -2,6 +2,7 @@
 #define DESCRIPTIONFILEREADER_H
 
 #include <QObject>
+#include <QXmlStreamReader>
 
 class DescriptionFileReader
 {
