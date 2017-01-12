@@ -29,13 +29,15 @@ SOURCES += main.cpp\
     gate.cpp \
     osldgraphicsengine.cpp \
     descriptionfilereader.cpp \
-    connector.cpp
+    connector.cpp \
+    parser.cpp
 
 HEADERS  += osldisplay.h \
     block.h \
     gate.h \
     osldgraphicsengine.h \
     descriptionfilereader.h \
-    connector.h
+    connector.h \
+    parser.h
 
 FORMS    += osldisplay.ui
