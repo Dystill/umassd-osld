@@ -7,6 +7,9 @@ class Parser : public QXmlDefaultHandler
 public:
     Parser();
 
+    bool startDocument();
+
+    bool startElement();
 
 
 
