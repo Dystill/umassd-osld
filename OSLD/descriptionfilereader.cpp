@@ -1,4 +1,5 @@
 #include "descriptionfilereader.h"
+#include "parser.h"
 #include <iostream>
 #include <QXml.h>
 #include <string>

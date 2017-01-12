@@ -6,6 +6,10 @@ class Parser : public QXmlDefaultHandler
 {
 public:
     Parser();
+
+
+
+
 };
 
 #endif // PARSER_H

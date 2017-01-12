@@ -8,6 +8,10 @@ Parser::Parser()
     bool Parser::startDocument()
     {
         cout<< "Searching Document";
+        startDocument();
+        startElement("diagram");
+        endElement("diagram");
+        endDocument();
         return true;
     }
 
