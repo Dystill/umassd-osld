@@ -1,6 +1,7 @@
 #include "stimulatorinterface.h"
 
-StimulatorInterface::StimulatorInterface()
-{
+namespace stimulator {
 
-}
+StimulatorInterface::~StimulatorInterface() {}
+
+}  // namespace stimulator

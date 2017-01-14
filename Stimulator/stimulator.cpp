@@ -1,6 +1,15 @@
 #include "stimulator.h"
 
-Stimulator::Stimulator()
-{
+namespace stimulator {
+
+/*!
+ * \fn Stimulator::Stimulator()
+ * Constructor
+ */
+Stimulator::Stimulator() {}
+
+bool Stimulator::searchFor(QString key) {
 
 }
+
+}  // namespace stimulator
