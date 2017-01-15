@@ -28,7 +28,7 @@ private:
     QWidget *parent;  // holds the entire diagram
 
     QMap<QString, CommonSource> sources;
-    QMap<QString, QColor> statuses;
+    QMap<QString, QString> statuses;
 
     int fullWidth;
     int fullHeight;
@@ -43,9 +43,10 @@ public:
     QMap<QString, CommonSource> getSources() const { return sources; }
     void setSources(const QMap<QString, CommonSource> &value) { sources = value; }
 
-    QMap<QString, QColor> getStatuses() const { return statuses; }
-    void setStatuses(const QMap<QString, QColor> &value) { statuses = value; }
+    QMap<QString, QString> getStatuses() const { return statuses; }
+    void setStatuses(const QMap<QString, QString> &value) { statuses = value; }
 
+    Block *buildBlock(QString id, QPointF position, BlockData data);
 };
 
 #endif // OSLDGRAPHICSENGINE_H

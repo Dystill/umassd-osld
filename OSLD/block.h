@@ -4,16 +4,28 @@
 #include <diagramitem.h>
 #include <QDebug>
 
+struct BlockData {
+    QString title;
+    QString description;
+    QString hovertext;
+    QString status;
+};
+
 class Block : public DiagramItem
 {
 private:
-    QString status;
-    QColor color;
+    QWidget *parent;
+    QFont font;
+
+    QString status = "No Status Available";
+    QColor color = QColor("#888888");
     QString title;          // the name of the step this block represents
     QString description;    // the description of this block
     QString hovertext;      // the text that shows when the user hovers over the block
 
-    void setBlockSizing(QWidget *parent);
+    void setBlockSizing(QString title);
+
+    int maxWidth;
 
 public:
 
@@ -40,10 +52,10 @@ public:
     void setHovertext(const QString &value);
 
     QString getStatus() const;
-    void setStatus(const QString &value);
-
     QColor getColor() const;
-    void setColor(const QColor &value);
+
+    void setStatus(const QString &value, QMap<QString, QString> colorMap);
+
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

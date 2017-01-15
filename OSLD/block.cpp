@@ -6,23 +6,37 @@
 Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(parent, id, loc)
 {
+    this->parent = parent;
+    this->maxWidth = (this->parent->logicalDpiX() * 2);
+
     this->title = t;
     this->description = desc;
     this->hovertext = ht;
-    this->setBlockSizing(parent);
+    this->setBlockSizing(this->title);
+
+    this->font.setPointSize(12);
+    this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
 /*
  *  Block Sizing and Dimensions
  */
 
-void Block::setBlockSizing(QWidget *parent)
+void Block::setBlockSizing(QString title)
 {
-    int dpiX = parent->logicalDpiX();
-    int dpiY = parent->logicalDpiY();
+    QFontMetricsF metrics(font);
 
-    this->setWidth(dpiX * 2);
-    this->setHeight(dpiY / 2);
+    qreal textWidth = metrics.boundingRect(title).width();
+    qreal textHeight = metrics.boundingRect(title).height();
+
+    //qDebug() << "textWidth:" << title;
+    //qDebug() << "textWidth:" << textWidth;
+    //qDebug() << "textHeight:" << textHeight;
+
+    int cutOff = textWidth / this->maxWidth;
+
+    this->setWidth(((textWidth > maxWidth) ? maxWidth : textWidth) + (this->parent->logicalDpiX() / 2));
+    this->setHeight((((textHeight * cutOff)) + 1) + (this->parent->logicalDpiY() / 2));
 }
 
 
@@ -61,7 +75,28 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    QBrush brush(this->color);
+    QPen pen(QColor("#212121"));
+    QTextOption texto;
+
+    texto.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    texto.setAlignment(Qt::AlignCenter);
+
+    pen.setWidth(2);
+    pen.setJoinStyle(Qt::RoundJoin);
+
+    painter->setPen(pen);
+    painter->setFont(font);
+    painter->fillRect(boundingRect(), brush);
     painter->drawRect(boundingRect());
+
+    QPointF textTopLeft(boundingRect().left() + 10, boundingRect().top());
+    QPointF textBottomRight(boundingRect().right() - 10, boundingRect().bottom());
+    QRectF textRect(textTopLeft, textBottomRight);
+
+    pen.setColor(QColor("#FFFFFF"));
+    painter->setPen(pen);
+    painter->drawText(textRect, this->title, texto);
 }
 
 
@@ -101,7 +136,9 @@ QString Block::getTitle() const
 
 void Block::setTitle(const QString &value)
 {
-    title = value;
+    this->title = value;
+    this->setBlockSizing(this->title);
+    this->geometryChanged();
 }
 
 QString Block::getDescription() const
@@ -129,17 +166,16 @@ QString Block::getStatus() const
     return status;
 }
 
-void Block::setStatus(const QString &value)
+void Block::setStatus(const QString &value, QMap<QString, QString> colorMap)
 {
+    //qDebug() << value;
     status = value;
+
+    //qDebug() << colorMap[status];
+    color = QColor(colorMap[status]);
 }
 
 QColor Block::getColor() const
 {
     return color;
-}
-
-void Block::setColor(const QColor &value)
-{
-    color = value;
 }
