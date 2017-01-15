@@ -48,9 +48,6 @@ public:
     QString getDescription() const;
     void setDescription(const QString &value);
 
-    QString getHovertext() const;
-    void setHovertext(const QString &value);
-
     QString getStatus() const;
     QColor getColor() const;
 

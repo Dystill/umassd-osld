@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     osldgraphicsengine.cpp \
     descriptionfilereader.cpp \
     parser.cpp \
-    diagramitem.cpp
+    diagramitem.cpp \
+    connector.cpp
 
 HEADERS  += osldisplay.h \
     block.h \
@@ -38,6 +39,7 @@ HEADERS  += osldisplay.h \
     osldgraphicsengine.h \
     descriptionfilereader.h \
     parser.h \
-    diagramitem.h
+    diagramitem.h \
+    connector.h
 
 FORMS    += osldisplay.ui

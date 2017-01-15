@@ -4,10 +4,9 @@
 #include <QtCore>
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
-#include <QGraphicsLinearLayout>
-#include <QGraphicsGridLayout>
 #include "block.h"
 #include "gate.h"
+#include "connector.h"
 
 struct CommonSource {
     QString name;
@@ -35,6 +34,10 @@ private:
 
     QList<Block *> allBlocks;
     QList<Gate *> allGates;
+    QList<Connector *> allConns;
+
+    Block *getBlockInfoFromDescriptionFile(QPointF pos);
+    void drawAllItems();
 
 public:
     OSLDGraphicsEngine(QWidget *parent);

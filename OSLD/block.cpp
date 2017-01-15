@@ -12,7 +12,7 @@ Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, 
 
     this->title = t;
     this->description = desc;
-    this->hovertext = ht;
+    this->setToolTip(ht);
     this->setBlockSizing(this->title);
 
     this->setFlag(QGraphicsItem::ItemIsMovable);
@@ -153,16 +153,6 @@ QString Block::getDescription() const
 void Block::setDescription(const QString &value)
 {
     description = value;
-}
-
-QString Block::getHovertext() const
-{
-    return hovertext;
-}
-
-void Block::setHovertext(const QString &value)
-{
-    hovertext = value;
 }
 
 QString Block::getStatus() const
