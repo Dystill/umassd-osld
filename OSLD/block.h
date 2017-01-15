@@ -1,53 +1,39 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
-#include <QPainter>
-#include <QGraphicsWidget>
-#include <QDesktopWidget>
 #include <QDebug>
+#include "diagramitem.h"
 
-enum BlockStatus {
-    Valid,
-    Invalid,
-    Pending,
-    Warning,
-    Unknown
+struct BlockData {
+    QString title;
+    QString description;
+    QString hovertext;
+    QString status;
 };
 
-class Block : public QGraphicsWidget
+class Block : public DiagramItem
 {
 private:
     QWidget *parent;
+    QFont font;
+
+    QString status = "No Status Available";
+    QColor color = QColor("#888888");
     QString title;          // the name of the step this block represents
     QString description;    // the description of this block
     QString hovertext;      // the text that shows when the user hovers over the block
-    BlockStatus status;     // the current status of the block
-    QColor color;           // the color of the block as determined by the status
-    bool containsSub;          // whether or not the block contains a subdiagram
-    bool negated;           // whether or not the block is connected to a NOT gate
 
-    int blockWidth;
-    int blockHeight;
-    int lineLength;
-    int vMargin;
+    void setBlockSizing(QString title);
 
-    // for painting the NOT gate
-    QPainterPath *drawNOTGatePath();
-    void setBlockSizing(QWidget *parent);
+    int maxWidth;
 
 public:
-    // Block dimensions
-    static const int WIDTH = 160;
-    static const int HEIGHT = 40;
-    static const int LINE_LENGTH = 48;
-    static const int V_MARGIN = 8;
 
     // constructors
-    Block(QWidget *parent,
-          QString t  = "Default title",
-          QString d  = "Default description",
-          QString ht = "Default hovertext",
-          BlockStatus st = Unknown, bool n = 0, bool c = 0);
+    Block(QWidget *parent, QString id, QPointF loc,
+          QString t = "Block Title",
+          QString desc = "Block Description",
+          QString ht = "Block Hovertext");
 
     // QGraphicsItem stuff
     QRectF boundingRect() const;
@@ -56,37 +42,16 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
-    // return a color from a status
-    QColor static parseColor(BlockStatus value);
-
-
-    // Getters and Setters
-
-    QString getTitle() const;                   // get and set the block's title
+    QString getTitle() const;
     void setTitle(const QString &value);
 
-    QString getDescription() const;             // get and set the block's description
+    QString getDescription() const;
     void setDescription(const QString &value);
 
-    QString getHovertext() const;               // get and set the block's hovertext
-    void setHovertext(const QString &value);
+    QString getStatus() const;
+    QColor getColor() const;
 
-    bool contains() const;                      // get and set the block's containment status
-    void setContains(bool value);
-
-    bool isNegated() const;                     // get and set the negated status
-    void setNegated(bool value);
-
-    BlockStatus getOriginalStatus() const;      // get and set the block's initial status
-    void setOriginalStatus(BlockStatus value);
-
-    BlockStatus getBroadcastStatus() const;     // get the new status after applying NOT logic
-
-    QColor getColor() const;                    // get the color for a status
-
-    int width() const;
-    int height() const;
-    int verticalMargin() const;
+    void setStatus(const QString &value, QMap<QString, QString> colorMap);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

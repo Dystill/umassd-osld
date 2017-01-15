@@ -8,29 +8,18 @@
 
 enum GateType {
     AndGate,
-    OrGate
+    OrGate,
+    NotGate
 };
 
-class Gate : public QGraphicsWidget
+class Gate : public DiagramItem
 {
 private:
-    QList<Block *> inputBlocks;
-    QList<BlockStatus> blockStatuses;
-    QList<int> containingIndex;
-    Block *outputBlock;
-    BlockStatus outputStatus;
     GateType gateType;
-
-    int gateWidth;
-    int gateHeight;
-    int lineLength;
-
-    const int WIDTH = 64;
-    const int HEIGHT = 64;
-    const int LINE_LENGTH = 48;
 
     QPainterPath *drawANDGatePath();
     QPainterPath *drawORGatePath();
+    QPainterPath *drawNOTGatePath();
 
 public:
     QRectF boundingRect() const;
@@ -39,24 +28,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
-    Gate(QWidget *parent, GateType type = AndGate);
-    Gate(QWidget *parent, QList<Block *> blocks, Block *outputBlock, GateType type = AndGate);
-    void addBlock(Block *b);
-    void removeBlock(int pos);
-    void removeBlock(QString title);
-    QList<Block *> getInputBlocks() const;
-    Block *getOutputBlock() const;
-    int getGateStatus();
-    QString getGateStatusAsString();
-    GateType getGateType() const;
-    void setGateType(GateType value);
-    void updateOutputStatus();
-    int sizeOfBlocks(QList<Block *> blocks);
-    int getBlockCount();
-    QList<int> getContainingIndex() const;
-
-    int width() const;
-    int height() const;
+    Gate(QWidget *parent, QString id, QPointF loc, GateType type = AndGate);
 
     void setGateSizing(QWidget *parent);
 

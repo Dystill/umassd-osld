@@ -4,86 +4,139 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
     this->parent = parent;
 
-    QList<Block *> blocks1;
+    // get the status types for this diagram
+    statuses["Valid"] = "#8BC34A";
+    statuses["Invalid"] = "#EF5350";
+    statuses["Unknown"] = "#888888";
 
-    blocks1.append(new Block(parent, "Interlocks Closed", "description",
-                             "Block 1 Hovertext", Invalid, false, true));
-    blocks1.append(new Block(parent, "Standby", "description",
-                             "Block 2 Hovertext", Valid));
-    blocks1.append(new Block(parent, "Fire", "description",
-                             "Block 3 Hovertext", Warning));
-    blocks1.append(new Block(parent, "ITL", "description",
-                             "Block 4 Hovertext", Pending, true));
-    blocks1.append(new Block(parent, "Missile Enabled", "description",
-                             "Block 5 Hovertext", Valid));
+    // get the sources for this diagram
+    CommonSource sourceInfo;
+    sourceInfo.name = "Combat System Database";
+    sourceInfo.type = "SQLite Database";
+    sources["source1"] = sourceInfo;
 
-    Block *output = new Block(parent, "Missile Away", "description",
-                             "Block Out Hovertext", Unknown);
+    // create some gates
+    Gate *gate1 = new Gate(parent, "andGateId", QPointF(600,0), AndGate);
+    allGates.append(gate1);
+    Gate *gate2 = new Gate(parent, "orGateId", QPointF(600,150), OrGate);
+    allGates.append(gate2);
+    Gate *gate3 = new Gate(parent, "notGateId", QPointF(600,300), NotGate);
+    allGates.append(gate3);
 
-    QList<Block *> blocks2;
-    blocks2.append(new Block(parent, "Launcher Ready", "description",
-                             "Block 1 Hovertext", Valid));
-    blocks2.append(new Block(parent, "Within Limits", "description",
-                             "Block 2 Hovertext", Invalid, true));
-    blocks2.append(new Block(parent, "Tube Selected", "description",
-                             "Block 3 Hovertext", Pending));
-    blocks2.append(new Block(parent, "Inputs Matched", "description",
-                             "Block 4 Hovertext", Invalid));
-    blocks2.append(new Block(parent, "Booster Prearmed", "description",
-                             "Block 5 Hovertext", Valid));
-    blocks2.append(new Block(parent, "CSPL Prearmed (Vertical Only)", "description",
-                             "Block 6 Hovertext", Warning));
+    // get blocks from the description file
+    QPointF point(0, 0);
+    for(int i = 0; i < 5; i++) {    // obtain the number of diagram items from the description file
 
-    // create the gate
-    Gate *gate1 = new Gate(parent, blocks1, output, AndGate);
-    Gate *gate2 = new Gate(parent, blocks2, gate1->getInputBlocks().at(0), OrGate);
+        if(!allBlocks.isEmpty())
+            point.setY(point.y() + allBlocks.at(i - 1)->height() + 20);
 
-    gates.append(gate1);
-    gates.append(gate2);
+        Block *block = getBlockInfoFromDescriptionFile(point);
 
-    QGraphicsWidget *gateGroup1 = drawGateGroup(gates.at(0));
+        allBlocks.append(block);
 
-    this->addItem(gateGroup1);
-}
-
-QGraphicsWidget *OSLDGraphicsEngine::drawGateGroup(Gate *gate)
-{
-    // create a widget to hold all of the blocks of the gate
-    // create a layout for the widget to align the blocks vertically
-    QGraphicsWidget *itemHolder = new QGraphicsWidget;
-    QGraphicsGridLayout *itemLayout
-            = new QGraphicsGridLayout(itemHolder);
-
-    // store the number of blocks connected to the gate in this subdiagram
-    // store the status color of each block leading into the gate
-    QList<Block *> inputBlocks = gate->getInputBlocks();
-    int numOfBlocks = inputBlocks.count();
-    QList<QColor> connColors;
-    int blockSpacing = inputBlocks.at(0)->height() + inputBlocks.at(0)->verticalMargin();
-
-    // loop through each block to draw and record the status color for the connectors
-    for (int i = 0; i < numOfBlocks; i++) {
-        Block *block = inputBlocks.at(i);                // get each block
-        connColors.append(Block::parseColor(block->getBroadcastStatus()));   // record the status color
-        itemLayout->addItem(block, i, 1, Qt::AlignCenter);          // draw the block
+        this->connectItems(block, gate2);
     }
 
-    // space out all drawn items properly
-    itemLayout->setSpacing(0);
-    itemLayout->setVerticalSpacing(0);
+    this->drawAllItems();
+}
 
-    // create and draw the connections between the gate and blocks in the second column
-    Connector *blockToGate = new Connector(parent, blockSpacing, connColors);
-    itemLayout->addItem(blockToGate, 0, 2, numOfBlocks, 1, Qt::AlignCenter);
+/*
+ *  BLOCK FUNCTIONS
+ */
 
-    // add the gate to the third column
-    itemLayout->addItem(gate, 0, 3, numOfBlocks, 1, Qt::AlignCenter);
+// gets block information from a description file
+// ******currently only generates random data
+Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
+{
+    // create DescriptionFileReader object
 
-    // add the gate's output block in the fourth column
-    itemLayout->addItem(gate->getOutputBlock(), 0, 4, numOfBlocks, 1, Qt::AlignCenter);
+    // obtain the id for this a block from
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
+    int random = qrand() % 123456;
 
+    QString id = "Block ";
+    id.append(QString::number(random));
 
-    return itemHolder;  // return the widget holding the entire drawn subdiagram
+    QPointF position = pos;
+
+    // create a BlockData structure to store the block data
+    BlockData bd;
+    bd.title = QString("Block %1 Title").arg(random);
+    bd.description = QString("Block %1 Description").arg(random);
+    bd.hovertext = QString("Block %1 Hovertext").arg(random);
+    bd.status = (random % 2 == 0 ? "Valid" : "Invalid");
+
+    // for testing large title strings
+    // if(random % 3 == 0) bd.title.append("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+    return buildBlock(id, position, bd);
+}
+
+// adds data to a block
+Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData data)
+{
+    qDebug() << "Creating Block" << id;
+
+    Block *block = new Block(this->parent, id, position);
+
+    block->setTitle(data.title);
+    block->setDescription(data.description);
+    block->setToolTip(data.hovertext);
+    block->setStatus(data.status, statuses);
+
+    return block;
+}
+
+void OSLDGraphicsEngine::drawAllItems()
+{
+    for(int i = 0; i < allGates.count(); i++) {
+        //qDebug() << "Drawing Gate" << i;
+        this->addItem(allGates.at(i));
+    }
+    for(int i = 0; i < allConns.count(); i++) {
+        //qDebug() << "Drawing Connector" << i;
+        this->addItem(allConns.at(i));
+    }
+    for(int i = 0; i < allBlocks.count(); i++) {
+        //qDebug() << "Drawing Block" << i;
+        this->addItem(allBlocks.at(i));
+    }
 }
 
 
+/*
+ *  CONNECTOR FUNCTIONS
+ */
+
+void OSLDGraphicsEngine::connectItems(Gate *input, DiagramItem *output)
+{
+    QPointF startPoint = input->outputPoint();
+    QPointF endPoint = output->inputPoint();
+
+    Connector *conn = new Connector(startPoint, endPoint);
+
+    //qDebug() << "Connecting Gate to Item:" << startPoint << "to" << endPoint;
+
+    input->addOutputConnector(conn);
+    output->addInputConnector(conn);
+
+    allConns.append(conn);
+}
+
+void OSLDGraphicsEngine::connectItems(Block *input, DiagramItem *output)
+{
+
+    QPointF startPoint = input->outputPoint();
+    QPointF endPoint = output->inputPoint();
+    QColor color = input->getColor();
+
+    //qDebug() << "Connecting Block to Item:" << startPoint << "to" << endPoint;
+
+    Connector *conn = new Connector(startPoint, endPoint, color);
+
+    input->addOutputConnector(conn);
+    output->addInputConnector(conn);
+
+    allConns.append(conn);
+}

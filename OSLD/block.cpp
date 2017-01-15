@@ -3,61 +3,45 @@
 /*
  *  CONSTRUCTOR
  */
-
-Block::Block(QWidget *parent, QString t, QString d, QString ht,
-             BlockStatus st, bool n, bool c)
+Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, QString ht)
+    : DiagramItem(parent, id, loc)
 {
-    this->setTitle(t);
-    this->setDescription(d);
-    this->setHovertext(ht);
-    this->setOriginalStatus(st);
-    this->setContains(c);
-    this->setNegated(n);
-    this->setParent(parent);
-    this->setBlockSizing(parent);
+    this->parent = parent;
+    this->maxWidth = (this->parent->logicalDpiX() * 2);
+    this->font.setPointSize(12);
+
+    this->title = t;
+    this->description = desc;
+    this->setToolTip(ht);
+    this->setBlockSizing(this->title);
+
+    this->isBlock(true);
+
+    this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
 /*
  *  Block Sizing and Dimensions
  */
 
-void Block::setBlockSizing(QWidget *parent)
+void Block::setBlockSizing(QString title)
 {
-    int dpiX = parent->logicalDpiX();
-    int dpiY = parent->logicalDpiY();
+    QFontMetricsF metrics(font);
 
-    this->blockWidth = dpiX * 2;
-    this->blockHeight = dpiY / 2;
-    this->lineLength = dpiX / 1.5;
-    this->vMargin = dpiY / 8;
-}
+    qreal textWidth = metrics.boundingRect(title).width();
+    qreal textHeight = metrics.boundingRect(title).height();
 
-/*
- *  Static Functions
- */
+    //qDebug() << "textWidth:" << title;
+    //qDebug() << "textWidth:" << textWidth;
+    //qDebug() << "textHeight:" << textHeight;
 
-// get the color for a specific block status
-QColor Block::parseColor(BlockStatus value)
-{
-    QColor validColor = QColor("#8BC34A");
-    QColor invalidColor = QColor("#EF5350");
-    QColor pendingColor = QColor("#9575CD");
-    QColor warningColor = QColor("#FF7043");
+    int cutOff = textWidth / this->maxWidth;
 
-    switch(value) {
-    case Valid:
-        return validColor;         // valid color green
-    case Invalid:
-        return invalidColor;       // invalid color red
-    case Pending:
-        return pendingColor;       // pending color blue
-    case Warning:
-        return warningColor;       // warning color orange
-    default:
-        break;
-    }
+    this->setWidth(((textWidth > maxWidth) ? maxWidth : textWidth) + (this->parent->logicalDpiX() / 2));
+    this->setHeight((((textHeight * cutOff)) + 1) + (this->parent->logicalDpiY() / 2));
 
-    return QColor("#888888");  // default color grey
+    this->update();
+    this->updateConnectors();
 }
 
 
@@ -67,12 +51,13 @@ QColor Block::parseColor(BlockStatus value)
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, blockWidth + lineLength, blockHeight);
+    return QRectF(0, 0, this->width(), this->height());
 }
 
 void Block::setGeometry(const QRectF &rect)
 {
     prepareGeometryChange();
+    this->updateConnectors();
     QGraphicsLayoutItem::setGeometry(rect);
     setPos(rect.topLeft());
 }
@@ -96,117 +81,31 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    /*
-     * initialize drawing tools
-     */
-
-    // create a new rectangle space to draw the block in
-    QRectF rect = QRectF(0, 0, blockWidth, blockHeight);
-
-    // create the line exiting the rectangle
-    QPointF lineStart = boundingRect().center();
-    QPointF lineToNOT = QPointF(blockWidth + (lineLength/2), boundingRect().center().y());
-    QPointF lineEnd = QPointF(boundingRect().right(), boundingRect().center().y());
-
-    QLineF line1(lineStart, lineToNOT);
-    QLineF line2(lineStart, lineEnd);
-
-    // create a color for the outline
-    QColor outlineColor = QColor("#212121");
-    QColor titleColor = QColor("#F1F1F1");
-
-    // create a brush to fill the block with a status color
     QBrush brush(this->color);
+    QPen pen(QColor("#212121"));
+    QTextOption texto;
 
-    // create a pen for the title text and border
-    QPen pen;
+    texto.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    texto.setAlignment(Qt::AlignCenter);
+
     pen.setWidth(2);
-    pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
 
-
-    /*
-     * drawing the shapes for the block
-     */
-
-    // draw the line exiting the block
-    if(this->negated) {                 // draw two lines separated by a NOT gate if the block is negated
-        // draw the line after the NOT gate
-        pen.setColor(this->parseColor(this->getBroadcastStatus()));
-        painter->setPen(pen);
-        painter->drawLine(line2);
-
-        // draw the line before the NOT gate
-        pen.setColor(this->color);
-        painter->setPen(pen);
-        painter->drawLine(line1);
-
-        // draw the NOT gate
-        QPainterPath *gatePath = drawNOTGatePath();
-        gatePath->translate(lineToNOT);
-        pen.setColor(outlineColor);
-        brush.setColor(QColor("#bbdefb"));
-        painter->setPen(pen);
-        painter->setBrush(brush);
-        painter->drawPath(*gatePath);
-    }
-    else {                              // draw a single line if not negated
-        pen.setColor(this->color);
-        painter->setPen(pen);
-        painter->drawLine(line2);
-    }
-
-    // fill block with the status color
-    brush.setColor(this->color);
-    painter->setBrush(brush);
-    painter->fillRect(rect, brush);
-
-    // draw an outline around the block
-    pen.setColor(outlineColor);
     painter->setPen(pen);
-    painter->drawRect(rect);
+    painter->setFont(font);
+    painter->fillRect(boundingRect(), brush);
+    painter->drawRect(boundingRect());
 
-    // set pen for the title of the block
-    QFont titleFont = QFont();
+    QPointF textTopLeft(boundingRect().left() + 10, boundingRect().top());
+    QPointF textBottomRight(boundingRect().right() - 10, boundingRect().bottom());
+    QRectF textRect(textTopLeft, textBottomRight);
 
-    pen.setColor(titleColor);
+    pen.setColor(QColor("#FFFFFF"));
     painter->setPen(pen);
-    painter->setFont(titleFont);
+    painter->drawText(textRect, this->title, texto);
 
-    // add the title to the block, truncate if necessary
-    QFontMetrics metrics = QFontMetrics(titleFont);
-    QString temp = metrics.elidedText(this->title, Qt::ElideRight, rect.width()*0.9);
-    painter->drawText(rect, Qt::AlignCenter, temp);
-
-}
-
-QPainterPath *Block::drawNOTGatePath()
-{
-    int gateHeight = blockHeight / 1.8;      // the height of the gate
-    int triangleWidth = gateHeight / 1.2;     // the width of the triangle
-    int dotRadius = gateHeight / 5;         // the radius for the circle
-
-    // defining corners for the triangle
-    QPointF topLeft(0, 0);
-    QPointF bottomLeft(0, gateHeight);
-    QPointF right(triangleWidth, (gateHeight / 2));
-
-    // create a painter path object to store the shape
-    QPainterPath *path = new QPainterPath(topLeft);
-
-    // create lines for the triangle
-    path->lineTo(right);
-    path->lineTo(bottomLeft);
-    path->lineTo(topLeft);
-
-    // create the circle dot at the tip
-    path->addEllipse(QPointF(right.x() + dotRadius, gateHeight / 2),
-                     dotRadius, dotRadius);
-
-    // align the path by the middle of the triangle
-    path->translate(-triangleWidth/2, -gateHeight/2);
-
-    return path;
+    //qDebug() << this->inputPoint();
+    //qDebug() << this->outputPoint();
 }
 
 
@@ -235,13 +134,10 @@ void Block::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mouseDoubleClickEvent(event);
 }
 
-
-
 /*
- *  GETTERS AND SETTERS
+ * GETTERS & SETTERS
  */
 
-// title
 QString Block::getTitle() const
 {
     return title;
@@ -249,10 +145,10 @@ QString Block::getTitle() const
 
 void Block::setTitle(const QString &value)
 {
-    title = value;
+    this->title = value;
+    this->setBlockSizing(this->title);
 }
 
-// description
 QString Block::getDescription() const
 {
     return description;
@@ -263,98 +159,21 @@ void Block::setDescription(const QString &value)
     description = value;
 }
 
-// hovertext
-QString Block::getHovertext() const
-{
-    return hovertext;
-}
-
-void Block::setHovertext(const QString &value)
-{
-    hovertext = value;
-    this->setToolTip(hovertext);
-}
-
-// contains
-bool Block::contains() const
-{
-    return containsSub;
-}
-
-void Block::setContains(bool value)
-{
-    containsSub = value;
-}
-
-// negated
-bool Block::isNegated() const
-{
-    return negated;
-}
-
-void Block::setNegated(bool value)
-{
-    negated = value;
-}
-
-// status and color
-BlockStatus Block::getOriginalStatus() const    // get the orginal status for the block
+QString Block::getStatus() const
 {
     return status;
 }
 
-BlockStatus Block::getBroadcastStatus() const   // get the status after applying NOT, if applicable
+void Block::setStatus(const QString &value, QMap<QString, QString> colorMap)
 {
-    BlockStatus temp = this->status;
-
-    if(this->negated) {
-        // perform NOT logic here
-        switch(this->status) {
-        case Valid:
-            temp = Invalid;
-            break;
-        case Invalid:
-            temp = Valid;
-            break;
-        case Pending:
-            temp = Warning;
-            break;
-        case Warning:
-            temp = Pending;
-            break;
-        default:
-            break;
-        }
-    }
-
-    return temp;
-}
-
-void Block::setOriginalStatus(BlockStatus value)    // sets the status and color for a block
-{
-    // set the status attribute to the value
+    //qDebug() << value;
     status = value;
 
-    // sets the block color and the text color depending on the value
-    color = this->parseColor(value);
+    //qDebug() << colorMap[status];
+    color = QColor(colorMap[status]);
 }
 
-QColor Block::getColor() const  // get the color for this block
+QColor Block::getColor() const
 {
     return color;
-}
-
-int Block::width() const
-{
-    return blockWidth;
-}
-
-int Block::height() const
-{
-    return blockHeight;
-}
-
-int Block::verticalMargin() const
-{
-    return vMargin;
 }
