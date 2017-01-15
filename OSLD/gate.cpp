@@ -10,6 +10,8 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc,GateType type)
     gateType = type;            // set the gate type
     this->setParent(parent);
     this->setGateSizing(parent);
+
+    this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
 /*
@@ -60,18 +62,31 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    QBrush brush(QColor("#bbdefb"));
+    QPen pen(QColor("#212121"));
+
+    pen.setWidth(2);
+    pen.setJoinStyle(Qt::RoundJoin);
+    painter->setPen(pen);
+
     QPainterPath *gatePath;
+
+    QPointF left(0, this->height() / 2);
+    QPointF right(this->width(), this->height() / 2);
 
     if(this->gateType == AndGate) {
         gatePath = this->drawANDGatePath();
     }
     else if(this->gateType == OrGate) {
         gatePath = this->drawORGatePath();
+        painter->drawLine(left, right);
     }
     else if(this->gateType == NotGate) {
         gatePath = this->drawNOTGatePath();
+        painter->drawLine(left, right);
     }
 
+    painter->fillPath(*gatePath, brush);
     painter->drawPath(*gatePath);
 }
 

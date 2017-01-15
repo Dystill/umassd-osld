@@ -8,13 +8,13 @@ Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, 
 {
     this->parent = parent;
     this->maxWidth = (this->parent->logicalDpiX() * 2);
+    this->font.setPointSize(12);
 
     this->title = t;
     this->description = desc;
     this->hovertext = ht;
     this->setBlockSizing(this->title);
 
-    this->font.setPointSize(12);
     this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
@@ -37,6 +37,8 @@ void Block::setBlockSizing(QString title)
 
     this->setWidth(((textWidth > maxWidth) ? maxWidth : textWidth) + (this->parent->logicalDpiX() / 2));
     this->setHeight((((textHeight * cutOff)) + 1) + (this->parent->logicalDpiY() / 2));
+
+    this->update();
 }
 
 
@@ -97,6 +99,9 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     pen.setColor(QColor("#FFFFFF"));
     painter->setPen(pen);
     painter->drawText(textRect, this->title, texto);
+
+    qDebug() << this->inputPoint();
+    qDebug() << this->outputPoint();
 }
 
 
@@ -138,7 +143,6 @@ void Block::setTitle(const QString &value)
 {
     this->title = value;
     this->setBlockSizing(this->title);
-    this->geometryChanged();
 }
 
 QString Block::getDescription() const

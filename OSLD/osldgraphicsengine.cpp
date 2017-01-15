@@ -15,9 +15,9 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     sourceInfo.type = "SQLite Database";
     sources["source1"] = sourceInfo;
 
+    // makes some blocks in a column
     QPointF point(0, 0);
-
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 1; i++) {
 
         if(!allBlocks.isEmpty())
             point.setY(point.y() + allBlocks.at(i - 1)->height() + 20);
@@ -42,7 +42,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
         this->addItem(block);
     }
 
-    // create the gate
+    // create some gates
     Gate *gate1 = new Gate(parent, "andGateId", QPointF(300,0), AndGate);
     this->addItem(gate1);
 
@@ -54,6 +54,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
 }
 
+// adds data to a block
 Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData data)
 {
     Block *block = new Block(this->parent, id, position);
