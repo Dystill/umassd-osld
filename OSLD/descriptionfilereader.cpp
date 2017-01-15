@@ -9,14 +9,15 @@
 DescriptionFileReader::DescriptionFileReader()
 {
 
-   QXmlInputSource* source = new QXmlInputSource(new QFile("descriptionFileMockup(NoComments).xml")); //Shows what file to use.
+   Parser handler;
    QXmlSimpleReader xmlReader; //Intialize xmlReader
-   Parser* handler = new Parser();
-   xmlReader.setContentHandler(handler);
-   xmlReader.parse (source);
-            //Parse XML until end
-
-        //Close reader and flush
+   xmlReader.setContentHandler(&handler);
+   for (int i=1; i<10;i++)
+   {
+       QFile xmlFile ("descriptionFileMockup(NoComments).xml");
+       QXmlInputSource source (&xmlFile);
+        xmlReader.parse (source);
+   }
 
 
 }
