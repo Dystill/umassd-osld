@@ -11,6 +11,8 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc,GateType type)
     this->setParent(parent);
     this->setGateSizing(parent);
 
+    this->isGate(true);
+
     this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
@@ -39,6 +41,7 @@ QRectF Gate::boundingRect() const   // returns the dimensions of the containing 
 void Gate::setGeometry(const QRectF &rect)  // i don't know. don't touch this.
 {
     prepareGeometryChange();
+    this->updateConnectors();
     QGraphicsLayoutItem::setGeometry(rect);
     setPos(rect.topLeft());
 }
@@ -67,6 +70,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     pen.setWidth(2);
     pen.setJoinStyle(Qt::RoundJoin);
+    pen.setCapStyle(Qt::RoundCap);
     painter->setPen(pen);
 
     QPainterPath *gatePath;

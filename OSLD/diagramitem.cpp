@@ -75,6 +75,19 @@ QPointF DiagramItem::outputPoint() const
     return this->pos() + QPoint(this->boundingRect().right(), this->boundingRect().center().y());
 }
 
+// update the line that exits this block
+void DiagramItem::updateConnectors()
+{
+    for(int i = 0; i < inputConn.count(); i++) {
+        //qDebug() << "Updating input connectors" << this->inputPoint();
+        this->inputConn.at(i)->setStartPoint(this->inputPoint());
+    }
+    for(int i = 0; i < outputConn.count(); i++) {
+        //qDebug() << "Updating output connectors" << this->outputPoint();
+        this->outputConn.at(i)->setEndPoint(this->outputPoint());
+    }
+}
+
 
 /*
  *  ATTRIBUTE GETTERS AND SETTERS
@@ -97,9 +110,45 @@ int DiagramItem::height() const { return itemHeight; }
 // QGraphicsItem::update() may have to be called afterwards
 void DiagramItem::setHeight(int value) { itemHeight = value; }
 
+QList<Connector *> DiagramItem::inputConnector() const
+{
+    return inputConn;
+}
+
+void DiagramItem::addInputConnector(Connector *value)
+{
+    inputConn.append(value);
+}
+
+QList<Connector *> DiagramItem::outputConnector() const
+{
+    return outputConn;
+}
+
+void DiagramItem::addOutputConnector(Connector *value)
+{
+    outputConn.append(value);
+}
 
 
+bool DiagramItem::isBlock() const {
+    return block;
+}
 
+bool DiagramItem::isGate() const
+{
+    return gate;
+}
+
+void DiagramItem::isBlock(bool value)
+{
+    block = value;
+}
+
+void DiagramItem::isGate(bool value)
+{
+    gate = value;
+}
 
 
 

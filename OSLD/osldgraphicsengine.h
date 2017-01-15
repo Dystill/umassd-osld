@@ -37,6 +37,11 @@ private:
     QList<Connector *> allConns;
 
     Block *getBlockInfoFromDescriptionFile(QPointF pos);
+    Block *buildBlock(QString id, QPointF position, BlockData data);
+
+    void connectItems(Gate *input, DiagramItem *output);
+    void connectItems(Block *input, DiagramItem *output);
+
     void drawAllItems();
 
 public:
@@ -48,8 +53,6 @@ public:
 
     QMap<QString, QString> getStatuses() const { return statuses; }
     void setStatuses(const QMap<QString, QString> &value) { statuses = value; }
-
-    Block *buildBlock(QString id, QPointF position, BlockData data);
 };
 
 #endif // OSLDGRAPHICSENGINE_H

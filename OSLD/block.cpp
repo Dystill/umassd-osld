@@ -15,6 +15,8 @@ Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, 
     this->setToolTip(ht);
     this->setBlockSizing(this->title);
 
+    this->isBlock(true);
+
     this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
@@ -39,6 +41,7 @@ void Block::setBlockSizing(QString title)
     this->setHeight((((textHeight * cutOff)) + 1) + (this->parent->logicalDpiY() / 2));
 
     this->update();
+    this->updateConnectors();
 }
 
 
@@ -54,6 +57,7 @@ QRectF Block::boundingRect() const
 void Block::setGeometry(const QRectF &rect)
 {
     prepareGeometryChange();
+    this->updateConnectors();
     QGraphicsLayoutItem::setGeometry(rect);
     setPos(rect.topLeft());
 }
@@ -100,8 +104,8 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setPen(pen);
     painter->drawText(textRect, this->title, texto);
 
-    qDebug() << this->inputPoint();
-    qDebug() << this->outputPoint();
+    //qDebug() << this->inputPoint();
+    //qDebug() << this->outputPoint();
 }
 
 

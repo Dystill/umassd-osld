@@ -1,8 +1,8 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
-#include <diagramitem.h>
 #include <QDebug>
+#include "diagramitem.h"
 
 struct BlockData {
     QString title;
@@ -52,7 +52,6 @@ public:
     QColor getColor() const;
 
     void setStatus(const QString &value, QMap<QString, QString> colorMap);
-
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

@@ -1,13 +1,20 @@
 #include "connector.h"
 
-Connector::Connector(DiagramItem *input, DiagramItem *output, QColor color)
+Connector::Connector(QColor color)
 {
-    startPoint = input->outputPoint();
-    endPoint = output->inputPoint();
+    startPoint = QPointF();
+    endPoint = QPointF();
 
     lineColor = color;
 }
 
+Connector::Connector(QPointF input, QPointF output, QColor color)
+{
+    startPoint = input;
+    endPoint = output;
+
+    lineColor = color;
+}
 
 QRectF Connector::boundingRect() const
 {
@@ -53,7 +60,45 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 
     pen.setWidth(2);
     pen.setJoinStyle(Qt::RoundJoin);
+    pen.setCapStyle(Qt::RoundCap);
 
     painter->setPen(pen);
     painter->drawLine(startPoint, endPoint);
+}
+
+
+QPointF Connector::getStartPoint() const
+{
+    return startPoint;
+}
+
+void Connector::setStartPoint(const QPointF &value)
+{
+    prepareGeometryChange();
+    startPoint = value;
+    this->update();
+    //qDebug() << "Start point changed to:" << startPoint;
+}
+
+QPointF Connector::getEndPoint() const
+{
+    return endPoint;
+}
+
+void Connector::setEndPoint(const QPointF &value)
+{
+    prepareGeometryChange();
+    endPoint = value;
+    this->update();
+    //qDebug() << "End point changed to:" << endPoint;
+}
+
+QColor Connector::color() const
+{
+    return lineColor;
+}
+
+void Connector::setColor(const QColor &value)
+{
+    lineColor = value;
 }
