@@ -2,6 +2,10 @@
 
 OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
+    int random;
+
     this->parent = parent;
 
     // get the status types for this diagram
@@ -15,17 +19,23 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     sourceInfo.type = "SQLite Database";
     sources["source1"] = sourceInfo;
 
-    // create some gates
-    Gate *gate1 = new Gate(parent, "andGateId", QPointF(600,0), AndGate);
-    allGates.append(gate1);
-    Gate *gate2 = new Gate(parent, "orGateId", QPointF(600,150), OrGate);
-    allGates.append(gate2);
-    Gate *gate3 = new Gate(parent, "notGateId", QPointF(600,300), NotGate);
-    allGates.append(gate3);
+    // get gates from the description file
+    QPointF point(600, 0);
+    for(int i = 0; i < 6; i++) {
+
+        if(!allGates.isEmpty()) {
+            point.setY(point.y() + allGates.at(i - 1)->height() + 20);
+        }
+
+        Gate *gate = getGateInfoFromDescriptionFile(point);
+
+        allGates.append(gate);
+    }
 
     // get blocks from the description file
-    QPointF point(0, 0);
-    for(int i = 0; i < 5; i++) {    // obtain the number of diagram items from the description file
+    point.setX(0);
+    point.setY(0);
+    for(int i = 0; i < 6; i++) {
 
         if(!allBlocks.isEmpty()) {
             point.setY(point.y() + allBlocks.at(i - 1)->height() + 20);
@@ -35,30 +45,79 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
         allBlocks.append(block);
 
-        this->connectItems(block, gate2);
+        random = qrand() % allGates.count();
+
+        this->connectItems(block, allGates.at(random));
+    }
+
+    for(int i = 0; i < allGates.count(); i++) {
+        random = qrand() % allBlocks.count();
+        this->connectItems(allBlocks.at(random), allGates.at(i));
     }
 
     this->drawAllItems();
 }
 
+// overrides to draw a grid for the background
 void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    QPen pen;
-    pen.setCosmetic(true);
-    painter->setPen(pen);
+    painter->fillRect(rect, QBrush(QColor("#fafafa")));
 
-    qreal left = int(rect.left()) - (int(rect.left()) % gridUnitSize);
-    qreal top = int(rect.top()) - (int(rect.top()) % gridUnitSize);
+    if(showGridBackground) {
+        QPen pen;
+        pen.setCosmetic(true);
+        pen.setColor(QColor("#9e9e9e"));
+        painter->setPen(pen);
 
-    for (qreal x = left; x < rect.right(); x += gridUnitSize){
-        for (qreal y = top; y < rect.bottom(); y += gridUnitSize){
-            points.append(QPointF(x,y));
+        qreal topY = rect.top();
+        qreal leftX = rect.left();
+        qreal bottomY = rect.bottom();
+        qreal rightX = rect.right();
+
+        qreal startingX = int(leftX) - (int(leftX) % gridUnitSize);
+        qreal startingY = int(topY) - (int(topY) % gridUnitSize);
+
+        /*
+        for(qreal x = startingX; x < rightX; x += gridUnitSize) {
+            backgroundGrid.append(QLineF(x, topY, x, bottomY));
         }
+        for(qreal y = startingY; y < bottomY; y += gridUnitSize) {
+            backgroundGrid.append(QLineF(leftX, y, rightX, y));
+        }
+        painter->drawLines(backgroundGrid.data(), backgroundGrid.size());
+        */
+
+        for(qreal x = startingX; x < rightX; x += gridUnitSize) {
+            for(qreal y = startingY; y < bottomY; y += gridUnitSize) {
+                backgroundDots.append(QPointF(x, y));
+            }
+        }
+        painter->drawPoints(backgroundDots.data(), backgroundDots.size());
+    }
+}
+
+Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
+
+    int random = qrand() % 123456;
+
+    QString id = "Gate ";
+    id.append(QString::number(random));
+
+    GateType type;
+
+    if(random % 3 == 0) {
+        type = AndGate;
+    }
+    else if((random % 3) - 1 == 0) {
+        type = OrGate;
+    }
+    else {
+        type = NotGate;
     }
 
-    painter->fillRect(rect, QBrush(QColor("#e0e0e0")));
-    painter->drawPoints(points.data(), points.size());
+    return new Gate(this->parent, id, pos, type);
 }
+
 
 /*
  *  BLOCK FUNCTIONS
@@ -71,8 +130,6 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
     // create DescriptionFileReader object
 
     // obtain the id for this a block from
-    QTime time = QTime::currentTime();
-    qsrand((uint)time.msec());
     int random = qrand() % 123456;
 
     QString id = "Block ";
@@ -88,7 +145,7 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
     bd.status = (random % 2 == 0 ? "Valid" : "Invalid");
 
     // for testing large title strings
-    // if(random % 3 == 0) bd.title.append("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    // if(random % 3 == 0) bd.title.append("@@@@@ @@@@@@@@@ @@@@@@@ @@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@ @@@@@ @@@@ @@@@@@@@@@@@@@@@ @@@ @ @@@@@@@@@@@@ @@@@@@@@@ @@@ @@@@@@@@@@@@@@@@@@ @@@@ @");
 
     return buildBlock(id, position, bd);
 }
@@ -96,7 +153,7 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
 // adds data to a block
 Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData data)
 {
-    qDebug() << "Creating Block" << id;
+    // qDebug() << "Creating Block" << id;
 
     Block *block = new Block(this->parent, id, position);
 
@@ -159,4 +216,13 @@ void OSLDGraphicsEngine::connectItems(Block *input, DiagramItem *output)
     output->addInputConnector(conn);
 
     allConns.append(conn);
+}
+
+/*
+ *  OTHER FUNCTIONS
+ */
+
+void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {
+    showGridBackground = show;
+    this->invalidate(area, BackgroundLayer);
 }

@@ -4,11 +4,25 @@
  *  CONSTRUCTOR
  */
 
-Gate::Gate(QWidget *parent, QString id, QPointF loc,GateType type)
+Gate::Gate(QWidget *parent, QString id, QPointF loc, GateType type)
     : DiagramItem(parent, id, loc)
 {
     gateType = type;            // set the gate type
     this->setGateSizing();
+
+    QString hovertext = id;
+
+    if(type == AndGate) {
+        hovertext.append(" - AND gate");
+    }
+    else if(type == OrGate) {
+        hovertext.append(" - OR gate");
+    }
+    else if(type == NotGate) {
+        hovertext.append(" - NOT gate");
+    }
+
+    this->setToolTip(hovertext);
 
     this->isGate(true);
 }

@@ -46,6 +46,7 @@
      <string>Window</string>
     </property>
     <addaction name="actionFullScreen"/>
+    <addaction name="actionShowGrid"/>
    </widget>
    <addaction name="menuWindow"/>
   </widget>
@@ -72,6 +73,14 @@
    </property>
    <property name="toolTip">
     <string>Toggle Full Screen</string>
+   </property>
+  </action>
+  <action name="actionShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Grid</string>
    </property>
   </action>
  </widget>

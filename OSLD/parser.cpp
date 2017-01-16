@@ -19,8 +19,8 @@ QTextStream cout (stdout);
         return true;
     }
 
-    bool Parser::startElement(const QString &, const Qstring &,
-                              const Qstring & qName,
+    bool Parser::startElement(const QString &, const QString &,
+                              const QString & qName,
                               const QXmlAttributes& atts)
     {
         QString str = QString("\n%1\\%2").arg(indent).arg(qName);

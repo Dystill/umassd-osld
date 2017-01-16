@@ -34,11 +34,20 @@ private:
     int fullWidth;  // holds the width of the entire diagram
     int fullHeight; // holds the height for the entire diagram
     int gridUnitSize = 20;
-    QVarLengthArray<QPointF> points;
+
+    QVarLengthArray<QLineF> backgroundGrid;
+    QVarLengthArray<QPointF> backgroundDots;
+
+    bool showGridBackground = false;
 
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
     QList<Connector *> allConns;    // a list of all connector objects for this diagram
+
+
+
+    // functions for creating gates
+    Gate *getGateInfoFromDescriptionFile(QPointF pos);
 
     // functions for creating blocks
     Block *getBlockInfoFromDescriptionFile(QPointF pos);    // get information from the description file reader
@@ -48,6 +57,7 @@ private:
     void connectItems(Block *input, DiagramItem *output);   // creates a connector from a block to another item
 
     void drawAllItems();    // draws all of the items in the three "all" lists
+
 
 public:
     OSLDGraphicsEngine(QWidget *parent);
@@ -60,6 +70,7 @@ public:
     void setStatuses(const QMap<QString, QString> &value) { statuses = value; }
 
     void drawBackground(QPainter *painter, const QRectF &rect);
+    void showGrid(bool show, QRectF area);
 };
 
 #endif // OSLDGRAPHICSENGINE_H
