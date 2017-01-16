@@ -33,6 +33,8 @@ private:
 
     int fullWidth;  // holds the width of the entire diagram
     int fullHeight; // holds the height for the entire diagram
+    int gridUnitSize = 20;
+    QVarLengthArray<QPointF> points;
 
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
@@ -56,6 +58,8 @@ public:
 
     QMap<QString, QString> getStatuses() const { return statuses; }
     void setStatuses(const QMap<QString, QString> &value) { statuses = value; }
+
+    void drawBackground(QPainter *painter, const QRectF &rect);
 };
 
 #endif // OSLDGRAPHICSENGINE_H

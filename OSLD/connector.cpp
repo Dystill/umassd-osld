@@ -59,6 +59,7 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     QPen pen(lineColor);
 
     pen.setWidth(2);
+    pen.setCosmetic(true);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setCapStyle(Qt::RoundCap);
 

@@ -11,8 +11,6 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc,GateType type)
     this->setGateSizing();
 
     this->isGate(true);
-
-    this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
 /*
@@ -68,6 +66,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     QPen pen(QColor("#212121"));
 
     pen.setWidth(2);
+    pen.setCosmetic(true);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setCapStyle(Qt::RoundCap);
     painter->setPen(pen);

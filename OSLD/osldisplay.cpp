@@ -11,7 +11,6 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     scene = new OSLDGraphicsEngine(parent);
 
     // display the scene in the window
-    ui->graphicsView->setBackgroundBrush(QBrush(QColor("#EEEEEE")));
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);

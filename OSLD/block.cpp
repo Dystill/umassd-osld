@@ -15,8 +15,6 @@ Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, 
     this->setBlockSizing(this->title);
 
     this->isBlock(true);
-
-    this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
 /*
@@ -88,7 +86,9 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     texto.setAlignment(Qt::AlignCenter);
 
     pen.setWidth(2);
+    pen.setCosmetic(true);
     pen.setJoinStyle(Qt::RoundJoin);
+    pen.setCapStyle(Qt::RoundCap);
 
     painter->setPen(pen);
     painter->setFont(font);

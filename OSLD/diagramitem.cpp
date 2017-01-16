@@ -10,6 +10,8 @@ DiagramItem::DiagramItem(QWidget *parent, QString id, QPointF loc)
     this->setParent(parent);
     this->itemId = id;      // save the item's id
     this->setPos(loc);      // position the item
+    this->setFlags(QGraphicsItem::ItemIsSelectable |
+                   QGraphicsItem::ItemIsMovable);
 }
 
 

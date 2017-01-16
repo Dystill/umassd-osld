@@ -41,6 +41,25 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     this->drawAllItems();
 }
 
+void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
+{
+    QPen pen;
+    pen.setCosmetic(true);
+    painter->setPen(pen);
+
+    qreal left = int(rect.left()) - (int(rect.left()) % gridUnitSize);
+    qreal top = int(rect.top()) - (int(rect.top()) % gridUnitSize);
+
+    for (qreal x = left; x < rect.right(); x += gridUnitSize){
+        for (qreal y = top; y < rect.bottom(); y += gridUnitSize){
+            points.append(QPointF(x,y));
+        }
+    }
+
+    painter->fillRect(rect, QBrush(QColor("#e0e0e0")));
+    painter->drawPoints(points.data(), points.size());
+}
+
 /*
  *  BLOCK FUNCTIONS
  */
