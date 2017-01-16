@@ -40,3 +40,4 @@ QTextStream cout (stdout);
         indent.remove( (uint)0, 4 );
         return true;
     }
+//Disregard

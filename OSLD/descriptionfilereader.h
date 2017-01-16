@@ -8,6 +8,11 @@ class DescriptionFileReader
 {
 public:
     DescriptionFileReader();
+    ~DescriptionFileReader();
+
+    //Methods
+    void Read();
 };
 
 #endif // DESCRIPTIONFILEREADER_H
+//Disregard
