@@ -67,7 +67,7 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 }
 
 
-QPointF Connector::getStartPoint() const
+QPointF Connector::start() const
 {
     return startPoint;
 }
@@ -80,7 +80,7 @@ void Connector::setStartPoint(const QPointF &value)
     //qDebug() << "Start point changed to:" << startPoint;
 }
 
-QPointF Connector::getEndPoint() const
+QPointF Connector::end() const
 {
     return endPoint;
 }

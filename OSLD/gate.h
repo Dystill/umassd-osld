@@ -6,6 +6,7 @@
 #include <QList>
 #include <block.h>
 
+// enumeration to hold all of the gate types
 enum GateType {
     AndGate,
     OrGate,
@@ -15,22 +16,25 @@ enum GateType {
 class Gate : public DiagramItem
 {
 private:
-    GateType gateType;
+    GateType gateType;  // holds this gate's type (AND, OR, NOT)
 
-    QPainterPath *drawANDGatePath();
-    QPainterPath *drawORGatePath();
-    QPainterPath *drawNOTGatePath();
+    QPainterPath *drawANDGatePath();    // returns a path to draw the shape of an AND gate
+    QPainterPath *drawORGatePath();     //                  "   "                 OR gate
+    QPainterPath *drawNOTGatePath();    //                  "   "                 NOT gate
 
 public:
+    // constructor
+    Gate(QWidget *parent, QString id, QPointF loc, GateType type = AndGate);
+
+    // QGraphicsItem stuff
     QRectF boundingRect() const;
     void setGeometry(const QRectF &rect);
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
-    Gate(QWidget *parent, QString id, QPointF loc, GateType type = AndGate);
-
-    void setGateSizing(QWidget *parent);
+    // function to set the size for the gate
+    void setGateSizing();
 
 signals:
 

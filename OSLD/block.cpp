@@ -6,8 +6,7 @@
 Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(parent, id, loc)
 {
-    this->parent = parent;
-    this->maxWidth = (this->parent->logicalDpiX() * 2);
+    this->maxWidth = (this->parent()->logicalDpiX() * 2);
     this->font.setPointSize(12);
 
     this->title = t;
@@ -37,8 +36,8 @@ void Block::setBlockSizing(QString title)
 
     int cutOff = textWidth / this->maxWidth;
 
-    this->setWidth(((textWidth > maxWidth) ? maxWidth : textWidth) + (this->parent->logicalDpiX() / 2));
-    this->setHeight((((textHeight * cutOff)) + 1) + (this->parent->logicalDpiY() / 2));
+    this->setWidth(((textWidth > maxWidth) ? maxWidth : textWidth) + (this->parent()->logicalDpiX() / 2));
+    this->setHeight((((textHeight * cutOff)) + 1) + (this->parent()->logicalDpiY() / 2));
 
     this->update();
     this->updateConnectors();

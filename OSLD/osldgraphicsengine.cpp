@@ -27,8 +27,9 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     QPointF point(0, 0);
     for(int i = 0; i < 5; i++) {    // obtain the number of diagram items from the description file
 
-        if(!allBlocks.isEmpty())
+        if(!allBlocks.isEmpty()) {
             point.setY(point.y() + allBlocks.at(i - 1)->height() + 20);
+        }
 
         Block *block = getBlockInfoFromDescriptionFile(point);
 

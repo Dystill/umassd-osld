@@ -4,6 +4,9 @@
 #include <QDebug>
 #include "diagramitem.h"
 
+// builder structure that holds block data
+// used to store a block's data before passing it into a function
+// makes function parameters neater and smaller
 struct BlockData {
     QString title;
     QString description;
@@ -14,34 +17,34 @@ struct BlockData {
 class Block : public DiagramItem
 {
 private:
-    QWidget *parent;
-    QFont font;
+    QFont font;         // font for the title text
 
-    QString status = "No Status Available";
-    QColor color = QColor("#888888");
-    QString title;          // the name of the step this block represents
-    QString description;    // the description of this block
-    QString hovertext;      // the text that shows when the user hovers over the block
+    QString status = "No Status Available";     // holds the text of the block's status, which is used to access a QMap of status/color combos
+    QColor color = QColor("#888888");           // the color of the block is stored here for easier access
+    QString title;                              // the name of the step this block represents
+    QString description;                        // the description of this block
+    QString hovertext;                          // the text that shows when the user hovers over the block
 
-    void setBlockSizing(QString title);
+    void setBlockSizing(QString title);         // private function used to generate a size for this block that contains the title text
 
-    int maxWidth;
+    int maxWidth;                               // the maximum width of the block before word wraping the title
 
 public:
 
-    // constructors
-    Block(QWidget *parent, QString id, QPointF loc,
+    // constructor
+    Block(QWidget *parent, QString id, QPointF loc,     // blocks must have the parent object, id, and location, which is handled by the parent class
           QString t = "Block Title",
           QString desc = "Block Description",
           QString ht = "Block Hovertext");
 
     // QGraphicsItem stuff
-    QRectF boundingRect() const;
-    void setGeometry(const QRectF &rect);
-    QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+    QRectF boundingRect() const;    // returns the rectagular container for this item
+    void setGeometry(const QRectF &rect);   // used by QGraphicsItem to resize and update graphics elements
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;    // gives default sizes for items to use
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,   // paints the graphics to use for the object
                QWidget *widget);
 
+    // getter and setter functions
     QString getTitle() const;
     void setTitle(const QString &value);
 
@@ -51,7 +54,7 @@ public:
     QString getStatus() const;
     QColor getColor() const;
 
-    void setStatus(const QString &value, QMap<QString, QString> colorMap);
+    void setStatus(const QString &value, QMap<QString, QString> colorMap);  // sets both status and color. color cannot be changed directly
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

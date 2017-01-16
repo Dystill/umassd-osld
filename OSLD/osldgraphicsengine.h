@@ -8,11 +8,13 @@
 #include "gate.h"
 #include "connector.h"
 
+// holds data source information
 struct CommonSource {
     QString name;
     QString type;
 };
 
+// holds subdiagram information
 struct Subdiagram {
     QString name;
     QString description;
@@ -24,25 +26,26 @@ struct Subdiagram {
 class OSLDGraphicsEngine : public QGraphicsScene
 {
 private:
-    QWidget *parent;  // holds the entire diagram
+    QWidget *parent;
 
-    QMap<QString, CommonSource> sources;
-    QMap<QString, QString> statuses;
+    QMap<QString, CommonSource> sources;    // maps source ids to their name and type
+    QMap<QString, QString> statuses;    // maps status names to different colors
 
-    int fullWidth;
-    int fullHeight;
+    int fullWidth;  // holds the width of the entire diagram
+    int fullHeight; // holds the height for the entire diagram
 
-    QList<Block *> allBlocks;
-    QList<Gate *> allGates;
-    QList<Connector *> allConns;
+    QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
+    QList<Gate *> allGates;         // a list of all of the gates in the diagram
+    QList<Connector *> allConns;    // a list of all connector objects for this diagram
 
-    Block *getBlockInfoFromDescriptionFile(QPointF pos);
-    Block *buildBlock(QString id, QPointF position, BlockData data);
+    // functions for creating blocks
+    Block *getBlockInfoFromDescriptionFile(QPointF pos);    // get information from the description file reader
+    Block *buildBlock(QString id, QPointF position, BlockData data);    // passes data into a block
 
-    void connectItems(Gate *input, DiagramItem *output);
-    void connectItems(Block *input, DiagramItem *output);
+    void connectItems(Gate *input, DiagramItem *output);    // creates a connector from a gate to another item
+    void connectItems(Block *input, DiagramItem *output);   // creates a connector from a block to another item
 
-    void drawAllItems();
+    void drawAllItems();    // draws all of the items in the three "all" lists
 
 public:
     OSLDGraphicsEngine(QWidget *parent);

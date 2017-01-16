@@ -8,8 +8,7 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc,GateType type)
     : DiagramItem(parent, id, loc)
 {
     gateType = type;            // set the gate type
-    this->setParent(parent);
-    this->setGateSizing(parent);
+    this->setGateSizing();
 
     this->isGate(true);
 
@@ -20,10 +19,10 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc,GateType type)
  *  Gate Sizing and Dimensions
  */
 
-void Gate::setGateSizing(QWidget *parent)
+void Gate::setGateSizing()
 {
-    int dpiX = parent->logicalDpiX();
-    int dpiY = parent->logicalDpiY();
+    int dpiX = this->parent()->logicalDpiX();
+    int dpiY = this->parent()->logicalDpiY();
 
     this->setWidth(dpiX);
     this->setHeight(dpiY);

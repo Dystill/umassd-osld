@@ -6,7 +6,8 @@
 
 DiagramItem::DiagramItem(QWidget *parent, QString id, QPointF loc)
 {
-    this->parent = parent;  // save parent item for resizing purposes
+    this->itemParent = parent;  // save parent item for resizing purposes
+    this->setParent(parent);
     this->itemId = id;      // save the item's id
     this->setPos(loc);      // position the item
 }
@@ -88,10 +89,43 @@ void DiagramItem::updateConnectors()
     }
 }
 
+QList<Connector *> DiagramItem::inputConnector() const
+{
+    return inputConn;
+}
+
+void DiagramItem::addInputConnector(Connector *value)
+{
+    inputConn.append(value);
+}
+
+void DiagramItem::removeInputConnector(Connector *value)
+{
+    inputConn.removeOne(value);
+}
+
+QList<Connector *> DiagramItem::outputConnector() const
+{
+    return outputConn;
+}
+
+void DiagramItem::addOutputConnector(Connector *value)
+{
+    outputConn.append(value);
+}
+
+void DiagramItem::removeOutputConnector(Connector *value)
+{
+    outputConn.removeOne(value);
+}
+
 
 /*
  *  ATTRIBUTE GETTERS AND SETTERS
  */
+
+// returns the widget this block will be displayed in
+QWidget *DiagramItem::parent() const { return itemParent; }
 
 // returns this item's unique id
 QString DiagramItem::id() const { return itemId; }
@@ -109,26 +143,6 @@ int DiagramItem::height() const { return itemHeight; }
 // sets the height for this item
 // QGraphicsItem::update() may have to be called afterwards
 void DiagramItem::setHeight(int value) { itemHeight = value; }
-
-QList<Connector *> DiagramItem::inputConnector() const
-{
-    return inputConn;
-}
-
-void DiagramItem::addInputConnector(Connector *value)
-{
-    inputConn.append(value);
-}
-
-QList<Connector *> DiagramItem::outputConnector() const
-{
-    return outputConn;
-}
-
-void DiagramItem::addOutputConnector(Connector *value)
-{
-    outputConn.append(value);
-}
 
 
 bool DiagramItem::isBlock() const {
