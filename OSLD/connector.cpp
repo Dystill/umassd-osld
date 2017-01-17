@@ -13,6 +13,8 @@ Connector::Connector(QPointF input, QPointF output, QColor color)
     startPoint = input;
     endPoint = output;
 
+    // qDebug() << "startEnd Constructor: "<< startPoint << endPoint;
+
     lineColor = color;
 }
 
@@ -57,6 +59,7 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(widget);
 
     QPen pen(lineColor);
+    // qDebug() << "startEnd Paint: "<< startPoint << endPoint;
 
     pen.setWidth(2);
     pen.setCosmetic(true);

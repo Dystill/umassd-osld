@@ -138,11 +138,11 @@ void DiagramItem::updateConnectors()
 {
     for(int i = 0; i < inputConn.count(); i++) {
         //qDebug() << "Updating input connectors" << this->inputPoint();
-        this->inputConn.at(i)->setStartPoint(this->inputPoint());
+        this->inputConn.at(i)->setEndPoint(this->inputPoint());
     }
     for(int i = 0; i < outputConn.count(); i++) {
         //qDebug() << "Updating output connectors" << this->outputPoint();
-        this->outputConn.at(i)->setEndPoint(this->outputPoint());
+        this->outputConn.at(i)->setStartPoint(this->outputPoint());
     }
 }
 

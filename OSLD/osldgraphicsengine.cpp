@@ -68,7 +68,7 @@ void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
     if(showGridBackground) {
         QPen pen;
         pen.setCosmetic(true);
-        pen.setColor(QColor("#757575"));
+        pen.setColor(QColor("#212121"));
         painter->setPen(pen);
 
         qreal topY = rect.top();
@@ -188,13 +188,13 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData da
 
 void OSLDGraphicsEngine::drawAllItems()
 {
-    for(int i = 0; i < allGates.count(); i++) {
-        //qDebug() << "Drawing Gate" << i;
-        this->addItem(allGates.at(i));
-    }
     for(int i = 0; i < allConns.count(); i++) {
         //qDebug() << "Drawing Connector" << i;
         this->addItem(allConns.at(i));
+    }
+    for(int i = 0; i < allGates.count(); i++) {
+        //qDebug() << "Drawing Gate" << i;
+        this->addItem(allGates.at(i));
     }
     for(int i = 0; i < allBlocks.count(); i++) {
         //qDebug() << "Drawing Block" << i;
@@ -224,7 +224,6 @@ void OSLDGraphicsEngine::connectItems(Gate *input, DiagramItem *output)
 
 void OSLDGraphicsEngine::connectItems(Block *input, DiagramItem *output)
 {
-
     QPointF startPoint = input->outputPoint();
     QPointF endPoint = output->inputPoint();
     QColor color = input->getColor();
