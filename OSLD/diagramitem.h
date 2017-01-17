@@ -21,12 +21,22 @@ private:
     int itemWidth;  // the width of this item
     int itemHeight; // the height of this item
 
+    int circleRadius;
+    int lineLength;
+
     bool block = false; // holds whether or not this item is a block
     bool gate = false;  // holds whether or not this item is a gate
 
 public:
     // constructor
     DiagramItem(QWidget *parent, QString id, QPointF loc = QPointF(0, 0));  // requires the parent object and id. location defaults to (0,0)
+
+
+    // QGraphicsItem stuff
+    QRectF boundingRect() const;    // returns the rectagular container for this item
+    void setGeometry(const QRectF &rect);   // used by QGraphicsItem to resize and update graphics elements
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;    // gives default sizes for items to use
+
 
     //static QPointF convertPointToRelative(QPointF loc, DiagramItem *anchor);
     //static QPointF convertPointToAbsolute(QPointF loc, DiagramItem *anchor);
@@ -63,6 +73,12 @@ public:
 protected:
     void isBlock(bool value);   // set if this item is a block
     void isGate(bool value);    // set if this item is a gate
+
+    int getCircleRadius() const;
+    void setCircleRadius(int value);
+
+    int getLineLength() const;
+    void setLineLength(int value);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);

@@ -48,28 +48,17 @@ void Block::setBlockSizing(QString title)
 
 QRectF Block::boundingRect() const
 {
-    return QRectF(0, 0, this->width(), this->height());
+    return DiagramItem::boundingRect();
 }
 
 void Block::setGeometry(const QRectF &rect)
 {
-    prepareGeometryChange();
-    this->updateConnectors();
-    QGraphicsLayoutItem::setGeometry(rect);
-    setPos(rect.topLeft());
+    DiagramItem::setGeometry(rect);
 }
 
 QSizeF Block::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
-    switch (which) {
-    case Qt::MinimumSize:
-    case Qt::PreferredSize:
-    case Qt::MaximumSize:
-        return boundingRect().size();
-    default:
-        break;
-    }
-    return constraint;
+    return DiagramItem::sizeHint(which, constraint);
 }
 
 // paint shapes in the block
@@ -78,29 +67,62 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    QBrush brush(this->color);
-    QPen pen(QColor("#212121"));
-    QTextOption texto;
+    // initialize items
+    QRectF rect = boundingRect();   // box for the block
+    QBrush brush(this->color);      // brush to fill the rectangle block
+    QPen pen(QColor(this->color));    // pen to outlien the rectable block
+    QTextOption texto;              // options for the title
 
-    texto.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-    texto.setAlignment(Qt::AlignCenter);
-
-    pen.setWidth(2);
-    pen.setCosmetic(true);
-    pen.setJoinStyle(Qt::RoundJoin);
-    pen.setCapStyle(Qt::RoundCap);
-
+    // set the pen
+    pen.setWidth(2);                    // thickness
+    pen.setCosmetic(true);              // same thickness with scaling
+    pen.setJoinStyle(Qt::RoundJoin);    // rounded corners
+    pen.setCapStyle(Qt::RoundCap);      // rounded line ends
+    pen.setColor(QColor("#212121"));
     painter->setPen(pen);
-    painter->setFont(font);
-    painter->fillRect(boundingRect(), brush);
-    painter->drawRect(boundingRect());
+    painter->setBrush(brush);
 
-    QPointF textTopLeft(boundingRect().left() + 10, boundingRect().top());
-    QPointF textBottomRight(boundingRect().right() - 10, boundingRect().bottom());
+    //// Drawing the Connector entry lines
+    // adjust the drawing rectangle to draw the connector lines and circles
+    rect.setLeft(rect.left() + this->getCircleRadius());
+    rect.setRight(rect.right() - this->getCircleRadius());
+
+    // make points for the connector entry areas
+    QPointF middleLeft = QPointF(rect.left(), rect.center().y());
+    QPointF middleRight = QPointF(rect.right(), rect.center().y());
+
+    // draw middle line
+    painter->drawLine(middleLeft, middleRight);
+
+    // draw the connector circles
+    painter->drawEllipse(middleLeft, this->getCircleRadius(), this->getCircleRadius());
+    painter->drawEllipse(middleRight, this->getCircleRadius(), this->getCircleRadius());
+
+    //// Drawing the Block
+    // resize the drawing rectangle to make the block
+    rect.setLeft(rect.left() + this->getLineLength());
+    rect.setRight(rect.right() - this->getLineLength());
+
+    // draw the block
+    painter->drawRect(rect);
+
+
+    //// Drawing the Title text
+    // create a textbox for the title
+    QPointF textTopLeft(rect.left() + 10, rect.top());
+    QPointF textBottomRight(rect.right() - 10, rect.bottom());
     QRectF textRect(textTopLeft, textBottomRight);
 
+    // set some text flags
+    texto.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);   // wordwrap
+    texto.setAlignment(Qt::AlignCenter);                            // center align
+
+    // set the color and font for the text
     pen.setColor(QColor("#FFFFFF"));
+    painter->setFont(font);
     painter->setPen(pen);
+
+    // draw the text
     painter->drawText(textRect, this->title, texto);
 
     //qDebug() << this->inputPoint();

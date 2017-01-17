@@ -18,9 +18,9 @@ class Gate : public DiagramItem
 private:
     GateType gateType;  // holds this gate's type (AND, OR, NOT)
 
-    QPainterPath *drawANDGatePath();    // returns a path to draw the shape of an AND gate
-    QPainterPath *drawORGatePath();     //                  "   "                 OR gate
-    QPainterPath *drawNOTGatePath();    //                  "   "                 NOT gate
+    QPainterPath *drawANDGatePath(int width, int height);    // returns a path to draw the shape of an AND gate
+    QPainterPath *drawORGatePath(int width, int height);     //                  "   "                 OR gate
+    QPainterPath *drawNOTGatePath(int width, int height);    //                  "   "                 NOT gate
 
 public:
     // constructor

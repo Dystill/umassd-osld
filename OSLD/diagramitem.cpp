@@ -4,6 +4,26 @@
  *  CONSTRUCTOR
  */
 
+int DiagramItem::getCircleRadius() const
+{
+    return circleRadius;
+}
+
+void DiagramItem::setCircleRadius(int value)
+{
+    circleRadius = value;
+}
+
+int DiagramItem::getLineLength() const
+{
+    return lineLength;
+}
+
+void DiagramItem::setLineLength(int value)
+{
+    lineLength = value;
+}
+
 DiagramItem::DiagramItem(QWidget *parent, QString id, QPointF loc)
 {
     this->itemParent = parent;  // save parent item for resizing purposes
@@ -12,6 +32,9 @@ DiagramItem::DiagramItem(QWidget *parent, QString id, QPointF loc)
     this->setPos(loc);      // position the item
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsMovable);
+
+    this->lineLength = (parent->logicalDpiX() / 2);
+    this->circleRadius = (parent->logicalDpiX() / 24);
 }
 
 
@@ -39,7 +62,37 @@ void DiagramItem::removeOutputItem(DiagramItem *item)
 }
 
 /*
- *
+ *  QGRAPHICSWIDGET FUNCTIONS
+ */
+QRectF DiagramItem::boundingRect() const
+{
+    return QRectF(0, 0, this->width() + ((lineLength + circleRadius) * 2), this->height());
+}
+
+void DiagramItem::setGeometry(const QRectF &rect)
+{
+    prepareGeometryChange();
+    this->updateConnectors();
+    QGraphicsLayoutItem::setGeometry(rect);
+    setPos(rect.topLeft());
+}
+
+QSizeF DiagramItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
+{
+    switch (which) {
+    case Qt::MinimumSize:
+    case Qt::PreferredSize:
+    case Qt::MaximumSize:
+        return boundingRect().size();
+    default:
+        break;
+    }
+    return constraint;
+}
+
+
+/*
+ *  MOUSE FUNCTIONS
  */
 
 void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -124,13 +177,13 @@ QPointF DiagramItem::convertPointToAbsolute(QPointF loc, DiagramItem *anchor)
 // get the point where connectors can enter this item
 QPointF DiagramItem::inputPoint() const
 {
-    return this->pos() + QPoint(this->boundingRect().left(), this->boundingRect().center().y());
+    return this->pos() + QPoint(this->boundingRect().left() + circleRadius, this->boundingRect().center().y());
 }
 
 // get the point where connectors can leave this item
 QPointF DiagramItem::outputPoint() const
 {
-    return this->pos() + QPoint(this->boundingRect().right(), this->boundingRect().center().y());
+    return this->pos() + QPoint(this->boundingRect().right() - circleRadius, this->boundingRect().center().y());
 }
 
 // update the line that exits this block
