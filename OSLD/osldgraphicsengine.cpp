@@ -30,6 +30,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
         Gate *gate = getGateInfoFromDescriptionFile(point);
 
         allGates.append(gate);
+        allItems.append(gate);
     }
 
     // get blocks from the description file
@@ -44,6 +45,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
         Block *block = getBlockInfoFromDescriptionFile(point);
 
         allBlocks.append(block);
+        allItems.append(block);
 
         random = qrand() % allGates.count();
 
@@ -66,7 +68,7 @@ void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
     if(showGridBackground) {
         QPen pen;
         pen.setCosmetic(true);
-        pen.setColor(QColor("#9e9e9e"));
+        pen.setColor(QColor("#757575"));
         painter->setPen(pen);
 
         qreal topY = rect.top();
@@ -94,6 +96,25 @@ void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
         }
         painter->drawPoints(backgroundDots.data(), backgroundDots.size());
     }
+}
+
+Subdiagram *OSLDGraphicsEngine::createSubdiagram(QList<QString> ids, QString name, bool outline)
+{
+    Subdiagram *sub = new Subdiagram;
+
+    sub->name = name;
+    sub->showOutline = outline;
+
+    for(int i = 0; i < allItems.count(); i++) {                // loop through each item in allItems
+        for(int j = 0; j < ids.count(); j++) {              // loop through each string in the id list
+            if(allItems.at(i)->id().compare(ids.at(j)) == 0) { // if the item's id matches the id in the id list
+                sub->items.append(allItems.at(i));             // add the item to the subdiagram
+                j = ids.count();                            // go to the next id
+            }
+        }
+    }
+
+    return sub;
 }
 
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {

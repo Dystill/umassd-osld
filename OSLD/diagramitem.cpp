@@ -39,6 +39,57 @@ void DiagramItem::removeOutputItem(DiagramItem *item)
 }
 
 /*
+ *
+ */
+
+void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    /*
+    mDragged = qgraphicsitem_cast<QGraphicsItem*>(itemAt(mouseEvent->scenePos(), QTransform()));
+    if (mDragged) {
+        mDragOffset = mouseEvent->scenePos() - mDragged->pos();
+    } else
+        QGraphicsScene::mousePressEvent(mouseEvent);
+    */
+    qDebug() << "Mouse pressed onto" << this->id();
+    QGraphicsItem::mousePressEvent(mouseEvent);
+
+    update();
+}
+
+void DiagramItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    /*
+    if (mDragged) {
+        // Ensure that the item's offset from the mouse cursor stays the same.
+        mDragged->setPos(mouseEvent->scenePos() - mDragOffset);
+    } else
+        QGraphicsScene::mouseMoveEvent(mouseEvent);
+        */
+    qDebug() << "Mouse moving" << this->id();
+    QGraphicsItem::mouseMoveEvent(mouseEvent);
+
+    update();
+}
+
+void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    /*
+    if (mDragged) {
+        int x = floor(mouseEvent->scenePos().x() / mCellSize.width()) * mCellSize.width();
+        int y = floor(mouseEvent->scenePos().y() / mCellSize.height()) * mCellSize.height();
+        mDragged->setPos(x, y);
+        mDragged = 0;
+    } else
+        QGraphicsScene::mouseReleaseEvent(mouseEvent);
+        */
+    qDebug() << "Mouse released" << this->id();
+    QGraphicsItem::mouseReleaseEvent(mouseEvent);
+
+    update();
+}
+
+/*
  *  ITEM POSITIONING AND LOCATING
  */
 
@@ -65,6 +116,10 @@ QPointF DiagramItem::convertPointToAbsolute(QPointF loc, DiagramItem *anchor)
     return temp;
 }
 */
+
+/*
+ *  CONNECTOR ATTACHING FUNCTIONS
+ */
 
 // get the point where connectors can enter this item
 QPointF DiagramItem::inputPoint() const

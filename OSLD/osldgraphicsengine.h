@@ -17,8 +17,6 @@ struct CommonSource {
 // holds subdiagram information
 struct Subdiagram {
     QString name;
-    QString description;
-    QString hovertext;
     bool showOutline;
     QList<DiagramItem *> items;
 };
@@ -40,11 +38,14 @@ private:
 
     bool showGridBackground = false;
 
+    QList<Block *> allSubdiagrams;  // a list of all of the blocks in the diagram
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
+    QList<DiagramItem *> allItems;  // a list of both blocks and gates
     QList<Connector *> allConns;    // a list of all connector objects for this diagram
 
 
+    Subdiagram *createSubdiagram(QList<QString> ids, QString name, bool outline = false);
 
     // functions for creating gates
     Gate *getGateInfoFromDescriptionFile(QPointF pos);
