@@ -15,8 +15,6 @@ Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, 
     this->setBlockSizing(this->title);
 
     this->isBlock(true);
-
-    this->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
 /*
@@ -88,7 +86,9 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     texto.setAlignment(Qt::AlignCenter);
 
     pen.setWidth(2);
+    pen.setCosmetic(true);
     pen.setJoinStyle(Qt::RoundJoin);
+    pen.setCapStyle(Qt::RoundCap);
 
     painter->setPen(pen);
     painter->setFont(font);
@@ -115,22 +115,21 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 // when the user clicks down on a block
 void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    update();
-    QGraphicsItem::mousePressEvent(event);
+    qDebug() << "Mouse pressed onto" << this->title;
+    DiagramItem::mousePressEvent(event);
+}
+
+void Block::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "Mouse moving" << this->title;
+    DiagramItem::mouseMoveEvent(event);
 }
 
 // when the user releases the mouse click
 void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    update();
-    QGraphicsItem::mouseReleaseEvent(event);
-}
-
-// when the user double clicks
-void Block::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-    update();
-    QGraphicsItem::mouseDoubleClickEvent(event);
+    qDebug() << "Mouse released" << this->title;
+    DiagramItem::mouseReleaseEvent(event);
 }
 
 /*

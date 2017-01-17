@@ -11,12 +11,12 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     scene = new OSLDGraphicsEngine(parent);
 
     // display the scene in the window
-    ui->graphicsView->setBackgroundBrush(QBrush(QColor("#EEEEEE")));
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     ui->graphicsView->viewport()->installEventFilter(this);
+    ui->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
 
     // starts the application in full screen mode
     // enterFullScreen();
@@ -113,12 +113,21 @@ void OSLDisplay::exitFullScreen()
 }
 
 void OSLDisplay::zoom(int px) {
-    if(px > 0) {
+    if(px > 0 && scaleAmount < 150) {
         ui->graphicsView->scale(1.1, 1.1);
+        scaleAmount *= 1.1;
     }
-    else if (px < 0) {
+    else if (px < 0 && scaleAmount > 50) {
         ui->graphicsView->scale(0.90, 0.90);
+        scaleAmount *= 0.9;
     }
+    //qDebug() << scaleAmount;
 }
 
-
+void OSLDisplay::on_actionShowGrid_triggered()
+{
+    scene->showGrid(ui->actionShowGrid->isChecked(),
+                    QRectF(ui->graphicsView->mapToScene(
+                               ui->graphicsView->rect()).boundingRect()));
+    ui->graphicsView->viewport()->update();
+}

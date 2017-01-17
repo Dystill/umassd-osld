@@ -4,15 +4,27 @@
  *  CONSTRUCTOR
  */
 
-Gate::Gate(QWidget *parent, QString id, QPointF loc,GateType type)
+Gate::Gate(QWidget *parent, QString id, QPointF loc, GateType type)
     : DiagramItem(parent, id, loc)
 {
     gateType = type;            // set the gate type
     this->setGateSizing();
 
-    this->isGate(true);
+    QString hovertext = id;
 
-    this->setFlag(QGraphicsItem::ItemIsMovable);
+    if(type == AndGate) {
+        hovertext.append(" - AND gate");
+    }
+    else if(type == OrGate) {
+        hovertext.append(" - OR gate");
+    }
+    else if(type == NotGate) {
+        hovertext.append(" - NOT gate");
+    }
+
+    this->setToolTip(hovertext);
+
+    this->isGate(true);
 }
 
 /*
@@ -68,6 +80,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     QPen pen(QColor("#212121"));
 
     pen.setWidth(2);
+    pen.setCosmetic(true);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setCapStyle(Qt::RoundCap);
     painter->setPen(pen);

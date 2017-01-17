@@ -17,8 +17,6 @@ struct CommonSource {
 // holds subdiagram information
 struct Subdiagram {
     QString name;
-    QString description;
-    QString hovertext;
     bool showOutline;
     QList<DiagramItem *> items;
 };
@@ -33,10 +31,24 @@ private:
 
     int fullWidth;  // holds the width of the entire diagram
     int fullHeight; // holds the height for the entire diagram
+    int gridUnitSize = 20;
 
+    QVarLengthArray<QLineF> backgroundGrid;
+    QVarLengthArray<QPointF> backgroundDots;
+
+    bool showGridBackground = false;
+
+    QList<Block *> allSubdiagrams;  // a list of all of the blocks in the diagram
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
+    QList<DiagramItem *> allItems;  // a list of both blocks and gates
     QList<Connector *> allConns;    // a list of all connector objects for this diagram
+
+
+    Subdiagram *createSubdiagram(QList<QString> ids, QString name, bool outline = false);
+
+    // functions for creating gates
+    Gate *getGateInfoFromDescriptionFile(QPointF pos);
 
     // functions for creating blocks
     Block *getBlockInfoFromDescriptionFile(QPointF pos);    // get information from the description file reader
@@ -47,6 +59,7 @@ private:
 
     void drawAllItems();    // draws all of the items in the three "all" lists
 
+
 public:
     OSLDGraphicsEngine(QWidget *parent);
     QGraphicsWidget *drawGateGroup(Gate *gate);
@@ -56,6 +69,9 @@ public:
 
     QMap<QString, QString> getStatuses() const { return statuses; }
     void setStatuses(const QMap<QString, QString> &value) { statuses = value; }
+
+    void drawBackground(QPainter *painter, const QRectF &rect);
+    void showGrid(bool show, QRectF area);
 };
 
 #endif // OSLDGRAPHICSENGINE_H

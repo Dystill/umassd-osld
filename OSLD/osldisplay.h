@@ -24,9 +24,14 @@ private slots:
     void wheelEvent(QWheelEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
 
+    void on_actionShowGrid_triggered();
+
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
+
+    qreal scaleAmount = 100;
+
     void enterFullScreen();
     void exitFullScreen();
     void zoom(int px);

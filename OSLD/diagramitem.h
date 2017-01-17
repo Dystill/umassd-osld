@@ -64,6 +64,10 @@ protected:
     void isBlock(bool value);   // set if this item is a block
     void isGate(bool value);    // set if this item is a gate
 
+    void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
 };
 
 #endif // DIAGRAMITEM_H
