@@ -7,19 +7,26 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // create an instance of the graphics engine
-    scene = new OSLDGraphicsEngine(parent);
-
-    // display the scene in the window
-    ui->graphicsView->setScene(scene);
+    // set different flags
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    ui->graphicsView->viewport()->installEventFilter(this);
     ui->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
 
+    // filter mouse scrolling to perform custom functions
+    ui->graphicsView->viewport()->installEventFilter(this);
+
+    // create an instance of the OSLD graphics engine
+    scene = new OSLDGraphicsEngine(parent);
+
+    // display the scene from the graphics engine in the window
+    ui->graphicsView->setScene(scene);
+
+    // resize window to fit the scene
+    this->adjustSize();
+
     // starts the application in full screen mode
-    // enterFullScreen();
+    enterFullScreen();
     QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
 }
 
