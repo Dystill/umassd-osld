@@ -1,14 +1,43 @@
-#include "descriptionfilereader.h"
-#include "parser.h"
+#include <QtWidgets>
 #include <iostream>
 #include <QXml.h>
 #include <string>
+#include "descriptionfilereader.h"
+#include "parser.h"
 #include <QXmlDefaultHandler>
+#include<qDebug>
+#include <QStringList>
+
+
 using namespace std;
 
-DescriptionFileReader::DescriptionFileReader()
+DescriptionFileReader::DescriptionFileReader(QWidget *parent) :
+    QMainWindow(parent)
 {
 
+    QString pathAndName;
+    QString fileName;
+
+    fileName = "/notes.xml"; //NEED TO FIND A WAY TO MAKE THIS DYNAMIC!!
+
+    //Opens explorer to browse for location of XML file
+    QString filePath = QFileDialog::getOpenFileName(this,tr("Open File"),"/home",tr("XML File(*.xml)"));
+
+
+    QDir d = QFileInfo(filePath).absoluteDir();
+    QString path = d.absolutePath(); //Gets path of file from the directory
+
+    QFile file(filePath); //represents file that was opened
+
+    file.setFileName(fileName);
+
+    pathAndName = path + fileName; //Concatinates location of the file + the name of the file
+
+    //Double Checks FilePath
+    //qDebug()<<"File path of the file is:" << path;
+    //qDebug()<<"File name of the file is:" << pathAndName;
+
+    this->Read(pathAndName);
 }
 
 DescriptionFileReader::~DescriptionFileReader()
@@ -17,22 +46,20 @@ DescriptionFileReader::~DescriptionFileReader()
 }
 
 
-
-void DescriptionFileReader::Read()
+void DescriptionFileReader::Read(QString filepath)
 {
 
    Parser handler;
-   QXmlSimpleReader xmlReader; //Intialize xmlReader
-   cout<< "test a";
+   bool hope; //determines if file is open and able to be parsed
    xmlReader.setContentHandler(&handler);
-   for (int i=1; i<1;i++)//It should only read the first 10 lines.
-   {
-       cout<< "test "<< i;
-       QFile xmlFile ("descriptionFileMockupVer2.xml");
-       QXmlInputSource source (&xmlFile);
-        xmlReader.parse (source);
-   }
+   xmlReader.setErrorHandler(&handler);
 
+   QFile xmlFile (filepath);
+   QXmlInputSource source (&xmlFile);
+   hope = xmlReader.parse (source);
 
+   qDebug()<<"Parse: "<<hope; //If returns true, it is open.
 }
 //Disregard
+
+

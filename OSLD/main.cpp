@@ -9,12 +9,10 @@ int main(int argc, char *argv[])
 
     a.setOverrideCursor(Qt::ArrowCursor);
 
-    OSLDisplay w(new QWidget);
-    //DescriptionFileReader x;
+    //OSLDisplay w(new QWidget);
+    DescriptionFileReader x;
 
-    w.show();
-    //x.Read();
-
+    //w.show();
 
     return a.exec();
 }
