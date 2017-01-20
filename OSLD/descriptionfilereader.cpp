@@ -18,7 +18,7 @@ DescriptionFileReader::DescriptionFileReader(QWidget *parent) :
     QString pathAndName;
     QString fileName;
 
-    fileName = "/notes.xml"; //NEED TO FIND A WAY TO MAKE THIS DYNAMIC!!
+    fileName = "/descriptionFileMockupVer2.xml"; //NEED TO FIND A WAY TO MAKE THIS DYNAMIC!!
 
     //Opens explorer to browse for location of XML file
     QString filePath = QFileDialog::getOpenFileName(this,tr("Open File"),"/home",tr("XML File(*.xml)"));
@@ -59,6 +59,7 @@ void DescriptionFileReader::Read(QString filepath)
    hope = xmlReader.parse (source);
 
    qDebug()<<"Parse: "<<hope; //If returns true, it is open.
+
 }
 
 

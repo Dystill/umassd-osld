@@ -3,13 +3,21 @@
 #include <qstring.h>
 #include <qxml.h>
 #include <QTextStream>
+#include<qDebug>
 QTextStream cout (stdout);
+
+//qName = expected tag
 
 
     bool Parser::startDocument()
     {
        indent = " "; //Set indent ot an empty string because root element needs to be printed without any indentation.
         return true; //return true so parser continues without reporting errors.
+    }
+
+    bool Parser::endDocument()
+    {
+        return true;
     }
 
     bool Parser::characters(const QString& text)
@@ -23,21 +31,17 @@ QTextStream cout (stdout);
                               const QString& qName,
                               const QXmlAttributes& atts)
     {
-        QString str = QString("\n%1\\%2").arg(indent).arg(qName);
-        cout << str;
-        if (atts.length()>0)
+        qDebug()<< "Start of element" << qName;
+        for(int i = 0; i<atts.length(); i++)
         {
-            QString fieldName = atts.qName(0);
-            QString fieldValue = atts.value(0);
-            cout << QString("(%2=%3)").arg(fieldName).arg(fieldValue);
+            qDebug()<< atts.type(i) << "=" << atts.value(i);
         }
-        cout << "{";
-        indent += "    ";
         return true;
     }
-    bool Parser::endElement( const QString&, const QString&, const QString& )
+
+    bool Parser::endElement( const QString&, const QString&, const QString& qName)
     {
-        indent.remove( (uint)0, 4 );
+        qDebug() << "End of element" << qName;
         return true;
     }
 //Disregard
