@@ -60,6 +60,6 @@ void DescriptionFileReader::Read(QString filepath)
 
    qDebug()<<"Parse: "<<hope; //If returns true, it is open.
 }
-//Disregard
+
 
 
