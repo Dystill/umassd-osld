@@ -20,29 +20,19 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     scene = new OSLDGraphicsEngine(parent);
 
     // display the scene from the graphics engine in the window
+    scene->setSceneRect(scene->itemsBoundingRect().adjusted(-50, -50, 50, 50));
     ui->graphicsView->setScene(scene);
 
-    // resize window to fit the scene
     this->adjustSize();
 
     // starts the application in full screen mode
-    enterFullScreen();
+    //enterFullScreen();
     QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
 }
 
 OSLDisplay::~OSLDisplay()
 {
     delete ui;
-}
-
-void OSLDisplay::on_actionFullScreen_triggered()
-{
-    if(this->isFullScreen()) {
-        exitFullScreen();
-    }
-    else {
-        enterFullScreen();
-    }
 }
 
 void OSLDisplay::keyPressEvent(QKeyEvent *event)
@@ -107,6 +97,28 @@ bool OSLDisplay::eventFilter(QObject *object, QEvent *event)
     return false;
 }
 
+// code to execute when the window is resized
+void OSLDisplay::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);    // call parent resize event
+
+    // resize the view contents to match the window size
+    ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+
+    // fitInView initially scales the view contents down dramatically -- to 0.0410959 in matrix points m11 & m22
+    // I couldn't figure out a reason as to why, so this fixes it
+    if(initScaleFix == false) { // flagged so this only triggers once during initialization
+
+        QTransform transformer; // robot in disguise
+        /* transformer is a matrix specifying the transformations made to the shape of the view (e.g. scale, rotate, shear, etc.)
+         * it initializes to a normal & untouched shape, and that's what we want here.
+         */
+        ui->graphicsView->setTransform(transformer);    // set the graphics view contents back to normal
+
+        initScaleFix = true;    // update the flag so this part isn't executed again
+    }
+}
+
 void OSLDisplay::enterFullScreen()
 {
     QMainWindow::showFullScreen();
@@ -120,21 +132,40 @@ void OSLDisplay::exitFullScreen()
 }
 
 void OSLDisplay::zoom(int px) {
-    if(px > 0 && scaleAmount < 150) {
+    if(px > 0) {
         ui->graphicsView->scale(1.1, 1.1);
         scaleAmount *= 1.1;
     }
-    else if (px < 0 && scaleAmount > 50) {
+    else if (px < 0) {
         ui->graphicsView->scale(0.90, 0.90);
         scaleAmount *= 0.9;
     }
     //qDebug() << scaleAmount;
+    qDebug() << "z" << ui->graphicsView->matrix();
 }
 
+// when the full screen menu button is pressed
+void OSLDisplay::on_actionFullScreen_triggered()
+{
+    if(this->isFullScreen()) {
+        exitFullScreen();
+    }
+    else {
+        enterFullScreen();
+    }
+}
+
+// when the show grid button is pressed
 void OSLDisplay::on_actionShowGrid_triggered()
 {
     scene->showGrid(ui->actionShowGrid->isChecked(),
                     QRectF(ui->graphicsView->mapToScene(
                                ui->graphicsView->rect()).boundingRect()));
     ui->graphicsView->viewport()->update();
+}
+
+// when the close window button is pressed
+void OSLDisplay::on_closeButton_clicked()
+{
+    this->destroy();
 }

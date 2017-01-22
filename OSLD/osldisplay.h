@@ -23,14 +23,18 @@ private slots:
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
     void on_actionShowGrid_triggered();
+
+    void on_closeButton_clicked();
 
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
 
     qreal scaleAmount = 100;
+    bool initScaleFix = false;  // cannot figure out why the scene becomes really small initially, so this helps fix it
 
     void enterFullScreen();
     void exitFullScreen();
