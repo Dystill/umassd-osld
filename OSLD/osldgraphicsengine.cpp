@@ -54,7 +54,8 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
     for(int i = 0; i < allGates.count(); i++) {
         random = qrand() % allBlocks.count();
-        this->connectItems(allBlocks.at(random), allGates.at(i));
+        // this->connectItems(allBlocks.at(random), allGates.at(i));
+        this->connectItems(allGates.at(i), allBlocks.at(random));
     }
 
     this->drawAllItems();
