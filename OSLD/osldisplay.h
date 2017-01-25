@@ -29,6 +29,8 @@ private slots:
 
     void on_closeButton_clicked();
 
+    void on_actionShowCloseButton_triggered();
+
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;

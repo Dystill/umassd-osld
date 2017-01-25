@@ -45,7 +45,7 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuWindow">
@@ -54,6 +54,7 @@
     </property>
     <addaction name="actionFullScreen"/>
     <addaction name="actionShowGrid"/>
+    <addaction name="actionShowCloseButton"/>
    </widget>
    <addaction name="menuWindow"/>
   </widget>
@@ -73,6 +74,9 @@
    <property name="toolTip">
     <string>Toggle Full Screen</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+Return</string>
+   </property>
   </action>
   <action name="actionShowGrid">
    <property name="checkable">
@@ -83,6 +87,26 @@
    </property>
    <property name="toolTip">
     <string>This setting may slow down your computer.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionShowCloseButton">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Hide Close Button</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide On-Screen Buttons</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
    </property>
   </action>
  </widget>

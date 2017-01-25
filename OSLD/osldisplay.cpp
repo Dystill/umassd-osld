@@ -45,21 +45,6 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
         if(this->isFullScreen())
             exitFullScreen();
         break;
-    case Qt::Key_F11:                   // f11
-        if(mod == Qt::NoModifier) {
-            if(this->isFullScreen())
-                exitFullScreen();
-            else
-                enterFullScreen();
-        }
-    case Qt::Key_Return:                // enter
-        if(mod == Qt::AltModifier) {
-            if(this->isFullScreen())
-                exitFullScreen();
-            else
-                enterFullScreen();
-        }
-        break;
     case Qt::Key_Equal:                 // =
         if(mod == Qt::ControlModifier){zoom(1);zoom(1);}
         break;
@@ -168,4 +153,16 @@ void OSLDisplay::on_actionShowGrid_triggered()
 void OSLDisplay::on_closeButton_clicked()
 {
     this->destroy();
+}
+
+void OSLDisplay::on_actionShowCloseButton_triggered()
+{
+    if(ui->closeButton->isHidden()) {
+        ui->closeButton->show();
+        ui->actionShowCloseButton->setText("Hide On-Screen Buttons");
+    }
+    else {
+        ui->closeButton->hide();
+        ui->actionShowCloseButton->setText("Show On-Screen Buttons");
+    }
 }

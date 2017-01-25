@@ -166,6 +166,10 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
     bd.hovertext = QString("Block %1 Hovertext").arg(random);
     bd.status = (random % 2 == 0 ? "Valid" : "Invalid");
 
+    if(random % 2 == 1) {
+        bd.textColor = QColor(Qt::black);
+    }
+
     // for testing large title strings
     // if(random % 3 == 0) bd.title.append("@@@@@ @@@@@@@@@ @@@@@@@ @@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@ @@@@@ @@@@ @@@@@@@@@@@@@@@@ @@@ @ @@@@@@@@@@@@ @@@@@@@@@ @@@ @@@@@@@@@@@@@@@@@@ @@@@ @");
 
@@ -183,6 +187,7 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData da
     block->setDescription(data.description);
     block->setToolTip(data.hovertext);
     block->setStatus(data.status, statuses);
+    block->setTextColor(data.textColor);
 
     return block;
 }

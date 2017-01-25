@@ -21,10 +21,20 @@ Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, 
  *  Block Sizing and Dimensions
  */
 
+QColor Block::getTextColor() const
+{
+    return textColor;
+}
+
+void Block::setTextColor(const QColor &value)
+{
+    textColor = value;
+}
+
 void Block::setBlockSizing(QString title)
 {
     QFontMetricsF metrics(font);
-
+    
     qreal textWidth = metrics.boundingRect(title).width();
     qreal textHeight = metrics.boundingRect(title).height();
 
@@ -118,7 +128,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     texto.setAlignment(Qt::AlignCenter);                            // center align
 
     // set the color and font for the text
-    pen.setColor(QColor("#FFFFFF"));
+    pen.setColor(textColor);
     painter->setFont(font);
     painter->setPen(pen);
 

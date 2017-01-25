@@ -12,6 +12,7 @@ struct BlockData {
     QString description;
     QString hovertext;
     QString status;
+    QColor textColor = QColor(Qt::white);
 };
 
 class Block : public DiagramItem
@@ -21,6 +22,7 @@ private:
 
     QString status = "No Status Available";     // holds the text of the block's status, which is used to access a QMap of status/color combos
     QColor color = QColor("#888888");           // the color of the block is stored here for easier access
+    QColor textColor;
     QString title;                              // the name of the step this block represents
     QString description;                        // the description of this block
     QString hovertext;                          // the text that shows when the user hovers over the block
@@ -55,6 +57,9 @@ public:
     QColor getColor() const;
 
     void setStatus(const QString &value, QMap<QString, QString> colorMap);  // sets both status and color. color cannot be changed directly
+
+    QColor getTextColor() const;
+    void setTextColor(const QColor &value);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
