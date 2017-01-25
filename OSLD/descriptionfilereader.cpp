@@ -1,5 +1,6 @@
 #include <QtWidgets>
 #include <iostream>
+#include <stdio.h>
 #include <QXml.h>
 #include <string>
 #include "descriptionfilereader.h"
@@ -28,7 +29,7 @@ DescriptionFileReader::DescriptionFileReader(QWidget *parent) :
     QString path = d.absolutePath(); //Gets path of file from the directory
 
     QFile file(filePath); //represents file that was opened
-
+    //file.open(QIODevice::ReadOnly);
     file.setFileName(fileName);
 
     pathAndName = path + fileName; //Concatinates location of the file + the name of the file
@@ -50,16 +51,48 @@ void DescriptionFileReader::Read(QString filepath)
 {
 
    Parser handler;
-   bool hope; //determines if file is open and able to be parsed
-   xmlReader.setContentHandler(&handler);
-   xmlReader.setErrorHandler(&handler);
+   //bool hope; //determines if file is open and able to be parsed
+   //xmlReader.setContentHandler(&handler);
+   //xmlReader.setErrorHandler(&handler);
 
    QFile xmlFile (filepath);
+   xmlFile.open(QIODevice::ReadOnly);
    QXmlInputSource source (&xmlFile);
-   hope = xmlReader.parse (source);
 
-   qDebug()<<"Parse: "<<hope; //If returns true, it is open.
 
+    std::string inBuff;
+   QString outBuff;
+   QString title;
+  // hope = xmlReader.parse (source);
+
+  // qDebug()<<"Parse: "<<hope; //If returns true, it is open.
+
+   xmlReader.setDevice(&xmlFile);
+   xmlReader.readNext();
+qDebug()<< "TEST1";
+   while(!xmlReader.atEnd())
+   {
+       qDebug()<< "TEST2";
+       if(xmlReader.isStartElement())
+       {
+           qDebug()<< "TEST3";
+
+           //inBuff = (xmlReader.readElementText()).toStdString();
+           //outBuff = QString::fromStdString(inBuff); // Converts data types to make things workable
+           if (outBuff == "diagram")
+           {
+                qDebug()<< "TEST4";
+                title = outBuff;
+                qDebug()<< "TEST5";
+                qDebug()<< " Diagram's name is: "<< title;
+                qDebug()<< "TEST6";
+           }
+       }
+       else
+       {
+           xmlReader.readNext();
+       }
+   }
 }
 
 
