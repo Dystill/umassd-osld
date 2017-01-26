@@ -107,6 +107,10 @@ Subdiagram *OSLDGraphicsEngine::createSubdiagram(DiagramItem *rootItem, QList<QS
     sub->root = rootItem;   // store the root item
 
     for(int i = 0; i < allItems.count(); i++) {                 // loop through each item in allItems
+        for(int j = 0; j < itemIds.count(); j++) {                  // loop through each string in the id list
+            if(allItems.at(i)->id().compare(itemIds.at(j)) == 0) {  // if the item's id matches the id in the id list
+                sub->inputItems.append(allItems.at(i));              // add the item to the subdiagram
+                j = itemIds.count();                                // go to the next id
             }
         }
     }
