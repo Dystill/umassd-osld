@@ -10,7 +10,7 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc, GateType type)
     gateType = type;            // set the gate type
     this->setGateSizing();
 
-    QString hovertext = id;
+    this->hovertext = id;
 
     if(type == AndGate) {
         hovertext.append(" - AND gate");
@@ -68,6 +68,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     QRectF rect = boundingRect();
     QBrush brush(QColor("#bbdefb"));
     QPen pen(QColor("#212121"));
+    QTextOption texto;
 
     pen.setWidth(2);
     pen.setCosmetic(true);
@@ -115,6 +116,25 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     // draw circles for the connector entry points
     painter->drawEllipse(QPointF(rect.left(), rect.center().y()), this->getCircleRadius(), this->getCircleRadius());
     painter->drawEllipse(QPointF(rect.right(), rect.center().y()), this->getCircleRadius(), this->getCircleRadius());
+
+    // draw title if necessary
+
+    if(!this->title.isEmpty()) {
+        // set some text flags
+        texto.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);   // wordwrap
+        texto.setAlignment(Qt::AlignCenter);                            // center align
+
+        // set the color and font for the text
+        pen.setColor(textColor);
+        QFont font;
+        font.setPointSize(12);
+        painter->setFont(font);
+        painter->setPen(pen);
+
+        // draw the text
+        painter->drawText(rect, this->title, texto);
+    }
+
 }
 
 QPainterPath *Gate::drawANDGatePath(int width, int height)
@@ -199,4 +219,49 @@ QPainterPath *Gate::drawNOTGatePath(int width, int height)
                      dotRadius, dotRadius);
 
     return path;
+}
+
+
+
+/*
+ * GETTERS & SETTERS
+ */
+
+QString Gate::getTitle() const
+{
+    return title;
+}
+
+void Gate::setTitle(const QString &value)
+{
+    this->title = value;
+}
+
+QString Gate::getDescription() const
+{
+    return description;
+}
+
+void Gate::setDescription(const QString &value)
+{
+    description = value;
+}
+
+QString Gate::getStatus() const
+{
+    return status;
+}
+
+void Gate::setStatus(const QString &value, QMap<QString, QString> colorMap)
+{
+    //qDebug() << value;
+    status = value;
+
+    //qDebug() << colorMap[status];
+    color = QColor(colorMap[status]);
+}
+
+QColor Gate::getColor() const
+{
+    return color;
 }

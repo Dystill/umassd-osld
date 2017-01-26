@@ -17,8 +17,8 @@ struct CommonSource {
 // holds subdiagram information
 struct Subdiagram {
     QString name;
-    bool showOutline;
-    QList<DiagramItem *> items;
+    DiagramItem *root;                  // the final item for the diagram
+    QList<DiagramItem *> inputItems;    // all other diagram items in the subdiagram
 };
 
 class OSLDGraphicsEngine : public QGraphicsScene
@@ -45,7 +45,7 @@ private:
     QList<Connector *> allConns;    // a list of all connector objects for this diagram
 
 
-    Subdiagram *createSubdiagram(QList<QString> ids, QString name, bool outline = false);
+    Subdiagram *createSubdiagram(DiagramItem *rootItem, QList<QString> itemIds, QString name);
 
     // functions for creating gates
     Gate *getGateInfoFromDescriptionFile(QPointF pos);

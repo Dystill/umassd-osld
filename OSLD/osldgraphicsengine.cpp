@@ -99,18 +99,14 @@ void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
     }
 }
 
-Subdiagram *OSLDGraphicsEngine::createSubdiagram(QList<QString> ids, QString name, bool outline)
+Subdiagram *OSLDGraphicsEngine::createSubdiagram(DiagramItem *rootItem, QList<QString> itemIds, QString name)
 {
     Subdiagram *sub = new Subdiagram;
 
     sub->name = name;
-    sub->showOutline = outline;
+    sub->root = rootItem;   // store the root item
 
-    for(int i = 0; i < allItems.count(); i++) {                // loop through each item in allItems
-        for(int j = 0; j < ids.count(); j++) {              // loop through each string in the id list
-            if(allItems.at(i)->id().compare(ids.at(j)) == 0) { // if the item's id matches the id in the id list
-                sub->items.append(allItems.at(i));             // add the item to the subdiagram
-                j = ids.count();                            // go to the next id
+    for(int i = 0; i < allItems.count(); i++) {                 // loop through each item in allItems
             }
         }
     }
