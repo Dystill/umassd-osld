@@ -280,7 +280,7 @@
 				</connect>
 			</connections>
 		</subdiagram>
-		<!-- another subdiagram held within block_2 in the previous sibdiagram -->
+		<!-- another subdiagram held within block_2 in the previous subdiagram -->
 		<subdiagram root_item_id="block_2">
 			<subdiagram_data>
 				<name column="name">block_2 subdiagram</name>

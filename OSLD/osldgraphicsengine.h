@@ -17,6 +17,7 @@ struct CommonSource {
 // holds subdiagram information
 struct Subdiagram {
     QString name;
+    QString description;
     DiagramItem *root;                  // the final item for the diagram
     QList<DiagramItem *> inputItems;    // all other diagram items in the subdiagram
 };
@@ -38,7 +39,7 @@ private:
 
     bool showGridBackground = false;
 
-    QList<Block *> allSubdiagrams;  // a list of all of the blocks in the diagram
+    QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
     QList<DiagramItem *> allItems;  // a list of both blocks and gates
