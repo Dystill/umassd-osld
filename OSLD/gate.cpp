@@ -10,7 +10,7 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc, GateType type)
     gateType = type;            // set the gate type
     this->setGateSizing();
 
-    this->hovertext = id;
+    QString hovertext = id;
 
     if(type == AndGate) {
         hovertext.append(" - AND gate");
@@ -119,20 +119,20 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     // draw title if necessary
 
-    if(!this->title.isEmpty()) {
+    if(!this->getTitle().isEmpty()) {
         // set some text flags
         texto.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);   // wordwrap
         texto.setAlignment(Qt::AlignCenter);                            // center align
 
         // set the color and font for the text
-        pen.setColor(textColor);
+        pen.setColor(this->getTextColor());
         QFont font;
         font.setPointSize(12);
         painter->setFont(font);
         painter->setPen(pen);
 
         // draw the text
-        painter->drawText(rect, this->title, texto);
+        painter->drawText(rect, this->getTitle(), texto);
     }
 
 }
@@ -219,49 +219,4 @@ QPainterPath *Gate::drawNOTGatePath(int width, int height)
                      dotRadius, dotRadius);
 
     return path;
-}
-
-
-
-/*
- * GETTERS & SETTERS
- */
-
-QString Gate::getTitle() const
-{
-    return title;
-}
-
-void Gate::setTitle(const QString &value)
-{
-    this->title = value;
-}
-
-QString Gate::getDescription() const
-{
-    return description;
-}
-
-void Gate::setDescription(const QString &value)
-{
-    description = value;
-}
-
-QString Gate::getStatus() const
-{
-    return status;
-}
-
-void Gate::setStatus(const QString &value, QMap<QString, QString> colorMap)
-{
-    //qDebug() << value;
-    status = value;
-
-    //qDebug() << colorMap[status];
-    color = QColor(colorMap[status]);
-}
-
-QColor Gate::getColor() const
-{
-    return color;
 }

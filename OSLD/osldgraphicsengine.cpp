@@ -4,7 +4,6 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
-    int random;
 
     this->parent = parent;
 
@@ -19,103 +18,56 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     sourceInfo.type = "SQLite Database";
     sources["source1"] = sourceInfo;
 
-    // get gates from the description file
-    QPointF point(600, 0);
-    for(int i = 0; i < 6; i++) {
+    for(int i = 0; i < 2; i++) {
+        QPointF rootPoint(0, 0);
 
-        if(!allGates.isEmpty()) {
-            point.setY(point.y() + allGates.at(i - 1)->height() + 20);
-        }
-
-        Gate *gate = getGateInfoFromDescriptionFile(point);
-
-        allGates.append(gate);
-        allItems.append(gate);
-    }
-
-    // get blocks from the description file
-    point.setX(0);
-    point.setY(0);
-    for(int i = 0; i < 6; i++) {
-
-        if(!allBlocks.isEmpty()) {
-            point.setY(point.y() + allBlocks.at(i - 1)->height() + 20);
-        }
-
-        Block *block = getBlockInfoFromDescriptionFile(point);
-
+        // set the root for the subdiagram
+        Block *block = getBlockInfoFromDescriptionFile(rootPoint);
         allBlocks.append(block);
         allItems.append(block);
 
-        random = qrand() % allGates.count();
+        // add items
+        QPointF itemPoints;
+        itemPoints.setX(rootPoint.x() - 200);
+        itemPoints.setY(rootPoint.y());
 
-        this->connectItems(block, allGates.at(random));
-    }
+        Gate *gate = getGateInfoFromDescriptionFile(itemPoints);
+        allGates.append(gate);
+        allItems.append(gate);
 
-    for(int i = 0; i < allGates.count(); i++) {
-        random = qrand() % allBlocks.count();
-        // this->connectItems(allBlocks.at(random), allGates.at(i));
-        this->connectItems(allGates.at(i), allBlocks.at(random));
-    }
+        itemPoints.setX(rootPoint.x() - 200);
+        itemPoints.setY(rootPoint.y() - 100);
+        Block *block1 = getBlockInfoFromDescriptionFile(itemPoints);
+        allBlocks.append(block1);
+        allItems.append(block1);
 
-    this->drawAllItems();
-}
+        itemPoints.setY(rootPoint.y() + 200);
+        Block *block2 = getBlockInfoFromDescriptionFile(itemPoints);
+        allBlocks.append(block2);
+        allItems.append(block2);
 
-// overrides to draw a grid for the background
-void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
-{
-    painter->fillRect(rect, QBrush(QColor("#fafafa")));
+        // set subdiagram nam and description
+        QString name = QString("Subdiagram %1").arg(i);
+        QString desc = QString("Subdiagram Description for %1").arg(i);
 
-    if(showGridBackground) {
-        QPen pen;
-        pen.setCosmetic(true);
-        pen.setColor(QColor("#212121"));
-        painter->setPen(pen);
+        Subdiagram *sub = new Subdiagram(block, name, desc);
+        sub->addInputItem(gate);
+        sub->connectItems(gate, block);
 
-        qreal topY = rect.top();
-        qreal leftX = rect.left();
-        qreal bottomY = rect.bottom();
-        qreal rightX = rect.right();
+        sub->addInputItem(block1);
+        sub->connectItems(block1, gate);
 
-        qreal startingX = int(leftX) - (int(leftX) % gridUnitSize);
-        qreal startingY = int(topY) - (int(topY) % gridUnitSize);
+        sub->addInputItem(block2);
+        sub->connectItems(block2, gate);
 
-        /*
-        for(qreal x = startingX; x < rightX; x += gridUnitSize) {
-            backgroundGrid.append(QLineF(x, topY, x, bottomY));
-        }
-        for(qreal y = startingY; y < bottomY; y += gridUnitSize) {
-            backgroundGrid.append(QLineF(leftX, y, rightX, y));
-        }
-        painter->drawLines(backgroundGrid.data(), backgroundGrid.size());
-        */
-
-        for(qreal x = startingX; x < rightX; x += gridUnitSize) {
-            for(qreal y = startingY; y < bottomY; y += gridUnitSize) {
-                backgroundDots.append(QPointF(x, y));
-            }
-        }
-        painter->drawPoints(backgroundDots.data(), backgroundDots.size());
+        sub->drawAllItems();
+        allSubdiagrams.append(sub);
     }
 }
 
-Subdiagram *OSLDGraphicsEngine::createSubdiagram(DiagramItem *rootItem, QList<QString> itemIds, QString name)
+QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
 {
-    Subdiagram *sub = new Subdiagram;
-
-    sub->name = name;
-    sub->root = rootItem;   // store the root item
-
-    for(int i = 0; i < allItems.count(); i++) {                 // loop through each item in allItems
-        for(int j = 0; j < itemIds.count(); j++) {                  // loop through each string in the id list
-            if(allItems.at(i)->id().compare(itemIds.at(j)) == 0) {  // if the item's id matches the id in the id list
-                sub->inputItems.append(allItems.at(i));              // add the item to the subdiagram
-                j = itemIds.count();                                // go to the next id
-            }
-        }
-    }
-
-    return sub;
+    return allSubdiagrams;
 }
 
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
@@ -137,7 +89,11 @@ Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
         type = NotGate;
     }
 
-    return new Gate(this->parent, id, pos, type);
+    Gate *gate = new Gate(this->parent, id, pos, type);
+
+    gate->setStatus("Valid", statuses);
+
+    return gate;
 }
 
 
@@ -169,6 +125,9 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
     if(random % 2 == 1) {
         bd.textColor = QColor(Qt::black);
     }
+    else if(random % 3 == 0) {
+
+    }
 
     // for testing large title strings
     // if(random % 3 == 0) bd.title.append("@@@@@ @@@@@@@@@ @@@@@@@ @@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@ @@@@@ @@@@ @@@@@@@@@@@@@@@@ @@@ @ @@@@@@@@@@@@ @@@@@@@@@ @@@ @@@@@@@@@@@@@@@@@@ @@@@ @");
@@ -190,65 +149,4 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData da
     block->setTextColor(data.textColor);
 
     return block;
-}
-
-void OSLDGraphicsEngine::drawAllItems()
-{
-    for(int i = 0; i < allConns.count(); i++) {
-        //qDebug() << "Drawing Connector" << i;
-        this->addItem(allConns.at(i));
-    }
-    for(int i = 0; i < allGates.count(); i++) {
-        //qDebug() << "Drawing Gate" << i;
-        this->addItem(allGates.at(i));
-    }
-    for(int i = 0; i < allBlocks.count(); i++) {
-        //qDebug() << "Drawing Block" << i;
-        this->addItem(allBlocks.at(i));
-    }
-}
-
-
-/*
- *  CONNECTOR FUNCTIONS
- */
-
-void OSLDGraphicsEngine::connectItems(Gate *input, DiagramItem *output)
-{
-    QPointF startPoint = input->outputPoint();
-    QPointF endPoint = output->inputPoint();
-
-    Connector *conn = new Connector(startPoint, endPoint);
-
-    //qDebug() << "Connecting Gate to Item:" << startPoint << "to" << endPoint;
-
-    input->addOutputConnector(conn);
-    output->addInputConnector(conn);
-
-    allConns.append(conn);
-}
-
-void OSLDGraphicsEngine::connectItems(Block *input, DiagramItem *output)
-{
-    QPointF startPoint = input->outputPoint();
-    QPointF endPoint = output->inputPoint();
-    QColor color = input->getColor();
-
-    //qDebug() << "Connecting Block to Item:" << startPoint << "to" << endPoint;
-
-    Connector *conn = new Connector(startPoint, endPoint, color);
-
-    input->addOutputConnector(conn);
-    output->addInputConnector(conn);
-
-    allConns.append(conn);
-}
-
-/*
- *  OTHER FUNCTIONS
- */
-
-void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {
-    showGridBackground = show;
-    this->invalidate(area, BackgroundLayer);
 }

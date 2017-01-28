@@ -33,7 +33,7 @@ private slots:
 
 private:
     Ui::OSLDisplay *ui;
-    OSLDGraphicsEngine *scene;
+    Subdiagram *scene;
 
     qreal scaleAmount = 100;
     bool initScaleFix = false;  // cannot figure out why the scene becomes really small initially, so this helps fix it

@@ -3,16 +3,17 @@
 /*
  *  CONSTRUCTOR
  */
+
 Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(parent, id, loc)
 {
-    this->maxWidth = (this->parent()->logicalDpiX() * 2);
-    this->font.setPointSize(12);
+    this->setMaxWidth(this->parent()->logicalDpiX() * 2);
+    this->setFontPointSize(12);
 
-    this->title = t;
-    this->description = desc;
+    this->setTitle(t);
+    this->setDescription(desc);
     this->setToolTip(ht);
-    this->setBlockSizing(this->title);
+    this->setBlockSizing(this->getTitle());
 
     this->isBlock(true);
 }
@@ -21,34 +22,9 @@ Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, 
  *  Block Sizing and Dimensions
  */
 
-QColor Block::getTextColor() const
-{
-    return textColor;
-}
-
-void Block::setTextColor(const QColor &value)
-{
-    textColor = value;
-}
-
 void Block::setBlockSizing(QString title)
 {
-    QFontMetricsF metrics(font);
-    
-    qreal textWidth = metrics.boundingRect(title).width();
-    qreal textHeight = metrics.boundingRect(title).height();
-
-    //qDebug() << "textWidth:" << title;
-    //qDebug() << "textWidth:" << textWidth;
-    //qDebug() << "textHeight:" << textHeight;
-
-    int cutOff = textWidth / this->maxWidth;
-
-    this->setWidth(((textWidth > maxWidth) ? maxWidth : textWidth) + (this->parent()->logicalDpiX() / 2));
-    this->setHeight((((textHeight * cutOff)) + 1) + (this->parent()->logicalDpiY() / 2));
-
-    this->update();
-    this->updateConnectors();
+    DiagramItem::setItemSizing(title);
 }
 
 
@@ -79,8 +55,8 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     // initialize items
     QRectF rect = boundingRect();   // box for the block
-    QBrush brush(this->color);      // brush to fill the rectangle block
-    QPen pen(QColor(this->color));    // pen to outlien the rectable block
+    QBrush brush(this->getColor());      // brush to fill the rectangle block
+    QPen pen(QColor(this->getColor()));    // pen to outlien the rectable block
     QTextOption texto;              // options for the title
 
     // set the pen
@@ -128,12 +104,12 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     texto.setAlignment(Qt::AlignCenter);                            // center align
 
     // set the color and font for the text
-    pen.setColor(textColor);
-    painter->setFont(font);
+    pen.setColor(this->getTextColor());
+    painter->setFont(this->getFont());
     painter->setPen(pen);
 
     // draw the text
-    painter->drawText(textRect, this->title, texto);
+    painter->drawText(textRect, this->getTitle(), texto);
 
     //qDebug() << this->inputPoint();
     //qDebug() << this->outputPoint();
@@ -147,63 +123,31 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 // when the user clicks down on a block
 void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse pressed onto" << this->title;
+    qDebug() << "Mouse pressed onto" << this->getTitle();
     DiagramItem::mousePressEvent(event);
 }
 
 void Block::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse moving" << this->title;
+    qDebug() << "Mouse moving" << this->getTitle();
     DiagramItem::mouseMoveEvent(event);
 }
 
 // when the user releases the mouse click
 void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse released" << this->title;
+    qDebug() << "Mouse released" << this->getTitle();
     DiagramItem::mouseReleaseEvent(event);
 }
 
-/*
- * GETTERS & SETTERS
- */
 
-QString Block::getTitle() const
+Subdiagram *Block::getSubdiagram() const
 {
-    return title;
+    return subdiagram;
 }
 
-void Block::setTitle(const QString &value)
+void Block::setSubdiagram(Subdiagram *value)
 {
-    this->title = value;
-    this->setBlockSizing(this->title);
-}
-
-QString Block::getDescription() const
-{
-    return description;
-}
-
-void Block::setDescription(const QString &value)
-{
-    description = value;
-}
-
-QString Block::getStatus() const
-{
-    return status;
-}
-
-void Block::setStatus(const QString &value, QMap<QString, QString> colorMap)
-{
-    //qDebug() << value;
-    status = value;
-
-    //qDebug() << colorMap[status];
-    color = QColor(colorMap[status]);
-}
-
-QColor Block::getColor() const
-{
-    return color;
+    subdiagram = value;
+    this->update();
 }
