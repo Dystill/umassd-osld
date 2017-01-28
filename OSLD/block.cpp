@@ -53,31 +53,32 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    // initialize items
-    QRectF rect = boundingRect();   // box for the block
-    QBrush brush(this->getColor());      // brush to fill the rectangle block
-    QPen pen(QColor(this->getColor()));    // pen to outlien the rectable block
-    QTextOption texto;              // options for the title
+    // initialize painting area to the bounding rectangle
+    QRectF rect = boundingRect();
+    QTextOption texto;              // options for the title text
 
-    // set the pen
+    // set the pen to draw lines
+    QPen pen(QColor("#212121"));    // pen to outline the rectable block
     pen.setWidth(2);                    // thickness
     pen.setCosmetic(true);              // same thickness with scaling
     pen.setJoinStyle(Qt::RoundJoin);    // rounded corners
     pen.setCapStyle(Qt::RoundCap);      // rounded line ends
-    pen.setColor(QColor("#212121"));
     painter->setPen(pen);
+
+    // set the brush to fill areas with the status color
+    QBrush brush(this->getColor());      // brush to fill the rectangle block
     painter->setBrush(brush);
 
     //// Drawing the Connector entry lines
-    // adjust the drawing rectangle to draw the connector lines and circles
+    // adjust the painting area to draw the connector lines and circles
     rect.setLeft(rect.left() + this->getCircleRadius());
     rect.setRight(rect.right() - this->getCircleRadius());
 
-    // make points for the connector entry areas
+    // make points to place the connector entry circles
     QPointF middleLeft = QPointF(rect.left(), rect.center().y());
     QPointF middleRight = QPointF(rect.right(), rect.center().y());
 
-    // draw middle line
+    // draw the line crossing the block
     painter->drawLine(middleLeft, middleRight);
 
     // draw the connector circles
@@ -85,13 +86,28 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawEllipse(middleRight, this->getCircleRadius(), this->getCircleRadius());
 
     //// Drawing the Block
-    // resize the drawing rectangle to make the block
+    // resize the painting area to make the block
     rect.setLeft(rect.left() + this->getLineLength());
     rect.setRight(rect.right() - this->getLineLength());
 
     // draw the block
-    painter->drawRect(rect);
+    if(this->getSubdiagram() == 0) {
+        painter->drawRect(rect);
+    }
+    else {
+        // reset the painter so there's no brush color
+        painter->setBrush(QBrush(Qt::transparent));
 
+        // prepare a gradient going down the block
+        QLinearGradient gradient(rect.center().x(), rect.top(), rect.center().x(), rect.bottom());
+            gradient.setColorAt(0, this->getColor().lighter(150));
+            gradient.setColorAt(0.25, this->getColor());
+            gradient.setColorAt(0.75, this->getColor());
+            gradient.setColorAt(1, this->getColor().darker(150));
+
+        painter->fillRect(rect, gradient);
+        painter->drawRect(rect);
+    }
 
     //// Drawing the Title text
     // create a textbox for the title
@@ -123,20 +139,17 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 // when the user clicks down on a block
 void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse pressed onto" << this->getTitle();
     DiagramItem::mousePressEvent(event);
 }
 
 void Block::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse moving" << this->getTitle();
     DiagramItem::mouseMoveEvent(event);
 }
 
 // when the user releases the mouse click
 void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse released" << this->getTitle();
     DiagramItem::mouseReleaseEvent(event);
 }
 
@@ -150,4 +163,14 @@ void Block::setSubdiagram(Subdiagram *value)
 {
     subdiagram = value;
     this->update();
+}
+
+bool Block::hasSubdiagram() const
+{
+    if(subdiagram == 0) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }

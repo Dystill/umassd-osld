@@ -186,26 +186,17 @@ void DiagramItem::removeOutputConnector(Connector *value)
 
 void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    qDebug() << "Mouse pressed onto" << this->id();
     QGraphicsItem::mousePressEvent(mouseEvent);
-
-    update();
 }
 
 void DiagramItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    qDebug() << "Mouse moving" << this->id();
     QGraphicsItem::mouseMoveEvent(mouseEvent);
-
-    update();
 }
 
 void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    qDebug() << "Mouse released" << this->id();
     QGraphicsItem::mouseReleaseEvent(mouseEvent);
-
-    update();
 }
 
 

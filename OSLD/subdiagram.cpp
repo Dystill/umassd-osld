@@ -69,6 +69,36 @@ void Subdiagram::drawBackground(QPainter *painter, const QRectF &rect)
     }
 }
 
+void Subdiagram::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsScene::mousePressEvent(event);
+    clickedItem = itemAt(event->scenePos(), QTransform());
+    clickPosition = event->scenePos();
+    update();
+}
+
+void Subdiagram::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsScene::mouseMoveEvent(event);
+}
+
+void Subdiagram::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsScene::mouseReleaseEvent(event);
+    QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());
+    if(releaseItem == clickedItem && clickPosition == event->scenePos()) {
+        DiagramItem *pressedItem = qgraphicsitem_cast<DiagramItem *>(releaseItem);
+        if(pressedItem->isBlock()) {
+            Block *pressedBlock = qgraphicsitem_cast<Block *>(pressedItem);
+            if(pressedBlock->hasSubdiagram()) {
+                qDebug() << "Go to" << pressedBlock->getSubdiagram()->getName();
+            }
+        }
+    }
+    update();
+}
+
+
 void Subdiagram::drawAllItems()
 {
     for(int i = 0; i < connectors.count(); i++) {

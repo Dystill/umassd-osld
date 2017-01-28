@@ -20,7 +20,7 @@ struct BlockData {
 class Block : public DiagramItem
 {
 private:
-    Subdiagram *subdiagram;
+    Subdiagram *subdiagram = 0;
 
 public:
     // constructor
@@ -39,6 +39,7 @@ public:
     Subdiagram *getSubdiagram() const;
     void setSubdiagram(Subdiagram *value);
 
+    bool hasSubdiagram() const;
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

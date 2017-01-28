@@ -35,13 +35,13 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
         allGates.append(gate);
         allItems.append(gate);
 
-        itemPoints.setX(rootPoint.x() - 200);
-        itemPoints.setY(rootPoint.y() - 100);
+        itemPoints.setX(itemPoints.x() - 400);
+        itemPoints.setY(itemPoints.y() - 100);
         Block *block1 = getBlockInfoFromDescriptionFile(itemPoints);
         allBlocks.append(block1);
         allItems.append(block1);
 
-        itemPoints.setY(rootPoint.y() + 200);
+        itemPoints.setY(itemPoints.y() + 200);
         Block *block2 = getBlockInfoFromDescriptionFile(itemPoints);
         allBlocks.append(block2);
         allItems.append(block2);
@@ -63,11 +63,6 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
         sub->drawAllItems();
         allSubdiagrams.append(sub);
     }
-}
-
-QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
-{
-    return allSubdiagrams;
 }
 
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
@@ -149,4 +144,10 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData da
     block->setTextColor(data.textColor);
 
     return block;
+}
+
+
+QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
+{
+    return allSubdiagrams;
 }

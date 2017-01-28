@@ -23,6 +23,9 @@ private:
     int gridUnitSize = 20;
     bool showGridBackground = false;
 
+    QGraphicsItem *clickedItem;
+    QPointF clickPosition;
+
 public:
     Subdiagram();
     Subdiagram(Block *root, QString name, QString description);
@@ -45,6 +48,9 @@ public:
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
 
 #endif // SUBDIAGRAM_H
