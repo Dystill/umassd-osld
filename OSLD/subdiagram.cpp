@@ -8,7 +8,7 @@ Subdiagram::Subdiagram()
 Subdiagram::Subdiagram(Block *root, QString name, QString description)
 {
     this->root = root;
-    this->root->setSubdiagram(this);
+    this->root->setChildSubdiagram(this);
     this->name = name;
     this->description = description;
 }
@@ -73,7 +73,7 @@ void Subdiagram::setInputItems(const QList<DiagramItem *> &value)
 
 void Subdiagram::addInputItem(DiagramItem *value) {
     inputItems.append(value);
-    value->setPartOfSubdiagram(this);
+    value->setParentSubdiagram(this);
 }
 
 QList<Connector *> Subdiagram::getConnectors() const

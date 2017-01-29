@@ -4,14 +4,14 @@
  *  CONSTRUCTOR
  */
 
-Subdiagram *DiagramItem::getPartOfSubdiagram() const
+Subdiagram *DiagramItem::getParentSubdiagram() const
 {
-    return partOfSubdiagram;
+    return parentSubdiagram;
 }
 
-void DiagramItem::setPartOfSubdiagram(Subdiagram *value)
+void DiagramItem::setParentSubdiagram(Subdiagram *value)
 {
-    partOfSubdiagram = value;
+    parentSubdiagram = value;
 }
 
 QPointF DiagramItem::getLocation() const

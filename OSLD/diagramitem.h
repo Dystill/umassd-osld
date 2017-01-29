@@ -28,7 +28,7 @@ private:
     QString hovertext;                          // the text that shows when the user hovers over the block
     QPointF location = QPointF(0,0);
 
-    Subdiagram *partOfSubdiagram = 0;
+    Subdiagram *parentSubdiagram = 0;
 
     QFont font;         // font for the title text
 
@@ -110,8 +110,8 @@ public:
     void setFont(const QFont &value);
     void setFontPointSize(int size);
 
-    Subdiagram *getPartOfSubdiagram() const;
-    void setPartOfSubdiagram(Subdiagram *value);
+    Subdiagram *getParentSubdiagram() const;
+    void setParentSubdiagram(Subdiagram *value);
 
     QPointF getLocation() const;
 

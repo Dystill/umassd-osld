@@ -4,16 +4,6 @@
  *  CONSTRUCTOR
  */
 
-bool Block::isCurrentlyRoot() const
-{
-    return currentlyRoot;
-}
-
-void Block::setCurrentlyRoot(bool value)
-{
-    currentlyRoot = value;
-}
-
 Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(parent, id, loc)
 {
@@ -101,7 +91,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     rect.setRight(rect.right() - this->getLineLength());
 
     // draw the block
-    if(this->getSubdiagram() == 0) {
+    if(this->getChildSubdiagram() == 0) {
         painter->drawRect(rect);
     }
     else {
@@ -170,20 +160,20 @@ void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
-Subdiagram *Block::getSubdiagram() const
+Subdiagram *Block::getChildSubdiagram() const
 {
-    return subdiagram;
+    return childSubdiagram;
 }
 
-void Block::setSubdiagram(Subdiagram *value)
+void Block::setChildSubdiagram(Subdiagram *value)
 {
-    subdiagram = value;
+    childSubdiagram = value;
     this->update();
 }
 
-bool Block::hasSubdiagram() const
+bool Block::hasChildSubdiagram() const
 {
-    if(subdiagram == 0) {
+    if(childSubdiagram == 0) {
         return false;
     }
     else {
@@ -192,6 +182,7 @@ bool Block::hasSubdiagram() const
 }
 
 
+// returns the location this block should be at when it is the root item
 QPointF Block::getRootLocation() const
 {
     return rootLocation;
@@ -200,4 +191,16 @@ QPointF Block::getRootLocation() const
 void Block::setRootLocation(const QPointF &value)
 {
     rootLocation = value;
+}
+
+
+// returns true if this item is the root item of the currently displayed subdiagram
+bool Block::isCurrentlyRoot() const
+{
+    return currentlyRoot;
+}
+
+void Block::setCurrentlyRoot(bool value)
+{
+    currentlyRoot = value;
 }

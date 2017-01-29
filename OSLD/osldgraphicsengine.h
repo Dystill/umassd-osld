@@ -27,6 +27,7 @@ private:
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
     QList<DiagramItem *> allItems;  // a list of both blocks and gates
 
+    QList<Block *> rootPathList;    // holds the chain of root items to the current subdiagram
 
     QVarLengthArray<QLineF> backgroundGrid;
     QVarLengthArray<QPointF> backgroundDots;
@@ -43,8 +44,6 @@ private:
     // functions for creating blocks
     Block *getBlockInfoFromDescriptionFile(QPointF pos);    // get information from the description file reader
     Block *buildBlock(QString id, QPointF position, BlockData data);    // passes data into a block
-
-    void drawAllItems();    // draws all of the items in the three "all" lists
 
 
 public:
@@ -66,6 +65,9 @@ public:
     Block *retrieveBlock(QString id);
     Subdiagram *getSubdiagramInfoFromDescriptionFile(Block *root, int index);
     void hideSubdiagramItems(Subdiagram *sub);
+
+    QList<Block *> getRootPathList() const;
+
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

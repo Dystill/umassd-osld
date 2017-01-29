@@ -259,6 +259,11 @@
 			<subdiagram_data>
 				<name column="name">Final output group</name>
 				<description column="desc">the main starting diagram</description>
+				<!-- the location to use for the root item for this diagram -->
+				<root_item_location>
+					<X>456</X>
+					<Y>139</Y>
+				</root_item_location>
 			</subdiagram_data>
 			<!-- the connections tag holds information for how the items are connected -->
 			<connections>
@@ -285,6 +290,10 @@
 			<subdiagram_data>
 				<name column="name">block_2 subdiagram</name>
 				<description column="desc">the diagram shown after clicking block_2</description>
+				<root_item_location>
+					<X>345</X>
+					<Y>234</Y>
+				</root_item_location>
 			</subdiagram_data>
 			<connections>
 				<connect>

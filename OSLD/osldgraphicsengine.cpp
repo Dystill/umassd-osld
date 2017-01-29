@@ -76,6 +76,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
         allSubdiagrams.append(sub);
     }
 
+    rootPathList.append(allSubdiagrams.at(0)->getRoot());
     this->drawSubdiagramItems(allSubdiagrams.at(0));
 }
 
@@ -97,6 +98,11 @@ Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root
 }
 
 // create a gate with random information
+QList<Block *> OSLDGraphicsEngine::getRootPathList() const
+{
+    return rootPathList;
+}
+
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
 
     int random = qrand() % 123456;  // make a random number
@@ -187,23 +193,32 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
             // check if the block has a subdiagram
-            if(pressedBlock->hasSubdiagram()) {
+            if(pressedBlock->hasChildSubdiagram()) {
 
-                Subdiagram *sub = pressedBlock->getSubdiagram();    // get the block's subdiagram
+                Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
 
                 // if the root block was pressed and it's not the top level subdiagram
-                if(sub == currentSubdiagram && pressedBlock->getPartOfSubdiagram() != 0) {
-                    this->hideSubdiagramItems(currentSubdiagram);
-                    pressedBlock->setPos(pressedBlock->getLocation());
-                    this->drawSubdiagramItems(pressedBlock->getPartOfSubdiagram());
+                if(sub == currentSubdiagram) {
+                    if(pressedBlock->getParentSubdiagram() != 0) {
+                        this->hideSubdiagramItems(currentSubdiagram);
+                        pressedBlock->setPos(pressedBlock->getLocation());
+                        rootPathList.removeOne(pressedBlock);
+                        this->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
+                    }
                 }
                 // else when a regular subdiagram block was pressed
                 else {
                     this->hideSubdiagramItems(currentSubdiagram);
-                    this->drawSubdiagramItems(pressedBlock->getSubdiagram());
+                    rootPathList.append(pressedBlock);
+                    this->drawSubdiagramItems(pressedBlock->getChildSubdiagram());
                 }
             }
         }
+    }
+
+    qDebug() << "\nCurrent path:";
+    for(int i = 0; i < rootPathList.count(); i++) {
+        qDebug() << rootPathList.at(i)->getTitle();
     }
 
     QGraphicsScene::mouseReleaseEvent(event);

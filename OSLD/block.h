@@ -20,7 +20,7 @@ struct BlockData {
 class Block : public DiagramItem
 {
 private:
-    Subdiagram *subdiagram = 0; // holds subdiagram if this block has one
+    Subdiagram *childSubdiagram = 0; // holds subdiagram if this block has one
 
     QPointF rootLocation = QPointF(0,0);
     bool currentlyRoot = false;
@@ -37,9 +37,11 @@ public:
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;    // gives default sizes for items to use
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,   // paints the graphics to use for the object
                QWidget *widget);
-    Subdiagram *getSubdiagram() const;
-    void setSubdiagram(Subdiagram *value);
-    bool hasSubdiagram() const;
+
+    Subdiagram *getChildSubdiagram() const;
+    void setChildSubdiagram(Subdiagram *value);
+    bool hasChildSubdiagram() const;
+
     QPointF getRootLocation() const;
     void setRootLocation(const QPointF &value);
 
