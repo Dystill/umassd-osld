@@ -3,16 +3,17 @@
 /*
  *  CONSTRUCTOR
  */
+
 Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(parent, id, loc)
 {
-    this->maxWidth = (this->parent()->logicalDpiX() * 2);
-    this->font.setPointSize(12);
+    this->setMaxWidth(this->parent()->logicalDpiX() * 2);
+    this->setFontPointSize(12);
 
-    this->title = t;
-    this->description = desc;
+    this->setTitle(t);
+    this->setDescription(desc);
     this->setToolTip(ht);
-    this->setBlockSizing(this->title);
+    this->setBlockSizing(this->getTitle());
 
     this->isBlock(true);
 }
@@ -21,34 +22,9 @@ Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, 
  *  Block Sizing and Dimensions
  */
 
-QColor Block::getTextColor() const
-{
-    return textColor;
-}
-
-void Block::setTextColor(const QColor &value)
-{
-    textColor = value;
-}
-
 void Block::setBlockSizing(QString title)
 {
-    QFontMetricsF metrics(font);
-    
-    qreal textWidth = metrics.boundingRect(title).width();
-    qreal textHeight = metrics.boundingRect(title).height();
-
-    //qDebug() << "textWidth:" << title;
-    //qDebug() << "textWidth:" << textWidth;
-    //qDebug() << "textHeight:" << textHeight;
-
-    int cutOff = textWidth / this->maxWidth;
-
-    this->setWidth(((textWidth > maxWidth) ? maxWidth : textWidth) + (this->parent()->logicalDpiX() / 2));
-    this->setHeight((((textHeight * cutOff)) + 1) + (this->parent()->logicalDpiY() / 2));
-
-    this->update();
-    this->updateConnectors();
+    DiagramItem::setItemSizing(title);
 }
 
 
@@ -77,31 +53,32 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    // initialize items
-    QRectF rect = boundingRect();   // box for the block
-    QBrush brush(this->color);      // brush to fill the rectangle block
-    QPen pen(QColor(this->color));    // pen to outlien the rectable block
-    QTextOption texto;              // options for the title
+    // initialize painting area to the bounding rectangle
+    QRectF rect = boundingRect();
+    QTextOption texto;              // options for the title text
 
-    // set the pen
+    // set the pen to draw lines
+    QPen pen(QColor("#212121"));    // pen to outline the rectable block
     pen.setWidth(2);                    // thickness
     pen.setCosmetic(true);              // same thickness with scaling
     pen.setJoinStyle(Qt::RoundJoin);    // rounded corners
     pen.setCapStyle(Qt::RoundCap);      // rounded line ends
-    pen.setColor(QColor("#212121"));
     painter->setPen(pen);
+
+    // set the brush to fill areas with the status color
+    QBrush brush(this->getColor());      // brush to fill the rectangle block
     painter->setBrush(brush);
 
     //// Drawing the Connector entry lines
-    // adjust the drawing rectangle to draw the connector lines and circles
+    // adjust the painting area to draw the connector lines and circles
     rect.setLeft(rect.left() + this->getCircleRadius());
     rect.setRight(rect.right() - this->getCircleRadius());
 
-    // make points for the connector entry areas
+    // make points to place the connector entry circles
     QPointF middleLeft = QPointF(rect.left(), rect.center().y());
     QPointF middleRight = QPointF(rect.right(), rect.center().y());
 
-    // draw middle line
+    // draw the line crossing the block
     painter->drawLine(middleLeft, middleRight);
 
     // draw the connector circles
@@ -109,13 +86,28 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawEllipse(middleRight, this->getCircleRadius(), this->getCircleRadius());
 
     //// Drawing the Block
-    // resize the drawing rectangle to make the block
+    // resize the painting area to make the block
     rect.setLeft(rect.left() + this->getLineLength());
     rect.setRight(rect.right() - this->getLineLength());
 
     // draw the block
-    painter->drawRect(rect);
+    if(this->getChildSubdiagram() == 0) {
+        painter->drawRect(rect);
+    }
+    else {
+        // reset the painter so there's no brush color
+        painter->setBrush(QBrush(Qt::transparent));
 
+        // prepare a gradient going down the block
+        QLinearGradient gradient(rect.center().x(), rect.top(), rect.center().x(), rect.bottom());
+            gradient.setColorAt(0, this->getColor().lighter(150));
+            gradient.setColorAt(0.25, this->getColor());
+            gradient.setColorAt(0.75, this->getColor());
+            gradient.setColorAt(1, this->getColor().darker(150));
+
+        painter->fillRect(rect, gradient);
+        painter->drawRect(rect);
+    }
 
     //// Drawing the Title text
     // create a textbox for the title
@@ -128,12 +120,12 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     texto.setAlignment(Qt::AlignCenter);                            // center align
 
     // set the color and font for the text
-    pen.setColor(textColor);
-    painter->setFont(font);
+    pen.setColor(this->getTextColor());
+    painter->setFont(this->getFont());
     painter->setPen(pen);
 
     // draw the text
-    painter->drawText(textRect, this->title, texto);
+    painter->drawText(textRect, this->getTitle(), texto);
 
     //qDebug() << this->inputPoint();
     //qDebug() << this->outputPoint();
@@ -147,63 +139,68 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 // when the user clicks down on a block
 void Block::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse pressed onto" << this->title;
     DiagramItem::mousePressEvent(event);
 }
 
 void Block::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse moving" << this->title;
     DiagramItem::mouseMoveEvent(event);
 }
 
 // when the user releases the mouse click
 void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse released" << this->title;
-    DiagramItem::mouseReleaseEvent(event);
+    if(this->isCurrentlyRoot()) {
+        this->setRootLocation(this->pos());
+        QGraphicsItem::mouseReleaseEvent(event);
+    }
+    else {
+        DiagramItem::mouseReleaseEvent(event);
+    }
 }
 
-/*
- * GETTERS & SETTERS
- */
 
-QString Block::getTitle() const
+Subdiagram *Block::getChildSubdiagram() const
 {
-    return title;
+    return childSubdiagram;
 }
 
-void Block::setTitle(const QString &value)
+void Block::setChildSubdiagram(Subdiagram *value)
 {
-    this->title = value;
-    this->setBlockSizing(this->title);
+    childSubdiagram = value;
+    this->update();
 }
 
-QString Block::getDescription() const
+bool Block::hasChildSubdiagram() const
 {
-    return description;
+    if(childSubdiagram == 0) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
-void Block::setDescription(const QString &value)
+
+// returns the location this block should be at when it is the root item
+QPointF Block::getRootLocation() const
 {
-    description = value;
+    return rootLocation;
 }
 
-QString Block::getStatus() const
+void Block::setRootLocation(const QPointF &value)
 {
-    return status;
+    rootLocation = value;
 }
 
-void Block::setStatus(const QString &value, QMap<QString, QString> colorMap)
-{
-    //qDebug() << value;
-    status = value;
 
-    //qDebug() << colorMap[status];
-    color = QColor(colorMap[status]);
+// returns true if this item is the root item of the currently displayed subdiagram
+bool Block::isCurrentlyRoot() const
+{
+    return currentlyRoot;
 }
 
-QColor Block::getColor() const
+void Block::setCurrentlyRoot(bool value)
 {
-    return color;
+    currentlyRoot = value;
 }

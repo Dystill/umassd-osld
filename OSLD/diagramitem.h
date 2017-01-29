@@ -7,6 +7,8 @@
 #include <QDebug>
 #include "connector.h"
 
+class Subdiagram;
+
 class DiagramItem : public QGraphicsWidget
 {
 private:
@@ -17,6 +19,21 @@ private:
 
     QList<Connector *> inputConn;   // the set of connectors that lead into this item
     QList<Connector *> outputConn;  // the set of connectors that exit from this item
+
+    QString status = "No Status Available";     // holds the text of the block's status, which is used to access a QMap of status/color combos
+    QColor color = QColor("#888888");           // the color of the block is stored here for easier access
+    QColor textColor;
+    QString title;                              // the name of the step this block represents
+    QString description;                        // the description of this block
+    QString hovertext;                          // the text that shows when the user hovers over the block
+    QPointF location = QPointF(0,0);
+
+    Subdiagram *parentSubdiagram = 0;
+
+    QFont font;         // font for the title text
+
+    int maxWidth;                               // the maximum width of the block before word wraping the title
+
 
     int itemWidth;  // the width of this item
     int itemHeight; // the height of this item
@@ -70,7 +87,37 @@ public:
     bool isBlock() const;
     bool isGate() const;
 
+
+    // getter and setter functions
+    QString getTitle() const;
+    void setTitle(const QString &value);
+
+    QString getDescription() const;
+    void setDescription(const QString &value);
+
+    QString getStatus() const;
+    QColor getColor() const;
+
+    void setStatus(const QString &value, QMap<QString, QString> colorMap);  // sets both status and color. color cannot be changed directly
+
+    QColor getTextColor() const;
+    void setTextColor(const QColor &value);
+
+    int getMaxWidth() const;
+    void setMaxWidth(int value);
+
+    QFont getFont() const;
+    void setFont(const QFont &value);
+    void setFontPointSize(int size);
+
+    Subdiagram *getParentSubdiagram() const;
+    void setParentSubdiagram(Subdiagram *value);
+
+    QPointF getLocation() const;
+
 protected:
+    void setItemSizing(QString title);         // private function used to generate a size for this block that contains the title text
+
     void isBlock(bool value);   // set if this item is a block
     void isGate(bool value);    // set if this item is a gate
 

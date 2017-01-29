@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     descriptionfilereader.cpp \
     parser.cpp \
     diagramitem.cpp \
-    connector.cpp
+    connector.cpp \
+    subdiagram.cpp
 
 HEADERS  += osldisplay.h \
     block.h \
@@ -40,6 +41,7 @@ HEADERS  += osldisplay.h \
     descriptionfilereader.h \
     parser.h \
     diagramitem.h \
-    connector.h
+    connector.h \
+    subdiagram.h
 
 FORMS    += osldisplay.ui
