@@ -26,6 +26,7 @@ private:
     QString title;                              // the name of the step this block represents
     QString description;                        // the description of this block
     QString hovertext;                          // the text that shows when the user hovers over the block
+    QPointF location = QPointF(0,0);
 
     Subdiagram *partOfSubdiagram = 0;
 
@@ -111,6 +112,8 @@ public:
 
     Subdiagram *getPartOfSubdiagram() const;
     void setPartOfSubdiagram(Subdiagram *value);
+
+    QPointF getLocation() const;
 
 protected:
     void setItemSizing(QString title);         // private function used to generate a size for this block that contains the title text

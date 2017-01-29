@@ -34,8 +34,8 @@ private:
     int gridUnitSize = 20;
     bool showGridBackground = false;
 
-    QGraphicsItem *clickedItem;
-    QPointF clickPosition;
+    QGraphicsItem *pressedItem;
+    QPointF pressPosition;
 
     // functions for creating gates
     Gate *getGateInfoFromDescriptionFile(QPointF pos);

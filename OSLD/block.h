@@ -20,7 +20,10 @@ struct BlockData {
 class Block : public DiagramItem
 {
 private:
-    Subdiagram *subdiagram = 0;
+    Subdiagram *subdiagram = 0; // holds subdiagram if this block has one
+
+    QPointF rootLocation = QPointF(0,0);
+    bool currentlyRoot = false;
 
 public:
     // constructor
@@ -28,18 +31,21 @@ public:
           QString t = "Block Title",
           QString desc = "Block Description",
           QString ht = "Block Hovertext");
-
     // QGraphicsItem stuff
     QRectF boundingRect() const;    // returns the rectagular container for this item
     void setGeometry(const QRectF &rect);   // used by QGraphicsItem to resize and update graphics elements
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;    // gives default sizes for items to use
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,   // paints the graphics to use for the object
                QWidget *widget);
-
     Subdiagram *getSubdiagram() const;
     void setSubdiagram(Subdiagram *value);
-
     bool hasSubdiagram() const;
+    QPointF getRootLocation() const;
+    void setRootLocation(const QPointF &value);
+
+    bool isCurrentlyRoot() const;
+    void setCurrentlyRoot(bool value);
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

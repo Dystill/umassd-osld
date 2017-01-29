@@ -14,12 +14,18 @@ void DiagramItem::setPartOfSubdiagram(Subdiagram *value)
     partOfSubdiagram = value;
 }
 
+QPointF DiagramItem::getLocation() const
+{
+    return location;
+}
+
 DiagramItem::DiagramItem(QWidget *parent, QString id, QPointF loc)
 {
     this->itemParent = parent;  // save parent item for resizing purposes
     this->setParent(parent);
     this->itemId = id;      // save the item's id
     this->setPos(loc);      // position the item
+    this->location = loc;
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsMovable);
 
@@ -206,6 +212,7 @@ void DiagramItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+    this->location = this->pos();
     QGraphicsItem::mouseReleaseEvent(mouseEvent);
 }
 

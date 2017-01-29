@@ -18,22 +18,24 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     sourceInfo.type = "SQLite Database";
     sources["source1"] = sourceInfo;
 
+    // create some random subdiagrams with three blocks and a single gate
     for(int i = 0; i < 5; i++) {
         QPointF rootPoint(0, 0);
 
         // set the root for the subdiagram
         Block *block;
-        if(i == 0) {
-            block = getBlockInfoFromDescriptionFile(rootPoint);
+        if(i == 0) {    // for the main subdiagram
+            block = getBlockInfoFromDescriptionFile(rootPoint); // create a root block
         }
         else {
-            DiagramItem *item;
+            DiagramItem *item;  // create a diagramitem
             do {
                 int random = qrand() % allSubdiagrams.at(i - 1)->getInputItems().count();
-                item = allSubdiagrams.at(i - 1)->getInputItems().at(random);
-            } while (item->isGate());
-            block = qgraphicsitem_cast<Block *>(item);
+                item = allSubdiagrams.at(i - 1)->getInputItems().at(random);    // get a random input item from the previous subdiagram
+            } while (item->isGate());                                           // keep trying until a block is obtained
+            block = qgraphicsitem_cast<Block *>(item);  // set the root block to the random item
         }
+        block->setRootLocation(rootPoint);  // set the root block's root location
         allBlocks.append(block);
         allItems.append(block);
 
@@ -94,10 +96,10 @@ Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root
     return sub;
 }
 
-
+// create a gate with random information
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
 
-    int random = qrand() % 123456;
+    int random = qrand() % 123456;  // make a random number
 
     QString id = "Gate ";
     id.append(QString::number(random));
@@ -162,8 +164,8 @@ void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
 
 void OSLDGraphicsEngine::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    clickedItem = itemAt(event->scenePos(), QTransform());
-    clickPosition = event->scenePos();
+    pressedItem = itemAt(event->scenePos(), QTransform());  // store the item that was clicked down on
+    pressPosition = event->scenePos();                      // store the position of the click
     QGraphicsScene::mousePressEvent(event);
     update();
 }
@@ -175,21 +177,27 @@ void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());
+    QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());   // get the item that was released
 
-    if(releaseItem == clickedItem && clickPosition == event->scenePos()) {
-        Block *pressedBlock;
+    // if the item was released at the same position, i.e. mouse wasn't moved away during click
+    if(releaseItem == pressedItem && pressPosition == event->scenePos()) {
 
-        if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {
-            qDebug() << "item is block";
+        Block *pressedBlock;    // to store a pointer to the clicked block
+
+        if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
+
+            // check if the block has a subdiagram
             if(pressedBlock->hasSubdiagram()) {
-                qDebug() << "block has subdiagram";
-                Subdiagram *sub = pressedBlock->getSubdiagram();
 
+                Subdiagram *sub = pressedBlock->getSubdiagram();    // get the block's subdiagram
+
+                // if the root block was pressed and it's not the top level subdiagram
                 if(sub == currentSubdiagram && pressedBlock->getPartOfSubdiagram() != 0) {
                     this->hideSubdiagramItems(currentSubdiagram);
+                    pressedBlock->setPos(pressedBlock->getLocation());
                     this->drawSubdiagramItems(pressedBlock->getPartOfSubdiagram());
                 }
+                // else when a regular subdiagram block was pressed
                 else {
                     this->hideSubdiagramItems(currentSubdiagram);
                     this->drawSubdiagramItems(pressedBlock->getSubdiagram());
@@ -212,7 +220,10 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
         //qDebug() << "Drawing Block" << i;
         this->addItem(sub->getInputItems().at(i));
     }
-    this->addItem(sub->getRoot());
+    Block *root = sub->getRoot();
+    root->setPos(root->getRootLocation());
+    root->setCurrentlyRoot(true);
+    this->addItem(root);
     currentSubdiagram = sub;
 }
 
@@ -226,7 +237,9 @@ void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
         //qDebug() << "Drawing Block" << i;
         this->removeItem(sub->getInputItems().at(i));
     }
-    this->removeItem(sub->getRoot());
+    Block *root = sub->getRoot();
+    root->setCurrentlyRoot(false);
+    this->removeItem(root);
     currentSubdiagram = 0;
 }
 

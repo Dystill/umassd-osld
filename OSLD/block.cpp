@@ -4,6 +4,16 @@
  *  CONSTRUCTOR
  */
 
+bool Block::isCurrentlyRoot() const
+{
+    return currentlyRoot;
+}
+
+void Block::setCurrentlyRoot(bool value)
+{
+    currentlyRoot = value;
+}
+
 Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(parent, id, loc)
 {
@@ -150,7 +160,13 @@ void Block::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 // when the user releases the mouse click
 void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    DiagramItem::mouseReleaseEvent(event);
+    if(this->isCurrentlyRoot()) {
+        this->setRootLocation(this->pos());
+        QGraphicsItem::mouseReleaseEvent(event);
+    }
+    else {
+        DiagramItem::mouseReleaseEvent(event);
+    }
 }
 
 
@@ -173,4 +189,15 @@ bool Block::hasSubdiagram() const
     else {
         return true;
     }
+}
+
+
+QPointF Block::getRootLocation() const
+{
+    return rootLocation;
+}
+
+void Block::setRootLocation(const QPointF &value)
+{
+    rootLocation = value;
 }
