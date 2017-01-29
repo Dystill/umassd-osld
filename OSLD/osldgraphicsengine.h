@@ -21,7 +21,7 @@ private:
     QMap<QString, QString> statuses;    // maps status names to different colors
 
 
-    Subdiagram *currentSubdiagram;
+    Subdiagram *currentSubdiagram = 0;
     QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
@@ -64,7 +64,7 @@ public:
 
     bool blockExists(QString id);
     Block *retrieveBlock(QString id);
-    Subdiagram *getSubdiagramInfoFromDescriptionFile(Block *root, int index, int total);
+    Subdiagram *getSubdiagramInfoFromDescriptionFile(Block *root, int index);
     void hideSubdiagramItems(Subdiagram *sub);
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

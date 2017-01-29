@@ -4,6 +4,16 @@
  *  CONSTRUCTOR
  */
 
+Subdiagram *DiagramItem::getPartOfSubdiagram() const
+{
+    return partOfSubdiagram;
+}
+
+void DiagramItem::setPartOfSubdiagram(Subdiagram *value)
+{
+    partOfSubdiagram = value;
+}
+
 DiagramItem::DiagramItem(QWidget *parent, QString id, QPointF loc)
 {
     this->itemParent = parent;  // save parent item for resizing purposes

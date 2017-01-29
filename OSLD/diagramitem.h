@@ -7,6 +7,8 @@
 #include <QDebug>
 #include "connector.h"
 
+class Subdiagram;
+
 class DiagramItem : public QGraphicsWidget
 {
 private:
@@ -24,6 +26,8 @@ private:
     QString title;                              // the name of the step this block represents
     QString description;                        // the description of this block
     QString hovertext;                          // the text that shows when the user hovers over the block
+
+    Subdiagram *partOfSubdiagram = 0;
 
     QFont font;         // font for the title text
 
@@ -104,6 +108,9 @@ public:
     QFont getFont() const;
     void setFont(const QFont &value);
     void setFontPointSize(int size);
+
+    Subdiagram *getPartOfSubdiagram() const;
+    void setPartOfSubdiagram(Subdiagram *value);
 
 protected:
     void setItemSizing(QString title);         // private function used to generate a size for this block that contains the title text

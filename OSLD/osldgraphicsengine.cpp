@@ -77,7 +77,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     this->drawSubdiagramItems(allSubdiagrams.at(0));
 }
 
-Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root, int index, int total) {
+Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root, int index) {
     Subdiagram *sub = new Subdiagram();
 
     // get name and description
@@ -175,16 +175,25 @@ void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-
     QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());
 
     if(releaseItem == clickedItem && clickPosition == event->scenePos()) {
-        DiagramItem *pressedItem = qgraphicsitem_cast<DiagramItem *>(releaseItem);
-        if(pressedItem->isBlock()) {
-            Block *pressedBlock = qgraphicsitem_cast<Block *>(pressedItem);
+        Block *pressedBlock;
+
+        if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {
+            qDebug() << "item is block";
             if(pressedBlock->hasSubdiagram()) {
-                this->hideSubdiagramItems(currentSubdiagram);
-                this->drawSubdiagramItems(pressedBlock->getSubdiagram());
+                qDebug() << "block has subdiagram";
+                Subdiagram *sub = pressedBlock->getSubdiagram();
+
+                if(sub == currentSubdiagram && pressedBlock->getPartOfSubdiagram() != 0) {
+                    this->hideSubdiagramItems(currentSubdiagram);
+                    this->drawSubdiagramItems(pressedBlock->getPartOfSubdiagram());
+                }
+                else {
+                    this->hideSubdiagramItems(currentSubdiagram);
+                    this->drawSubdiagramItems(pressedBlock->getSubdiagram());
+                }
             }
         }
     }

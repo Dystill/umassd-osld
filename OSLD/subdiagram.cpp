@@ -73,6 +73,7 @@ void Subdiagram::setInputItems(const QList<DiagramItem *> &value)
 
 void Subdiagram::addInputItem(DiagramItem *value) {
     inputItems.append(value);
+    value->setPartOfSubdiagram(this);
 }
 
 QList<Connector *> Subdiagram::getConnectors() const
