@@ -2,13 +2,12 @@
 #define SUBDIAGRAM_H
 
 #include <QtCore>
-#include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include "block.h"
 #include "gate.h"
 #include "connector.h"
 
-class Subdiagram : public QGraphicsScene
+class Subdiagram
 {
 private:
     QString name;
@@ -16,15 +15,6 @@ private:
     Block *root;                  // the final item for the diagram
     QList<DiagramItem *> inputItems;    // all other diagram items in the subdiagram
     QList<Connector *> connectors;      // a list of all connector objects for this diagram
-
-    QVarLengthArray<QLineF> backgroundGrid;
-    QVarLengthArray<QPointF> backgroundDots;
-
-    int gridUnitSize = 20;
-    bool showGridBackground = false;
-
-    QGraphicsItem *clickedItem;
-    QPointF clickPosition;
 
 public:
     Subdiagram();
@@ -42,15 +32,10 @@ public:
     QList<DiagramItem *> getInputItems() const;
     void setInputItems(const QList<DiagramItem *> &value);
     void addInputItem(DiagramItem *value);
-    void showGrid(bool show, QRectF area);
-
-    void drawAllItems();
-
+    QList<Connector *> getConnectors() const;
+    void setConnectors(const QList<Connector *> &value);
+    void addConnector(Connector *value);
 protected:
-    void drawBackground(QPainter *painter, const QRectF &rect);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
 
 #endif // SUBDIAGRAM_H

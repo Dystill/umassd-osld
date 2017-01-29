@@ -17,8 +17,7 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     ui->graphicsView->viewport()->installEventFilter(this);
 
     // create an instance of the OSLD graphics engine
-    OSLDGraphicsEngine *displayer = new OSLDGraphicsEngine(parent);
-    scene = displayer->getAllSubdiagrams().at(0);
+    scene = new OSLDGraphicsEngine(parent);
 
     // display the scene from the graphics engine in the window
     scene->setSceneRect(scene->itemsBoundingRect().adjusted(-50, -50, 50, 50));

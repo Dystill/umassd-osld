@@ -18,11 +18,22 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     sourceInfo.type = "SQLite Database";
     sources["source1"] = sourceInfo;
 
-    for(int i = 0; i < 2; i++) {
+    for(int i = 0; i < 5; i++) {
         QPointF rootPoint(0, 0);
 
         // set the root for the subdiagram
-        Block *block = getBlockInfoFromDescriptionFile(rootPoint);
+        Block *block;
+        if(i == 0) {
+            block = getBlockInfoFromDescriptionFile(rootPoint);
+        }
+        else {
+            DiagramItem *item;
+            do {
+                int random = qrand() % allSubdiagrams.at(i - 1)->getInputItems().count();
+                item = allSubdiagrams.at(i - 1)->getInputItems().at(random);
+            } while (item->isGate());
+            block = qgraphicsitem_cast<Block *>(item);
+        }
         allBlocks.append(block);
         allItems.append(block);
 
@@ -60,10 +71,29 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
         sub->addInputItem(block2);
         sub->connectItems(block2, gate);
 
-        sub->drawAllItems();
         allSubdiagrams.append(sub);
     }
+
+    this->drawSubdiagramItems(allSubdiagrams.at(0));
 }
+
+Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root, int index, int total) {
+    Subdiagram *sub = new Subdiagram();
+
+    // get name and description
+    sub->setName(QString("Subdiagram %1").arg(index));
+    sub->setDescription(QString("Subdiagram Description for %1").arg(index));
+
+    // set the root block
+    sub->setRoot(root);
+
+    // get item ids, find the items, then add to the subdiagram
+
+    // set all of the connectors
+
+    return sub;
+}
+
 
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
 
@@ -89,6 +119,111 @@ Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
     gate->setStatus("Valid", statuses);
 
     return gate;
+}
+
+
+// overrides to draw a grid for the background
+void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
+{
+    painter->fillRect(rect, QBrush(QColor("#fafafa")));
+
+    if(showGridBackground) {
+        QPen pen;
+        pen.setCosmetic(true);
+        pen.setColor(QColor("#212121"));
+        painter->setPen(pen);
+
+        qreal topY = rect.top();
+        qreal leftX = rect.left();
+        qreal bottomY = rect.bottom();
+        qreal rightX = rect.right();
+
+        qreal startingX = int(leftX) - (int(leftX) % gridUnitSize);
+        qreal startingY = int(topY) - (int(topY) % gridUnitSize);
+
+        /*
+        for(qreal x = startingX; x < rightX; x += gridUnitSize) {
+            backgroundGrid.append(QLineF(x, topY, x, bottomY));
+        }
+        for(qreal y = startingY; y < bottomY; y += gridUnitSize) {
+            backgroundGrid.append(QLineF(leftX, y, rightX, y));
+        }
+        painter->drawLines(backgroundGrid.data(), backgroundGrid.size());
+        */
+
+        for(qreal x = startingX; x < rightX; x += gridUnitSize) {
+            for(qreal y = startingY; y < bottomY; y += gridUnitSize) {
+                backgroundDots.append(QPointF(x, y));
+            }
+        }
+        painter->drawPoints(backgroundDots.data(), backgroundDots.size());
+    }
+}
+
+void OSLDGraphicsEngine::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    clickedItem = itemAt(event->scenePos(), QTransform());
+    clickPosition = event->scenePos();
+    QGraphicsScene::mousePressEvent(event);
+    update();
+}
+
+void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsScene::mouseMoveEvent(event);
+}
+
+void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+
+    QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());
+
+    if(releaseItem == clickedItem && clickPosition == event->scenePos()) {
+        DiagramItem *pressedItem = qgraphicsitem_cast<DiagramItem *>(releaseItem);
+        if(pressedItem->isBlock()) {
+            Block *pressedBlock = qgraphicsitem_cast<Block *>(pressedItem);
+            if(pressedBlock->hasSubdiagram()) {
+                this->hideSubdiagramItems(currentSubdiagram);
+                this->drawSubdiagramItems(pressedBlock->getSubdiagram());
+            }
+        }
+    }
+
+    QGraphicsScene::mouseReleaseEvent(event);
+    update();
+}
+
+void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
+{
+    for(int i = 0; i < sub->getConnectors().count(); i++) {
+        //qDebug() << "Drawing Connector" << i;
+        this->addItem(sub->getConnectors().at(i));
+    }
+    for(int i = 0; i < sub->getInputItems().count(); i++) {
+        //qDebug() << "Drawing Block" << i;
+        this->addItem(sub->getInputItems().at(i));
+    }
+    this->addItem(sub->getRoot());
+    currentSubdiagram = sub;
+}
+
+void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
+{
+    for(int i = 0; i < sub->getConnectors().count(); i++) {
+        //qDebug() << "Drawing Connector" << i;
+        this->removeItem(sub->getConnectors().at(i));
+    }
+    for(int i = 0; i < sub->getInputItems().count(); i++) {
+        //qDebug() << "Drawing Block" << i;
+        this->removeItem(sub->getInputItems().at(i));
+    }
+    this->removeItem(sub->getRoot());
+    currentSubdiagram = 0;
+}
+
+void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {
+    showGridBackground = show;
+    this->invalidate(area, BackgroundLayer);
 }
 
 
@@ -146,8 +281,27 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData da
     return block;
 }
 
+bool OSLDGraphicsEngine::blockExists(QString id) {
+    for(int i = 0; i < allBlocks.count(); i++) {
+        if(id.compare(allBlocks.at(i)->id())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
+    for(int i = 0; i < allBlocks.count(); i++) {
+        if(id.compare(allBlocks.at(i)->id())) {
+            return allBlocks.at(i);
+        }
+    }
+    return 0;
+}
+
 
 QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
 {
     return allSubdiagrams;
 }
+

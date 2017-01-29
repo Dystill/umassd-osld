@@ -12,7 +12,7 @@ struct CommonSource {
     QString type;
 };
 
-class OSLDGraphicsEngine
+class OSLDGraphicsEngine : public QGraphicsScene
 {
 private:
     QWidget *parent;
@@ -21,10 +21,21 @@ private:
     QMap<QString, QString> statuses;    // maps status names to different colors
 
 
+    Subdiagram *currentSubdiagram;
     QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
     QList<DiagramItem *> allItems;  // a list of both blocks and gates
+
+
+    QVarLengthArray<QLineF> backgroundGrid;
+    QVarLengthArray<QPointF> backgroundDots;
+
+    int gridUnitSize = 20;
+    bool showGridBackground = false;
+
+    QGraphicsItem *clickedItem;
+    QPointF clickPosition;
 
     // functions for creating gates
     Gate *getGateInfoFromDescriptionFile(QPointF pos);
@@ -44,7 +55,22 @@ public:
 
     QMap<QString, QString> getStatuses() const { return statuses; }
     void setStatuses(const QMap<QString, QString> &value) { statuses = value; }
+
     QList<Subdiagram *> getAllSubdiagrams() const;
+
+    void showGrid(bool show, QRectF area);
+
+    void drawSubdiagramItems(Subdiagram *sub);
+
+    bool blockExists(QString id);
+    Block *retrieveBlock(QString id);
+    Subdiagram *getSubdiagramInfoFromDescriptionFile(Block *root, int index, int total);
+    void hideSubdiagramItems(Subdiagram *sub);
+protected:
+    void drawBackground(QPainter *painter, const QRectF &rect);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
 
 #endif // OSLDGRAPHICSENGINE_H
