@@ -20,7 +20,6 @@ private:
     QMap<QString, CommonSource> sources;    // maps source ids to their name and type
     QMap<QString, QString> statuses;    // maps status names to different colors
 
-
     Subdiagram *currentSubdiagram = 0;
     QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
@@ -68,6 +67,9 @@ public:
 
     QList<Block *> getRootPathList() const;
 
+    QList<DiagramItem *> getAllItems() const;
+
+    void updateAllItems();
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

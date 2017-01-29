@@ -14,14 +14,16 @@ struct BlockData {
     QString description;
     QString hovertext;
     QString status;
-    QColor textColor = QColor(Qt::white);
+    QColor textColor = QColor(Qt::black);
+    bool italics = false;
+    bool bold = false;
+    bool underline = false;
 };
 
 class Block : public DiagramItem
 {
 private:
     Subdiagram *childSubdiagram = 0; // holds subdiagram if this block has one
-
     QPointF rootLocation = QPointF(0,0);
     bool currentlyRoot = false;
 

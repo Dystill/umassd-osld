@@ -18,6 +18,8 @@ public:
     explicit OSLDisplay(QWidget *parent = 0);
     ~OSLDisplay();
 
+protected:
+    void mouseReleaseEvent(QMouseEvent *event);
 private slots:
     void on_actionFullScreen_triggered();
     void keyPressEvent(QKeyEvent *event);
@@ -30,6 +32,8 @@ private slots:
     void on_closeButton_clicked();
 
     void on_actionShowCloseButton_triggered();
+
+    void on_actionFitDiagramToWindow_triggered();
 
 private:
     Ui::OSLDisplay *ui;

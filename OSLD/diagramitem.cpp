@@ -350,6 +350,23 @@ QColor DiagramItem::getColor() const
     return color;
 }
 
+void DiagramItem::setItalics(bool b)
+{
+    font.setItalic(b);
+    this->setItemSizing(this->title);
+}
+
+void DiagramItem::setBold(bool b)
+{
+    font.setBold(b);
+    this->setItemSizing(this->title);
+}
+
+void DiagramItem::setUnderline(bool b)
+{
+    font.setUnderline(b);
+    this->setItemSizing(this->title);
+}
 
 
 

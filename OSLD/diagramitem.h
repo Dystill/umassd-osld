@@ -115,6 +115,9 @@ public:
 
     QPointF getLocation() const;
 
+    void setItalics(bool b);
+    void setBold(bool b);
+    void setUnderline(bool b);
 protected:
     void setItemSizing(QString title);         // private function used to generate a size for this block that contains the title text
 

@@ -87,8 +87,7 @@ void OSLDisplay::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);    // call parent resize event
 
-    // resize the view contents to match the window size
-    ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+    on_actionFitDiagramToWindow_triggered();
 
     // fitInView initially scales the view contents down dramatically -- to 0.0410959 in matrix points m11 & m22
     // I couldn't figure out a reason as to why, so this fixes it
@@ -165,4 +164,17 @@ void OSLDisplay::on_actionShowCloseButton_triggered()
         ui->closeButton->hide();
         ui->actionShowCloseButton->setText("Show On-Screen Buttons");
     }
+}
+
+void OSLDisplay::mouseReleaseEvent(QMouseEvent *event) {
+    QMainWindow::mouseReleaseEvent(event);
+}
+
+void OSLDisplay::on_actionFitDiagramToWindow_triggered()
+{
+    // update scene rect to fit the items
+    scene->setSceneRect(scene->itemsBoundingRect().adjusted(-50, -50, 50, 50));
+
+    // resize the view contents to match the window size
+    ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }

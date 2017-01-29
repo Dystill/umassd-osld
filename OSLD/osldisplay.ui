@@ -45,7 +45,7 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuWindow">
@@ -55,6 +55,7 @@
     <addaction name="actionFullScreen"/>
     <addaction name="actionShowGrid"/>
     <addaction name="actionShowCloseButton"/>
+    <addaction name="actionFitDiagramToWindow"/>
    </widget>
    <addaction name="menuWindow"/>
   </widget>
@@ -107,6 +108,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionFitDiagramToWindow">
+   <property name="text">
+    <string>Fit Diagram To Window</string>
    </property>
   </action>
  </widget>

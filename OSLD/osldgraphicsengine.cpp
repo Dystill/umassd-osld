@@ -103,6 +103,11 @@ QList<Block *> OSLDGraphicsEngine::getRootPathList() const
     return rootPathList;
 }
 
+QList<DiagramItem *> OSLDGraphicsEngine::getAllItems() const
+{
+    return allItems;
+}
+
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
 
     int random = qrand() % 123456;  // make a random number
@@ -185,40 +190,43 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());   // get the item that was released
 
-    // if the item was released at the same position, i.e. mouse wasn't moved away during click
-    if(releaseItem == pressedItem && pressPosition == event->scenePos()) {
+    // if the click was from the left button
+    if(event->button() == Qt::LeftButton) {
+        // if the item was released at the same position, i.e. mouse wasn't moved away during click
+        if(releaseItem == pressedItem && pressPosition == event->scenePos()) {
 
-        Block *pressedBlock;    // to store a pointer to the clicked block
+            Block *pressedBlock;    // to store a pointer to the clicked block
 
-        if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
+            if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
-            // check if the block has a subdiagram
-            if(pressedBlock->hasChildSubdiagram()) {
+                // check if the block has a subdiagram
+                if(pressedBlock->hasChildSubdiagram()) {
 
-                Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
+                    Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
 
-                // if the root block was pressed and it's not the top level subdiagram
-                if(sub == currentSubdiagram) {
-                    if(pressedBlock->getParentSubdiagram() != 0) {
-                        this->hideSubdiagramItems(currentSubdiagram);
-                        pressedBlock->setPos(pressedBlock->getLocation());
-                        rootPathList.removeOne(pressedBlock);
-                        this->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
+                    // if the root block was pressed and it's not the top level subdiagram
+                    if(sub == currentSubdiagram) {
+                        if(pressedBlock->getParentSubdiagram() != 0) {
+                            this->hideSubdiagramItems(currentSubdiagram);
+                            pressedBlock->setPos(pressedBlock->getLocation());
+                            rootPathList.removeOne(pressedBlock);
+                            this->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
+                        }
                     }
-                }
-                // else when a regular subdiagram block was pressed
-                else {
-                    this->hideSubdiagramItems(currentSubdiagram);
-                    rootPathList.append(pressedBlock);
-                    this->drawSubdiagramItems(pressedBlock->getChildSubdiagram());
+                    // else when a regular subdiagram block was pressed
+                    else {
+                        this->hideSubdiagramItems(currentSubdiagram);
+                        rootPathList.append(pressedBlock);
+                        this->drawSubdiagramItems(pressedBlock->getChildSubdiagram());
+                    }
+
+                    qDebug() << "\nCurrent path:";
+                    for(int i = 0; i < rootPathList.count(); i++) {
+                        qDebug() << rootPathList.at(i)->getTitle();
+                    }
                 }
             }
         }
-    }
-
-    qDebug() << "\nCurrent path:";
-    for(int i = 0; i < rootPathList.count(); i++) {
-        qDebug() << rootPathList.at(i)->getTitle();
     }
 
     QGraphicsScene::mouseReleaseEvent(event);
@@ -289,11 +297,21 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
     bd.hovertext = QString("Block %1 Hovertext").arg(random);
     bd.status = (random % 2 == 0 ? "Valid" : "Invalid");
 
-    if(random % 2 == 1) {
-        bd.textColor = QColor(Qt::black);
+    int random2 = qrand() % 2;
+    if(random2 == 0) {
+        bd.textColor = QColor(Qt::white);
     }
-    else if(random % 3 == 0) {
-
+    random2 = qrand() % 2;
+    if(random2 == 0) {
+        bd.bold = true;
+    }
+    random2 = qrand() % 2;
+    if(random2 == 1) {
+        bd.underline = true;
+    }
+    random2 = qrand() % 2;
+    if(random2 == 1) {
+        bd.italics = true;
     }
 
     // for testing large title strings
@@ -314,6 +332,9 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData da
     block->setToolTip(data.hovertext);
     block->setStatus(data.status, statuses);
     block->setTextColor(data.textColor);
+    block->setItalics(data.italics);
+    block->setUnderline(data.underline);
+    block->setBold(data.bold);
 
     return block;
 }
