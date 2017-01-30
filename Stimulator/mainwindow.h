@@ -19,16 +19,6 @@ class MainWindow : public QMainWindow {
 
  private:
   Ui::MainWindow *ui;
-
-  QLabel *labelTitle;
-  QLabel *labelHoverText;
-  QLabel *labelStatus;
-  QLabel *labelDescription;
-
-  QLineEdit *lineEditTitle;
-  QLineEdit *lineEditHoverText;
-  QLineEdit *lineEditStatus;
-  QPlainTextEdit *plainTextEditDescription;
 };
 
 #endif  // MAINWINDOW_H
