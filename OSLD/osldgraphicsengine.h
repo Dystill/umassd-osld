@@ -15,8 +15,6 @@ struct CommonSource {
 class OSLDGraphicsEngine : public QGraphicsScene
 {
 private:
-    QWidget *parent;
-
     QMap<QString, CommonSource> sources;    // maps source ids to their name and type
     QMap<QString, QString> statuses;    // maps status names to different colors
 

@@ -12,7 +12,6 @@ class Subdiagram;
 class DiagramItem : public QGraphicsWidget
 {
 private:
-    QWidget *itemParent;    // mainly used to obtain screen dpi
     QString itemId;     // the unique identifier for this item. cannot be changed once item is constructed
 
     QList<DiagramItem *> outputItem;    // the item this item outputs to if applicable
@@ -46,7 +45,7 @@ private:
 
 public:
     // constructor
-    DiagramItem(QWidget *parent, QString id, QPointF loc = QPointF(0, 0));  // requires the parent object and id. location defaults to (0,0)
+    DiagramItem(QString id, QPointF loc = QPointF(0, 0));  // requires the parent object and id. location defaults to (0,0)
 
 
     // QGraphicsItem stuff
@@ -77,7 +76,6 @@ public:
     void removeOutputConnector(Connector *value);
 
     // getters and setters
-    QWidget *parent() const;
     QString id() const;
     int width() const;
     void setWidth(int value);
@@ -108,7 +106,7 @@ public:
 
     QFont getFont() const;
     void setFont(const QFont &value);
-    void setFontPointSize(int size);
+    void setTitleSize(int size);
 
     Subdiagram *getParentSubdiagram() const;
     void setParentSubdiagram(Subdiagram *value);

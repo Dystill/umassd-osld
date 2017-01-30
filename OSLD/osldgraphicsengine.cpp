@@ -5,7 +5,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
 
-    this->parent = parent;
+    this->setParent(parent);
 
     // get the status types for this diagram
     statuses["Valid"] = "#8BC34A";
@@ -127,7 +127,7 @@ Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
         type = NotGate;
     }
 
-    Gate *gate = new Gate(this->parent, id, pos, type);
+    Gate *gate = new Gate(id, pos, type);
 
     gate->setStatus("Valid", statuses);
 
@@ -325,7 +325,7 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData da
 {
     // qDebug() << "Creating Block" << id;
 
-    Block *block = new Block(this->parent, id, position);
+    Block *block = new Block(id, position);
 
     block->setTitle(data.title);
     block->setDescription(data.description);

@@ -4,11 +4,11 @@
  *  CONSTRUCTOR
  */
 
-Block::Block(QWidget *parent, QString id, QPointF loc, QString t, QString desc, QString ht)
-    : DiagramItem(parent, id, loc)
+Block::Block(QString id, QPointF loc, QString t, QString desc, QString ht)
+    : DiagramItem(id, loc)
 {
-    this->setMaxWidth(this->parent()->logicalDpiX() * 2);
-    this->setFontPointSize(12);
+    this->setMaxWidth(256);
+    this->setTitleSize(16);
 
     this->setTitle(t);
     this->setDescription(desc);

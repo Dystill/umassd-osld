@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     parser.cpp \
     diagramitem.cpp \
     connector.cpp \
-    subdiagram.cpp
+    subdiagram.cpp \
+    rootitempathscene.cpp
 
 HEADERS  += osldisplay.h \
     block.h \
@@ -42,6 +43,7 @@ HEADERS  += osldisplay.h \
     parser.h \
     diagramitem.h \
     connector.h \
-    subdiagram.h
+    subdiagram.h \
+    rootitempathscene.h
 
 FORMS    += osldisplay.ui

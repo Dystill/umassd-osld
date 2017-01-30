@@ -25,7 +25,7 @@ private:
 
 public:
     // constructor
-    Gate(QWidget *parent, QString id, QPointF loc, GateType type = AndGate);
+    Gate(QString id, QPointF loc, GateType type = AndGate);
 
     // QGraphicsItem stuff
     QRectF boundingRect() const;

@@ -4,33 +4,16 @@
  *  CONSTRUCTOR
  */
 
-Subdiagram *DiagramItem::getParentSubdiagram() const
+DiagramItem::DiagramItem(QString id, QPointF loc)
 {
-    return parentSubdiagram;
-}
-
-void DiagramItem::setParentSubdiagram(Subdiagram *value)
-{
-    parentSubdiagram = value;
-}
-
-QPointF DiagramItem::getLocation() const
-{
-    return location;
-}
-
-DiagramItem::DiagramItem(QWidget *parent, QString id, QPointF loc)
-{
-    this->itemParent = parent;  // save parent item for resizing purposes
-    this->setParent(parent);
     this->itemId = id;      // save the item's id
     this->setPos(loc);      // position the item
     this->location = loc;
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsMovable);
 
-    this->lineLength = (parent->logicalDpiX() / 2);
-    this->circleRadius = (parent->logicalDpiX() / 24);
+    this->lineLength = (48);
+    this->circleRadius = (4);
 }
 
 
@@ -48,9 +31,9 @@ void DiagramItem::setFont(const QFont &value)
     font = value;
 }
 
-void DiagramItem::setFontPointSize(int size)
+void DiagramItem::setTitleSize(int size)
 {
-    font.setPointSize(size);
+    font.setPixelSize(size);
 }
 
 void DiagramItem::setItemSizing(QString title)
@@ -60,14 +43,19 @@ void DiagramItem::setItemSizing(QString title)
     qreal textWidth = metrics.boundingRect(title).width();
     qreal textHeight = metrics.boundingRect(title).height();
 
-    //qDebug() << "textWidth:" << title;
-    //qDebug() << "textWidth:" << textWidth;
-    //qDebug() << "textHeight:" << textHeight;
+    qDebug() << "title:" << title;
+    qDebug() << "textWidth:" << textWidth;
+    qDebug() << "textHeight:" << textHeight;
 
-    int cutOff = textWidth / this->maxWidth;
+    int wordWrapLimit = ((textWidth + this->maxWidth - 1) / this->maxWidth);
 
-    this->setWidth(((textWidth > maxWidth) ? maxWidth : textWidth) + (this->parent()->logicalDpiX() / 2));
-    this->setHeight((((textHeight * cutOff)) + 1) + (this->parent()->logicalDpiY() / 2));
+    qDebug() << "wordWrapLimit:" << wordWrapLimit;
+
+    this->setWidth(((textWidth > this->maxWidth) ? this->maxWidth : textWidth) + 64);
+    this->setHeight(((textHeight * wordWrapLimit) + 1) * 2.5);
+
+    qDebug() << "Width:" << this->width();
+    qDebug() << "Height:" << this->height();
 
     this->update();
     this->updateConnectors();
@@ -221,12 +209,6 @@ void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
  *  ATTRIBUTE GETTERS AND SETTERS
  */
 
-// returns the widget this block will be displayed in
-QWidget *DiagramItem::parent() const
-{
-    return itemParent;
-}
-
 // returns this item's unique id
 QString DiagramItem::id() const
 {
@@ -368,6 +350,20 @@ void DiagramItem::setUnderline(bool b)
     this->setItemSizing(this->title);
 }
 
+Subdiagram *DiagramItem::getParentSubdiagram() const
+{
+    return parentSubdiagram;
+}
+
+void DiagramItem::setParentSubdiagram(Subdiagram *value)
+{
+    parentSubdiagram = value;
+}
+
+QPointF DiagramItem::getLocation() const
+{
+    return location;
+}
 
 
 

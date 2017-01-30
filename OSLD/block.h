@@ -29,7 +29,7 @@ private:
 
 public:
     // constructor
-    Block(QWidget *parent, QString id, QPointF loc,     // blocks must have the parent object, id, and location, which is handled by the parent class
+    Block(QString id, QPointF loc,     // blocks must have the parent object, id, and location, which is handled by the parent class
           QString t = "Block Title",
           QString desc = "Block Description",
           QString ht = "Block Hovertext");
