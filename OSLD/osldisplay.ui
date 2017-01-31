@@ -58,7 +58,7 @@
     </property>
     <addaction name="actionFullScreen"/>
     <addaction name="actionShowGrid"/>
-    <addaction name="actionHideCloseButton"/>
+    <addaction name="actionHideButtons"/>
     <addaction name="actionFitDiagramToWindow"/>
    </widget>
    <addaction name="menuWindow"/>
@@ -91,27 +91,27 @@
     <string>Show Grid</string>
    </property>
    <property name="toolTip">
-    <string>This setting may slow down your computer.</string>
+    <string>This setting may drastically slow down your computer</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
    </property>
   </action>
-  <action name="actionHideCloseButton">
+  <action name="actionHideButtons">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="checked">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Hide On-Screen Buttons</string>
+    <string>Immersive Mode</string>
    </property>
    <property name="toolTip">
-    <string>Hide On-Screen Buttons</string>
+    <string>Hide everything but the diagram</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+H</string>
+    <string>Ctrl+Space</string>
    </property>
   </action>
   <action name="actionFitDiagramToWindow">

@@ -138,6 +138,11 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
         if(mod == Qt::ControlModifier){zoom(-1);zoom(-1);}
         break;
     }
+
+    if(ui->menuBar->isHidden()) {
+        ui->menuBar->show();
+        ui->closeButton->show();
+    }
 }
 
 // code executed when the mouse wheel is manipulated
@@ -207,16 +212,10 @@ void OSLDisplay::mouseReleaseEvent(QMouseEvent *event) {
     QMainWindow::mouseReleaseEvent(event);
 }
 
-void OSLDisplay::on_actionHideCloseButton_triggered()
+void OSLDisplay::on_actionHideButtons_triggered()
 {
-    if(ui->closeButton->isHidden()) {
-        ui->closeButton->show();
-        ui->actionHideCloseButton->setChecked(false);
-    }
-    else {
-        ui->closeButton->hide();
-        ui->actionHideCloseButton->setChecked(true);
-    }
+    ui->closeButton->hide();
+    ui->menuBar->hide();
 }
 
 void OSLDisplay::on_actionFitDiagramToWindow_triggered()

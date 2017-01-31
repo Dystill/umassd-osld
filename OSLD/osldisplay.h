@@ -33,13 +33,13 @@ private slots:
 
     void on_actionFitDiagramToWindow_triggered();
 
-    void on_actionHideCloseButton_triggered();
+    void on_actionHideButtons_triggered();
 
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
 
-    qreal windowSizePercent = 0.75;
+    qreal windowSizePercent = 0.50;
     qreal scaleAmount = 100;
     bool initScaleFix = false;  // cannot figure out why the scene becomes really small initially, so this helps fix it
 
