@@ -19,7 +19,7 @@ DescriptionFileReader::DescriptionFileReader(QWidget *parent) :
     QString pathAndName;
     QString fileName;
 
-    fileName = "/descriptionFileMockupVer3.xml"; //NEED TO FIND A WAY TO MAKE THIS DYNAMIC!!
+    fileName = "/descriptionFileMockupVer3(grouped-alt).xml"; //NEED TO FIND A WAY TO MAKE THIS DYNAMIC!!
 
     //Opens explorer to browse for location of XML file
     QString filePath = QFileDialog::getOpenFileName(this,tr("Open File"),"/home",tr("XML File(*.xml)"));
@@ -68,23 +68,35 @@ void DescriptionFileReader::Read(QString filepath)
   // qDebug()<<"Parse: "<<hope; //If returns true, it is open.
 
    xmlReader.setDevice(&xmlFile);
-   xmlReader.readNext();
+   //xmlReader.readNext();
 qDebug()<< "TEST1";
    while(!xmlReader.atEnd())
    {
        qDebug()<< "TEST2";
-       if(xmlReader.isStartElement())
+
+       QXmlStreamReader::TokenType token = xmlReader.readNext();
+
+       if(token == QXmlStreamReader::StartDocument){
+       //we don’t want any of this data, it isn’t any element
+       //we need.
+       continue;
+       }
+
+       if(token == QXmlStreamReader::StartElement)
        {
            qDebug()<< "TEST3";
 
            //inBuff = (xmlReader.readElementText()).toStdString();
            //outBuff = QString::fromStdString(inBuff); // Converts data types to make things workable
-           if (outBuff == "diagram")
+
+           if (xmlReader.name() == "diagram")
            {
                 qDebug()<< "TEST4";
-                title = outBuff;
+                xmlReader.readNext();
+                //this->title = xmlReader.text().toString();
+               outBuff = xmlReader.text().toString();
                 qDebug()<< "TEST5";
-                qDebug()<< " Diagram's name is: "<< title;
+                qDebug()<< " Diagram's name is: "<< outBuff;
                 qDebug()<< "TEST6";
            }
        }
