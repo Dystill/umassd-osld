@@ -8,20 +8,19 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     ui->setupUi(this);
     this->setParent(parent);
 
-    QDesktopWidget *desktop = QApplication::desktop();
-    int screenWidth = desktop->width();
-    int screenHeight = desktop->height();
+    // resize the window to be a certain amount smaller than the screen
+    this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
 
-    qDebug() << screenWidth << "x" << screenHeight;
-
+    // set flags and event filters for the graphicsView
     this->prepareGraphicsView();
 
     // create an instance of the OSLD graphics engine
     scene = new OSLDGraphicsEngine(ui->graphicsView);
 
-    // display the scene from the graphics engine in the window
+    // display the scene from the graphics engine in the graphicsView
     ui->graphicsView->setScene(scene);
-    this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
+
+    // resize the scene to fit in the window
     this->fitToWindow();
 
     // starts the application in full screen mode
@@ -92,30 +91,32 @@ void OSLDisplay::resizeEvent(QResizeEvent *event)
     // I couldn't figure out a reason as to why, so this fixes it
     if(initScaleFix == false) { // flagged so this only triggers once during initialization
 
-        QTransform transformer; // robot in disguise
+        // get the dimensions of the window
+        int windowWidth = this->width();
+        int windowHeight = this->height();
 
-        int windowWidth = QDesktopWidget().availableGeometry(this).size().width() * windowSizePercent;
-        int windowHeight = QDesktopWidget().availableGeometry(this).size().height() * windowSizePercent;
-
+        // get the dimensions of the diagram
         int sceneWidth = scene->sceneRect().width();
         int sceneHeight = scene->sceneRect().height();
 
+        // get the percent difference in size between the two dimensions
         qreal widthRatio = qreal(windowWidth) / sceneWidth;
         qreal heightRatio = qreal(windowHeight) / sceneHeight;
 
+        // get the smaller of the two ratios
         qreal scaleFactor = widthRatio <= heightRatio ? widthRatio : heightRatio;
 
-        qDebug() << windowWidth << "x" << windowHeight;
-        qDebug() << sceneWidth << "x" << sceneHeight;
-        qDebug() << widthRatio << "x" << heightRatio;
-        qDebug() << scaleFactor;
+        // floor the ratio's tenth place
+        scaleFactor = std::floor(scaleFactor*10)/10;
 
+        // create a matrix specifying the transformations made to the diagram shape (e.g. scale, rotate, shear, etc.)
+        QTransform transformer; // robot in disguise
+
+        // scale the diagram by the calculated amount
         transformer.setMatrix(scaleFactor, 0, 0, 0, scaleFactor, 0, 0, 0, 1);
 
-        // transformer is a matrix specifying the transformations made to the shape of the view (e.g. scale, rotate, shear, etc.)
-        // it initializes to a normal & untouched shape, and that's what we want here.
-        ui->graphicsView->setTransform(transformer);    // set the graphics view contents back to normal
-        initScaleFix = true;    // update the flag so this part isn't executed again
+        ui->graphicsView->setTransform(transformer);    // perform the transformation on the diagram
+        initScaleFix = true;    // update the flag so this isn't executed again
     }
 }
 
@@ -136,6 +137,11 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Minus:                 // ctrl+- to zoom out
         if(mod == Qt::ControlModifier){zoom(-1);zoom(-1);}
         break;
+    }
+
+    if(ui->menuBar->isHidden()) {
+        ui->menuBar->show();
+        ui->closeButton->show();
     }
 }
 
@@ -206,16 +212,10 @@ void OSLDisplay::mouseReleaseEvent(QMouseEvent *event) {
     QMainWindow::mouseReleaseEvent(event);
 }
 
-void OSLDisplay::on_actionHideCloseButton_triggered()
+void OSLDisplay::on_actionHideButtons_triggered()
 {
-    if(ui->closeButton->isHidden()) {
-        ui->closeButton->show();
-        ui->actionHideCloseButton->setChecked(false);
-    }
-    else {
-        ui->closeButton->hide();
-        ui->actionHideCloseButton->setChecked(true);
-    }
+    ui->closeButton->hide();
+    ui->menuBar->hide();
 }
 
 void OSLDisplay::on_actionFitDiagramToWindow_triggered()
