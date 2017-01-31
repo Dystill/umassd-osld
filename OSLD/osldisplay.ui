@@ -60,14 +60,9 @@
     <addaction name="separator"/>
     <addaction name="actionFullScreen"/>
     <addaction name="actionShowGrid"/>
-<<<<<<< HEAD
     <addaction name="separator"/>
     <addaction name="actionHideCloseButton"/>
     <addaction name="actionHideBlockTitles"/>
-=======
-    <addaction name="actionHideButtons"/>
-    <addaction name="actionFitDiagramToWindow"/>
->>>>>>> origin/master
    </widget>
    <addaction name="menuWindow"/>
   </widget>
