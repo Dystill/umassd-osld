@@ -26,9 +26,13 @@
    <string>OSLDisplay</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QGraphicsView" name="graphicsView"/>
+      </item>
+     </layout>
     </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QPushButton" name="closeButton">
@@ -54,7 +58,7 @@
     </property>
     <addaction name="actionFullScreen"/>
     <addaction name="actionShowGrid"/>
-    <addaction name="actionShowCloseButton"/>
+    <addaction name="actionHideCloseButton"/>
     <addaction name="actionFitDiagramToWindow"/>
    </widget>
    <addaction name="menuWindow"/>
@@ -93,15 +97,15 @@
     <string>Ctrl+G</string>
    </property>
   </action>
-  <action name="actionShowCloseButton">
+  <action name="actionHideCloseButton">
    <property name="checkable">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="checked">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Hide Close Button</string>
+    <string>Hide On-Screen Buttons</string>
    </property>
    <property name="toolTip">
     <string>Hide On-Screen Buttons</string>
@@ -113,6 +117,9 @@
   <action name="actionFitDiagramToWindow">
    <property name="text">
     <string>Fit Diagram To Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>

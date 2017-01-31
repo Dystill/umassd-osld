@@ -25,6 +25,7 @@ Gate::Gate(QString id, QPointF loc, GateType type)
     this->setToolTip(hovertext);
 
     this->isGate(true);
+    this->setColor(QColor("#bbdefb"));
 }
 
 /*
@@ -63,7 +64,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     Q_UNUSED(widget);
 
     QRectF rect = boundingRect();
-    QBrush brush(QColor("#bbdefb"));
+    QBrush brush(this->getColor());
     QPen pen(QColor("#212121"));
     QTextOption texto;
 

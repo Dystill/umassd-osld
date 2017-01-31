@@ -4,6 +4,11 @@
  *  CONSTRUCTOR
  */
 
+void DiagramItem::setColor(const QColor &value)
+{
+    color = value;
+}
+
 DiagramItem::DiagramItem(QString id, QPointF loc)
 {
     this->itemId = id;      // save the item's id
@@ -12,7 +17,7 @@ DiagramItem::DiagramItem(QString id, QPointF loc)
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsMovable);
 
-    this->lineLength = (48);
+    this->lineLength = (24);
     this->circleRadius = (4);
 }
 
@@ -43,19 +48,19 @@ void DiagramItem::setItemSizing(QString title)
     qreal textWidth = metrics.boundingRect(title).width();
     qreal textHeight = metrics.boundingRect(title).height();
 
-    qDebug() << "title:" << title;
-    qDebug() << "textWidth:" << textWidth;
-    qDebug() << "textHeight:" << textHeight;
+    //qDebug() << "title:" << title;
+    //qDebug() << "textWidth:" << textWidth;
+    //qDebug() << "textHeight:" << textHeight;
 
     int wordWrapLimit = ((textWidth + this->maxWidth - 1) / this->maxWidth);
 
-    qDebug() << "wordWrapLimit:" << wordWrapLimit;
+    //qDebug() << "wordWrapLimit:" << wordWrapLimit;
 
     this->setWidth(((textWidth > this->maxWidth) ? this->maxWidth : textWidth) + 64);
     this->setHeight(((textHeight * wordWrapLimit) + 1) * 2.5);
 
-    qDebug() << "Width:" << this->width();
-    qDebug() << "Height:" << this->height();
+    //qDebug() << "Width:" << this->width();
+    //qDebug() << "Height:" << this->height();
 
     this->update();
     this->updateConnectors();

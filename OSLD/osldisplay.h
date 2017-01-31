@@ -31,20 +31,23 @@ private slots:
 
     void on_closeButton_clicked();
 
-    void on_actionShowCloseButton_triggered();
-
     void on_actionFitDiagramToWindow_triggered();
+
+    void on_actionHideCloseButton_triggered();
 
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
 
+    qreal windowSizePercent = 0.75;
     qreal scaleAmount = 100;
     bool initScaleFix = false;  // cannot figure out why the scene becomes really small initially, so this helps fix it
 
+    void prepareGraphicsView();
     void enterFullScreen();
     void exitFullScreen();
     void zoom(int px);
+    void fitToWindow();
 };
 
 #endif // OSLDISPLAY_H

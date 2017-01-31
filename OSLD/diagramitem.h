@@ -116,8 +116,10 @@ public:
     void setItalics(bool b);
     void setBold(bool b);
     void setUnderline(bool b);
+
 protected:
-    void setItemSizing(QString title);         // private function used to generate a size for this block that contains the title text
+    void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
+    void setColor(const QColor &value);         // let subclasses manually change their color
 
     void isBlock(bool value);   // set if this item is a block
     void isGate(bool value);    // set if this item is a gate
