@@ -4,8 +4,8 @@
  *  CONSTRUCTOR
  */
 
-Gate::Gate(QWidget *parent, QString id, QPointF loc, GateType type)
-    : DiagramItem(parent, id, loc)
+Gate::Gate(QString id, QPointF loc, GateType type)
+    : DiagramItem(id, loc)
 {
     gateType = type;            // set the gate type
     this->setGateSizing();
@@ -25,6 +25,7 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc, GateType type)
     this->setToolTip(hovertext);
 
     this->isGate(true);
+    this->setColor(QColor("#bbdefb"));
 }
 
 /*
@@ -33,11 +34,8 @@ Gate::Gate(QWidget *parent, QString id, QPointF loc, GateType type)
 
 void Gate::setGateSizing()
 {
-    int dpiX = this->parent()->logicalDpiX();
-    int dpiY = this->parent()->logicalDpiY();
-
-    this->setWidth(dpiX / 1.5);
-    this->setHeight(dpiY / 1.5);
+    this->setWidth(64);
+    this->setHeight(64);
 }
 
 /*
@@ -66,8 +64,9 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     Q_UNUSED(widget);
 
     QRectF rect = boundingRect();
-    QBrush brush(QColor("#bbdefb"));
+    QBrush brush(this->getColor());
     QPen pen(QColor("#212121"));
+    QTextOption texto;
 
     pen.setWidth(2);
     pen.setCosmetic(true);
@@ -115,6 +114,25 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     // draw circles for the connector entry points
     painter->drawEllipse(QPointF(rect.left(), rect.center().y()), this->getCircleRadius(), this->getCircleRadius());
     painter->drawEllipse(QPointF(rect.right(), rect.center().y()), this->getCircleRadius(), this->getCircleRadius());
+
+    // draw title if necessary
+
+    if(!this->getTitle().isEmpty()) {
+        // set some text flags
+        texto.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);   // wordwrap
+        texto.setAlignment(Qt::AlignCenter);                            // center align
+
+        // set the color and font for the text
+        pen.setColor(this->getTextColor());
+        QFont font;
+        font.setPointSize(12);
+        painter->setFont(font);
+        painter->setPen(pen);
+
+        // draw the text
+        painter->drawText(rect, this->getTitle(), texto);
+    }
+
 }
 
 QPainterPath *Gate::drawANDGatePath(int width, int height)

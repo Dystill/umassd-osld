@@ -18,6 +18,8 @@ public:
     explicit OSLDisplay(QWidget *parent = 0);
     ~OSLDisplay();
 
+protected:
+    void mouseReleaseEvent(QMouseEvent *event);
 private slots:
     void on_actionFullScreen_triggered();
     void keyPressEvent(QKeyEvent *event);
@@ -29,16 +31,25 @@ private slots:
 
     void on_closeButton_clicked();
 
+    void on_actionFitDiagramToWindow_triggered();
+
+    void on_actionHideButtons_triggered();
+
+    void on_actionHideBlockTitles_triggered(bool checked);
+
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
 
+    qreal windowSizePercent = 0.50;
     qreal scaleAmount = 100;
     bool initScaleFix = false;  // cannot figure out why the scene becomes really small initially, so this helps fix it
 
+    void prepareGraphicsView();
     void enterFullScreen();
     void exitFullScreen();
     void zoom(int px);
+    void fitToWindow();
 };
 
 #endif // OSLDISPLAY_H

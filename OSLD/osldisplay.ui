@@ -26,9 +26,13 @@
    <string>OSLDisplay</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QGraphicsView" name="graphicsView"/>
+      </item>
+     </layout>
     </item>
     <item alignment="Qt::AlignHCenter">
      <widget class="QPushButton" name="closeButton">
@@ -45,15 +49,20 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
      <string>Window</string>
     </property>
+    <addaction name="actionFitDiagramToWindow"/>
+    <addaction name="separator"/>
     <addaction name="actionFullScreen"/>
     <addaction name="actionShowGrid"/>
+    <addaction name="separator"/>
+    <addaction name="actionHideCloseButton"/>
+    <addaction name="actionHideBlockTitles"/>
    </widget>
    <addaction name="menuWindow"/>
   </widget>
@@ -73,6 +82,9 @@
    <property name="toolTip">
     <string>Toggle Full Screen</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+Return</string>
+   </property>
   </action>
   <action name="actionShowGrid">
    <property name="checkable">
@@ -82,7 +94,46 @@
     <string>Show Grid</string>
    </property>
    <property name="toolTip">
-    <string>This setting may slow down your computer.</string>
+    <string>This setting may drastically slow down your computer</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionHideButtons">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Immersive Mode</string>
+   </property>
+   <property name="toolTip">
+    <string>Hide everything but the diagram</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Space</string>
+   </property>
+  </action>
+  <action name="actionFitDiagramToWindow">
+   <property name="text">
+    <string>Fit Diagram To Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionHideBlockTitles">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Block Titles</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>

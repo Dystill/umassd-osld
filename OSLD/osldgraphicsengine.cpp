@@ -4,9 +4,8 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
-    int random;
 
-    this->parent = parent;
+    this->setParent(parent);
 
     // get the status types for this diagram
     statuses["Valid"] = "#8BC34A";
@@ -19,47 +18,122 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     sourceInfo.type = "SQLite Database";
     sources["source1"] = sourceInfo;
 
-    // get gates from the description file
-    QPointF point(600, 0);
-    for(int i = 0; i < 6; i++) {
+    // create some random subdiagrams with three blocks and a single gate
+    for(int i = 0; i < 5; i++) {
+        QPointF rootPoint(0, 0);
 
-        if(!allGates.isEmpty()) {
-            point.setY(point.y() + allGates.at(i - 1)->height() + 20);
+        // set the root for the subdiagram
+        Block *block;
+        if(i == 0) {    // for the main subdiagram
+            block = getBlockInfoFromDescriptionFile(rootPoint); // create a root block
         }
-
-        Gate *gate = getGateInfoFromDescriptionFile(point);
-
-        allGates.append(gate);
-        allItems.append(gate);
-    }
-
-    // get blocks from the description file
-    point.setX(0);
-    point.setY(0);
-    for(int i = 0; i < 6; i++) {
-
-        if(!allBlocks.isEmpty()) {
-            point.setY(point.y() + allBlocks.at(i - 1)->height() + 20);
+        else {
+            DiagramItem *item;  // create a diagramitem
+            do {
+                int random = qrand() % allSubdiagrams.at(i - 1)->getInputItems().count();
+                item = allSubdiagrams.at(i - 1)->getInputItems().at(random);    // get a random input item from the previous subdiagram
+            } while (item->isGate());                                           // keep trying until a block is obtained
+            block = qgraphicsitem_cast<Block *>(item);  // set the root block to the random item
         }
-
-        Block *block = getBlockInfoFromDescriptionFile(point);
-
+        block->setRootLocation(rootPoint);  // set the root block's root location
         allBlocks.append(block);
         allItems.append(block);
 
-        random = qrand() % allGates.count();
+        // add items
+        QPointF itemPoints;
+        itemPoints.setX(rootPoint.x() - 200);
+        itemPoints.setY(rootPoint.y());
 
-        this->connectItems(block, allGates.at(random));
+        Gate *gate = getGateInfoFromDescriptionFile(itemPoints);
+        allGates.append(gate);
+        allItems.append(gate);
+
+        itemPoints.setX(itemPoints.x() - 400);
+        itemPoints.setY(itemPoints.y() - 100);
+        Block *block1 = getBlockInfoFromDescriptionFile(itemPoints);
+        allBlocks.append(block1);
+        allItems.append(block1);
+
+        itemPoints.setY(itemPoints.y() + 200);
+        Block *block2 = getBlockInfoFromDescriptionFile(itemPoints);
+        allBlocks.append(block2);
+        allItems.append(block2);
+
+        // set subdiagram nam and description
+        QString name = QString("Subdiagram %1").arg(i);
+        QString desc = QString("Subdiagram Description for %1").arg(i);
+
+        Subdiagram *sub = new Subdiagram(block, name, desc);
+        sub->addInputItem(gate);
+        sub->connectItems(gate, block);
+
+        sub->addInputItem(block1);
+        sub->connectItems(block1, gate);
+
+        sub->addInputItem(block2);
+        sub->connectItems(block2, gate);
+
+        allSubdiagrams.append(sub);
     }
 
-    for(int i = 0; i < allGates.count(); i++) {
-        random = qrand() % allBlocks.count();
-        // this->connectItems(allBlocks.at(random), allGates.at(i));
-        this->connectItems(allGates.at(i), allBlocks.at(random));
-    }
-
-    this->drawAllItems();
+    rootPathList.append(allSubdiagrams.at(0)->getRoot());
+    this->drawSubdiagramItems(allSubdiagrams.at(0));
 }
+
+Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root, int index) {
+    Subdiagram *sub = new Subdiagram();
+
+    // get name and description
+    sub->setName(QString("Subdiagram %1").arg(index));
+    sub->setDescription(QString("Subdiagram Description for %1").arg(index));
+
+    // set the root block
+    sub->setRoot(root);
+
+    // get item ids, find the items, then add to the subdiagram
+
+    // set all of the connectors
+
+    return sub;
+}
+
+// create a gate with random information
+QList<Block *> OSLDGraphicsEngine::getRootPathList() const
+{
+    return rootPathList;
+}
+
+QList<DiagramItem *> OSLDGraphicsEngine::getAllItems() const
+{
+    return allItems;
+}
+
+Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
+
+    int random = qrand() % 123456;  // make a random number
+
+    QString id = "Gate ";
+    id.append(QString::number(random));
+
+    GateType type;
+
+    if(random % 3 == 0) {
+        type = AndGate;
+    }
+    else if((random % 3) - 1 == 0) {
+        type = OrGate;
+    }
+    else {
+        type = NotGate;
+    }
+
+    Gate *gate = new Gate(id, pos, type);
+
+    gate->setStatus("Valid", statuses);
+
+    return gate;
+}
+
 
 // overrides to draw a grid for the background
 void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
@@ -99,45 +173,102 @@ void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
     }
 }
 
-Subdiagram *OSLDGraphicsEngine::createSubdiagram(QList<QString> ids, QString name, bool outline)
+void OSLDGraphicsEngine::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    Subdiagram *sub = new Subdiagram;
+    pressedItem = itemAt(event->scenePos(), QTransform());  // store the item that was clicked down on
+    pressPosition = event->scenePos();                      // store the position of the click
+    QGraphicsScene::mousePressEvent(event);
+    update();
+}
 
-    sub->name = name;
-    sub->showOutline = outline;
+void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsScene::mouseMoveEvent(event);
+}
 
-    for(int i = 0; i < allItems.count(); i++) {                // loop through each item in allItems
-        for(int j = 0; j < ids.count(); j++) {              // loop through each string in the id list
-            if(allItems.at(i)->id().compare(ids.at(j)) == 0) { // if the item's id matches the id in the id list
-                sub->items.append(allItems.at(i));             // add the item to the subdiagram
-                j = ids.count();                            // go to the next id
+void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());   // get the item that was released
+
+    // if the click was from the left button
+    if(event->button() == Qt::LeftButton) {
+        // if the item was released at the same position, i.e. mouse wasn't moved away during click
+        if(releaseItem == pressedItem && pressPosition == event->scenePos()) {
+
+            Block *pressedBlock;    // to store a pointer to the clicked block
+
+            if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
+
+                // check if the block has a subdiagram
+                if(pressedBlock->hasChildSubdiagram()) {
+
+                    Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
+
+                    // if the root block was pressed and it's not the top level subdiagram
+                    if(sub == currentSubdiagram) {
+                        if(pressedBlock->getParentSubdiagram() != 0) {
+                            this->hideSubdiagramItems(currentSubdiagram);
+                            pressedBlock->setPos(pressedBlock->getLocation());
+                            rootPathList.removeOne(pressedBlock);
+                            this->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
+                        }
+                    }
+                    // else when a regular subdiagram block was pressed
+                    else {
+                        this->hideSubdiagramItems(currentSubdiagram);
+                        rootPathList.append(pressedBlock);
+                        this->drawSubdiagramItems(pressedBlock->getChildSubdiagram());
+                    }
+
+                    qDebug() << "\nCurrent path:";
+                    for(int i = 0; i < rootPathList.count(); i++) {
+                        qDebug() << rootPathList.at(i)->getTitle();
+                    }
+                }
             }
         }
     }
 
-    return sub;
+    QGraphicsScene::mouseReleaseEvent(event);
+    update();
 }
 
-Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
-
-    int random = qrand() % 123456;
-
-    QString id = "Gate ";
-    id.append(QString::number(random));
-
-    GateType type;
-
-    if(random % 3 == 0) {
-        type = AndGate;
+void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
+{
+    for(int i = 0; i < sub->getConnectors().count(); i++) {
+        //qDebug() << "Drawing Connector" << i;
+        this->addItem(sub->getConnectors().at(i));
     }
-    else if((random % 3) - 1 == 0) {
-        type = OrGate;
+    for(int i = 0; i < sub->getInputItems().count(); i++) {
+        //qDebug() << "Drawing Block" << i;
+        this->addItem(sub->getInputItems().at(i));
     }
-    else {
-        type = NotGate;
-    }
+    Block *root = sub->getRoot();
+    root->setPos(root->getRootLocation());
+    root->setCurrentlyRoot(true);
+    this->addItem(root);
+    currentSubdiagram = sub;
+}
 
-    return new Gate(this->parent, id, pos, type);
+void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
+{
+    for(int i = 0; i < sub->getConnectors().count(); i++) {
+        //qDebug() << "Drawing Connector" << i;
+        this->removeItem(sub->getConnectors().at(i));
+    }
+    for(int i = 0; i < sub->getInputItems().count(); i++) {
+        //qDebug() << "Drawing Block" << i;
+        this->removeItem(sub->getInputItems().at(i));
+    }
+    Block *root = sub->getRoot();
+    root->setCurrentlyRoot(false);
+    this->removeItem(root);
+    currentSubdiagram = 0;
+}
+
+void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {
+    showGridBackground = show;
+    this->invalidate(area, BackgroundLayer);
 }
 
 
@@ -166,6 +297,23 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
     bd.hovertext = QString("Block %1 Hovertext").arg(random);
     bd.status = (random % 2 == 0 ? "Valid" : "Invalid");
 
+    int random2 = qrand() % 2;
+    if(random2 == 0) {
+        bd.textColor = QColor(Qt::white);
+    }
+    random2 = qrand() % 2;
+    if(random2 == 0) {
+        bd.bold = true;
+    }
+    random2 = qrand() % 2;
+    if(random2 == 1) {
+        bd.underline = true;
+    }
+    random2 = qrand() % 2;
+    if(random2 == 1) {
+        bd.italics = true;
+    }
+
     // for testing large title strings
     // if(random % 3 == 0) bd.title.append("@@@@@ @@@@@@@@@ @@@@@@@ @@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@ @@@@@ @@@@ @@@@@@@@@@@@@@@@ @@@ @ @@@@@@@@@@@@ @@@@@@@@@ @@@ @@@@@@@@@@@@@@@@@@ @@@@ @");
 
@@ -177,73 +325,48 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData da
 {
     // qDebug() << "Creating Block" << id;
 
-    Block *block = new Block(this->parent, id, position);
+    Block *block = new Block(id, position);
 
     block->setTitle(data.title);
     block->setDescription(data.description);
     block->setToolTip(data.hovertext);
     block->setStatus(data.status, statuses);
+    block->setTextColor(data.textColor);
+    block->setItalics(data.italics);
+    block->setUnderline(data.underline);
+    block->setBold(data.bold);
 
     return block;
 }
 
-void OSLDGraphicsEngine::drawAllItems()
-{
-    for(int i = 0; i < allConns.count(); i++) {
-        //qDebug() << "Drawing Connector" << i;
-        this->addItem(allConns.at(i));
-    }
-    for(int i = 0; i < allGates.count(); i++) {
-        //qDebug() << "Drawing Gate" << i;
-        this->addItem(allGates.at(i));
-    }
+bool OSLDGraphicsEngine::blockExists(QString id) {
     for(int i = 0; i < allBlocks.count(); i++) {
-        //qDebug() << "Drawing Block" << i;
-        this->addItem(allBlocks.at(i));
+        if(id.compare(allBlocks.at(i)->id())) {
+            return true;
+        }
     }
+    return false;
 }
 
+Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
+    for(int i = 0; i < allBlocks.count(); i++) {
+        if(id.compare(allBlocks.at(i)->id())) {
+            return allBlocks.at(i);
+        }
+    }
+    return 0;
+}
 
-/*
- *  CONNECTOR FUNCTIONS
- */
-
-void OSLDGraphicsEngine::connectItems(Gate *input, DiagramItem *output)
+QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
 {
-    QPointF startPoint = input->outputPoint();
-    QPointF endPoint = output->inputPoint();
-
-    Connector *conn = new Connector(startPoint, endPoint);
-
-    //qDebug() << "Connecting Gate to Item:" << startPoint << "to" << endPoint;
-
-    input->addOutputConnector(conn);
-    output->addInputConnector(conn);
-
-    allConns.append(conn);
+    return allSubdiagrams;
 }
 
-void OSLDGraphicsEngine::connectItems(Block *input, DiagramItem *output)
-{
-    QPointF startPoint = input->outputPoint();
-    QPointF endPoint = output->inputPoint();
-    QColor color = input->getColor();
-
-    //qDebug() << "Connecting Block to Item:" << startPoint << "to" << endPoint;
-
-    Connector *conn = new Connector(startPoint, endPoint, color);
-
-    input->addOutputConnector(conn);
-    output->addInputConnector(conn);
-
-    allConns.append(conn);
+void OSLDGraphicsEngine::hideAllItemTitleText(bool b) {
+    DiagramItem::setTransparent(b);
+    for(int i = 0; i < allItems.count(); i++) {
+        allItems.at(i)->update();
+    }
+    this->update();
 }
 
-/*
- *  OTHER FUNCTIONS
- */
-
-void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {
-    showGridBackground = show;
-    this->invalidate(area, BackgroundLayer);
-}

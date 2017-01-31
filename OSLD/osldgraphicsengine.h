@@ -4,9 +4,7 @@
 #include <QtCore>
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
-#include "block.h"
-#include "gate.h"
-#include "connector.h"
+#include "subdiagram.h"
 
 // holds data source information
 struct CommonSource {
@@ -14,38 +12,28 @@ struct CommonSource {
     QString type;
 };
 
-// holds subdiagram information
-struct Subdiagram {
-    QString name;
-    bool showOutline;
-    QList<DiagramItem *> items;
-};
-
 class OSLDGraphicsEngine : public QGraphicsScene
 {
 private:
-    QWidget *parent;
-
     QMap<QString, CommonSource> sources;    // maps source ids to their name and type
     QMap<QString, QString> statuses;    // maps status names to different colors
 
-    int fullWidth;  // holds the width of the entire diagram
-    int fullHeight; // holds the height for the entire diagram
-    int gridUnitSize = 20;
+    Subdiagram *currentSubdiagram = 0;
+    QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
+    QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
+    QList<Gate *> allGates;         // a list of all of the gates in the diagram
+    QList<DiagramItem *> allItems;  // a list of both blocks and gates
+
+    QList<Block *> rootPathList;    // holds the chain of root items to the current subdiagram
 
     QVarLengthArray<QLineF> backgroundGrid;
     QVarLengthArray<QPointF> backgroundDots;
 
+    int gridUnitSize = 20;
     bool showGridBackground = false;
 
-    QList<Block *> allSubdiagrams;  // a list of all of the blocks in the diagram
-    QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
-    QList<Gate *> allGates;         // a list of all of the gates in the diagram
-    QList<DiagramItem *> allItems;  // a list of both blocks and gates
-    QList<Connector *> allConns;    // a list of all connector objects for this diagram
-
-
-    Subdiagram *createSubdiagram(QList<QString> ids, QString name, bool outline = false);
+    QGraphicsItem *pressedItem;
+    QPointF pressPosition;
 
     // functions for creating gates
     Gate *getGateInfoFromDescriptionFile(QPointF pos);
@@ -54,15 +42,9 @@ private:
     Block *getBlockInfoFromDescriptionFile(QPointF pos);    // get information from the description file reader
     Block *buildBlock(QString id, QPointF position, BlockData data);    // passes data into a block
 
-    void connectItems(Gate *input, DiagramItem *output);    // creates a connector from a gate to another item
-    void connectItems(Block *input, DiagramItem *output);   // creates a connector from a block to another item
-
-    void drawAllItems();    // draws all of the items in the three "all" lists
-
 
 public:
     OSLDGraphicsEngine(QWidget *parent);
-    QGraphicsWidget *drawGateGroup(Gate *gate);
 
     QMap<QString, CommonSource> getSources() const { return sources; }
     void setSources(const QMap<QString, CommonSource> &value) { sources = value; }
@@ -70,8 +52,28 @@ public:
     QMap<QString, QString> getStatuses() const { return statuses; }
     void setStatuses(const QMap<QString, QString> &value) { statuses = value; }
 
-    void drawBackground(QPainter *painter, const QRectF &rect);
+    QList<Subdiagram *> getAllSubdiagrams() const;
+
     void showGrid(bool show, QRectF area);
+
+    void drawSubdiagramItems(Subdiagram *sub);
+
+    bool blockExists(QString id);
+    Block *retrieveBlock(QString id);
+    Subdiagram *getSubdiagramInfoFromDescriptionFile(Block *root, int index);
+    void hideSubdiagramItems(Subdiagram *sub);
+
+    QList<Block *> getRootPathList() const;
+
+    QList<DiagramItem *> getAllItems() const;
+
+    void hideAllItemTitleText(bool b);
+
+protected:
+    void drawBackground(QPainter *painter, const QRectF &rect);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
 
 #endif // OSLDGRAPHICSENGINE_H

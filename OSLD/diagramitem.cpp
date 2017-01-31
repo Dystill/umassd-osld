@@ -1,40 +1,76 @@
 #include "diagramitem.h"
 
+bool DiagramItem::transparentTitle = false;
+
 /*
  *  CONSTRUCTOR
  */
 
-int DiagramItem::getCircleRadius() const
+DiagramItem::DiagramItem(QString id, QPointF loc)
 {
-    return circleRadius;
-}
-
-void DiagramItem::setCircleRadius(int value)
-{
-    circleRadius = value;
-}
-
-int DiagramItem::getLineLength() const
-{
-    return lineLength;
-}
-
-void DiagramItem::setLineLength(int value)
-{
-    lineLength = value;
-}
-
-DiagramItem::DiagramItem(QWidget *parent, QString id, QPointF loc)
-{
-    this->itemParent = parent;  // save parent item for resizing purposes
-    this->setParent(parent);
     this->itemId = id;      // save the item's id
     this->setPos(loc);      // position the item
+    this->location = loc;
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsMovable);
 
-    this->lineLength = (parent->logicalDpiX() / 2);
-    this->circleRadius = (parent->logicalDpiX() / 24);
+    this->lineLength = (24);
+    this->circleRadius = (3);
+}
+
+
+/*
+ *  Item Sizing and Dimensions
+ */
+
+QFont DiagramItem::getFont() const
+{
+    return font;
+}
+
+void DiagramItem::setFont(const QFont &value)
+{
+    font = value;
+}
+
+void DiagramItem::setTitleSize(int size)
+{
+    font.setPixelSize(size);
+}
+
+void DiagramItem::setItemSizing(QString title)
+{
+    QFontMetricsF metrics(font);
+
+    qreal textWidth = metrics.boundingRect(title).width();
+    qreal textHeight = metrics.boundingRect(title).height();
+
+    //qDebug() << "title:" << title;
+    //qDebug() << "textWidth:" << textWidth;
+    //qDebug() << "textHeight:" << textHeight;
+
+    int wordWrapLimit = ((textWidth + this->maxWidth - 1) / this->maxWidth);
+
+    //qDebug() << "wordWrapLimit:" << wordWrapLimit;
+
+    this->setWidth(((textWidth > this->maxWidth) ? this->maxWidth : textWidth) + 64);
+    this->setHeight(((textHeight * wordWrapLimit) + 1) * 2.5);
+
+    //qDebug() << "Width:" << this->width();
+    //qDebug() << "Height:" << this->height();
+
+    this->update();
+    this->updateConnectors();
+}
+
+int DiagramItem::getMaxWidth() const
+{
+    return maxWidth;
+}
+
+void DiagramItem::setMaxWidth(int value)
+{
+    maxWidth = value;
 }
 
 
@@ -89,86 +125,6 @@ QSizeF DiagramItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
     }
     return constraint;
 }
-
-
-/*
- *  MOUSE FUNCTIONS
- */
-
-void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
-{
-    /*
-    mDragged = qgraphicsitem_cast<QGraphicsItem*>(itemAt(mouseEvent->scenePos(), QTransform()));
-    if (mDragged) {
-        mDragOffset = mouseEvent->scenePos() - mDragged->pos();
-    } else
-        QGraphicsScene::mousePressEvent(mouseEvent);
-    */
-    qDebug() << "Mouse pressed onto" << this->id();
-    QGraphicsItem::mousePressEvent(mouseEvent);
-
-    update();
-}
-
-void DiagramItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
-{
-    /*
-    if (mDragged) {
-        // Ensure that the item's offset from the mouse cursor stays the same.
-        mDragged->setPos(mouseEvent->scenePos() - mDragOffset);
-    } else
-        QGraphicsScene::mouseMoveEvent(mouseEvent);
-        */
-    qDebug() << "Mouse moving" << this->id();
-    QGraphicsItem::mouseMoveEvent(mouseEvent);
-
-    update();
-}
-
-void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
-{
-    /*
-    if (mDragged) {
-        int x = floor(mouseEvent->scenePos().x() / mCellSize.width()) * mCellSize.width();
-        int y = floor(mouseEvent->scenePos().y() / mCellSize.height()) * mCellSize.height();
-        mDragged->setPos(x, y);
-        mDragged = 0;
-    } else
-        QGraphicsScene::mouseReleaseEvent(mouseEvent);
-        */
-    qDebug() << "Mouse released" << this->id();
-    QGraphicsItem::mouseReleaseEvent(mouseEvent);
-
-    update();
-}
-
-/*
- *  ITEM POSITIONING AND LOCATING
- */
-
-/*
-QPointF DiagramItem::convertPointToRelative(QPointF loc, DiagramItem *anchor)
-{
-    QPointF temp;
-    QPointF anchorPoint = anchor->location();
-
-    temp.setX(loc.x() - anchorPoint.x());
-    temp.setY(loc.y() - anchorPoint.y());
-
-    return temp;
-}
-
-QPointF DiagramItem::convertPointToAbsolute(QPointF loc, DiagramItem *anchor)
-{
-    QPointF temp;
-    QPointF anchorPoint = anchor->location();
-
-    temp.setX(loc.x() + anchorPoint.x());
-    temp.setY(loc.y() + anchorPoint.y());
-
-    return temp;
-}
-*/
 
 /*
  *  CONNECTOR ATTACHING FUNCTIONS
@@ -231,31 +187,65 @@ void DiagramItem::removeOutputConnector(Connector *value)
 
 
 /*
+ *  MOUSE FUNCTIONS
+ */
+
+void DiagramItem::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    QGraphicsItem::mousePressEvent(mouseEvent);
+}
+
+void DiagramItem::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    QGraphicsItem::mouseMoveEvent(mouseEvent);
+}
+
+void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    this->location = this->pos();
+    QGraphicsItem::mouseReleaseEvent(mouseEvent);
+}
+
+
+/*
  *  ATTRIBUTE GETTERS AND SETTERS
  */
 
-// returns the widget this block will be displayed in
-QWidget *DiagramItem::parent() const { return itemParent; }
-
 // returns this item's unique id
-QString DiagramItem::id() const { return itemId; }
+QString DiagramItem::id() const
+{
+    return itemId;
+}
 
 // returns the width of this item
-int DiagramItem::width() const { return itemWidth; }
+int DiagramItem::width() const
+{
+    return itemWidth;
+}
 
 // sets the width for this item
 // QGraphicsItem::update() may have to be called afterwards
-void DiagramItem::setWidth(int value) { itemWidth = value; }
+void DiagramItem::setWidth(int value)
+{
+    itemWidth = value;
+}
 
 // returns the height of this item
-int DiagramItem::height() const { return itemHeight; }
+int DiagramItem::height() const
+{
+    return itemHeight;
+}
 
 // sets the height for this item
 // QGraphicsItem::update() may have to be called afterwards
-void DiagramItem::setHeight(int value) { itemHeight = value; }
+void DiagramItem::setHeight(int value)
+{
+    itemHeight = value;
+}
 
 
-bool DiagramItem::isBlock() const {
+bool DiagramItem::isBlock() const
+{
     return block;
 }
 
@@ -274,8 +264,123 @@ void DiagramItem::isGate(bool value)
     gate = value;
 }
 
+int DiagramItem::getCircleRadius() const
+{
+    return circleRadius;
+}
 
+void DiagramItem::setCircleRadius(int value)
+{
+    circleRadius = value;
+}
 
+int DiagramItem::getLineLength() const
+{
+    return lineLength;
+}
+
+void DiagramItem::setLineLength(int value)
+{
+    lineLength = value;
+}
+
+QColor DiagramItem::getTextColor() const
+{
+    return textColor;
+}
+
+void DiagramItem::setTextColor(const QColor &value)
+{
+    textColor = value;
+}
+
+QString DiagramItem::getTitle() const
+{
+    return title;
+}
+
+void DiagramItem::setTitle(const QString &value)
+{
+    this->title = value;
+    this->setItemSizing(this->title);
+}
+
+QString DiagramItem::getDescription() const
+{
+    return description;
+}
+
+void DiagramItem::setDescription(const QString &value)
+{
+    description = value;
+}
+
+QString DiagramItem::getStatus() const
+{
+    return status;
+}
+
+void DiagramItem::setStatus(const QString &value, QMap<QString, QString> colorMap)
+{
+    //qDebug() << value;
+    status = value;
+
+    //qDebug() << colorMap[status];
+    color = QColor(colorMap[status]);
+}
+
+QColor DiagramItem::getColor() const
+{
+    return color;
+}
+
+void DiagramItem::setItalics(bool b)
+{
+    font.setItalic(b);
+    this->setItemSizing(this->title);
+}
+
+void DiagramItem::setBold(bool b)
+{
+    font.setBold(b);
+    this->setItemSizing(this->title);
+}
+
+void DiagramItem::setUnderline(bool b)
+{
+    font.setUnderline(b);
+    this->setItemSizing(this->title);
+}
+
+Subdiagram *DiagramItem::getParentSubdiagram() const
+{
+    return parentSubdiagram;
+}
+
+void DiagramItem::setParentSubdiagram(Subdiagram *value)
+{
+    parentSubdiagram = value;
+}
+
+QPointF DiagramItem::getLocation() const
+{
+    return location;
+}
+
+void DiagramItem::setColor(const QColor &value)
+{
+    color = value;
+}
+
+bool DiagramItem::isTransparent()
+{
+    return transparentTitle;
+}
+
+void DiagramItem::setTransparent(bool value)
+{
+    transparentTitle = value;
+}
 
 
 

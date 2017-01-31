@@ -22,9 +22,10 @@ private:
     QPainterPath *drawORGatePath(int width, int height);     //                  "   "                 OR gate
     QPainterPath *drawNOTGatePath(int width, int height);    //                  "   "                 NOT gate
 
+
 public:
     // constructor
-    Gate(QWidget *parent, QString id, QPointF loc, GateType type = AndGate);
+    Gate(QString id, QPointF loc, GateType type = AndGate);
 
     // QGraphicsItem stuff
     QRectF boundingRect() const;
@@ -33,6 +34,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
+protected:
     // function to set the size for the gate
     void setGateSizing();
 
