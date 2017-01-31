@@ -120,7 +120,8 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     texto.setAlignment(Qt::AlignCenter);                            // center align
 
     // set the color and font for the text
-    pen.setColor(this->getTextColor());
+    if(this->isTransparent()) pen.setColor(Qt::transparent);
+    else pen.setColor(this->getTextColor());
     painter->setFont(this->getFont());
     painter->setPen(pen);
 

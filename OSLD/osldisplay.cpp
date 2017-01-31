@@ -222,3 +222,8 @@ void OSLDisplay::on_actionFitDiagramToWindow_triggered()
 {
     this->fitToWindow();
 }
+
+void OSLDisplay::on_actionHideBlockTitles_triggered(bool checked)
+{
+    scene->hideAllItemTitleText(checked);
+}

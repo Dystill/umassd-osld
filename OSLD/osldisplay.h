@@ -35,6 +35,8 @@ private slots:
 
     void on_actionHideCloseButton_triggered();
 
+    void on_actionHideBlockTitles_triggered(bool checked);
+
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;

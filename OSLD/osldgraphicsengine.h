@@ -67,7 +67,8 @@ public:
 
     QList<DiagramItem *> getAllItems() const;
 
-    void updateAllItems();
+    void hideAllItemTitleText(bool b);
+
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

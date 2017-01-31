@@ -357,9 +357,16 @@ Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
     return 0;
 }
 
-
 QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
 {
     return allSubdiagrams;
+}
+
+void OSLDGraphicsEngine::hideAllItemTitleText(bool b) {
+    DiagramItem::setTransparent(b);
+    for(int i = 0; i < allItems.count(); i++) {
+        allItems.at(i)->update();
+    }
+    this->update();
 }
 

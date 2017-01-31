@@ -12,6 +12,8 @@ class Subdiagram;
 class DiagramItem : public QGraphicsWidget
 {
 private:
+    static bool transparentTitle;
+
     QString itemId;     // the unique identifier for this item. cannot be changed once item is constructed
 
     QList<DiagramItem *> outputItem;    // the item this item outputs to if applicable
@@ -32,7 +34,6 @@ private:
     QFont font;         // font for the title text
 
     int maxWidth;                               // the maximum width of the block before word wraping the title
-
 
     int itemWidth;  // the width of this item
     int itemHeight; // the height of this item
@@ -116,6 +117,9 @@ public:
     void setItalics(bool b);
     void setBold(bool b);
     void setUnderline(bool b);
+
+    static bool isTransparent();
+    static void setTransparent(bool value);
 
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text

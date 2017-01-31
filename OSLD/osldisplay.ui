@@ -49,17 +49,20 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
      <string>Window</string>
     </property>
+    <addaction name="actionFitDiagramToWindow"/>
+    <addaction name="separator"/>
     <addaction name="actionFullScreen"/>
     <addaction name="actionShowGrid"/>
+    <addaction name="separator"/>
     <addaction name="actionHideCloseButton"/>
-    <addaction name="actionFitDiagramToWindow"/>
+    <addaction name="actionHideBlockTitles"/>
    </widget>
    <addaction name="menuWindow"/>
   </widget>
@@ -120,6 +123,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionHideBlockTitles">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Block Titles</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>

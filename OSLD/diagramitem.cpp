@@ -1,13 +1,10 @@
 #include "diagramitem.h"
 
+bool DiagramItem::transparentTitle = false;
+
 /*
  *  CONSTRUCTOR
  */
-
-void DiagramItem::setColor(const QColor &value)
-{
-    color = value;
-}
 
 DiagramItem::DiagramItem(QString id, QPointF loc)
 {
@@ -18,7 +15,7 @@ DiagramItem::DiagramItem(QString id, QPointF loc)
                    QGraphicsItem::ItemIsMovable);
 
     this->lineLength = (24);
-    this->circleRadius = (4);
+    this->circleRadius = (3);
 }
 
 
@@ -370,6 +367,20 @@ QPointF DiagramItem::getLocation() const
     return location;
 }
 
+void DiagramItem::setColor(const QColor &value)
+{
+    color = value;
+}
+
+bool DiagramItem::isTransparent()
+{
+    return transparentTitle;
+}
+
+void DiagramItem::setTransparent(bool value)
+{
+    transparentTitle = value;
+}
 
 
 
