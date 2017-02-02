@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QObject>
 
-#include <QXmlSimpleReader>
+#include <QXmlStreamReader>
 #include <QtCore>
 #include <QMainWindow>
 
@@ -31,7 +31,7 @@ protected:
 private:
     QPushButton *loadButton;
     QLineEdit *filePathLine;
-    QXmlSimpleReader xmlReader;
+    QXmlStreamReader xmlReader;
 };
 
 #endif // DESCRIPTIONFILEREADER_H
