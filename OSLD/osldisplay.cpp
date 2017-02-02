@@ -7,6 +7,7 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setParent(parent);
+    this->addMenuBarActionsToDisplay();
 
     // resize the window to be a certain amount smaller than the screen
     this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
@@ -33,11 +34,20 @@ OSLDisplay::~OSLDisplay()
     delete ui;
 }
 
+// adds actions in the menu bar to the display
+// allows shortcuts to work while menu bar is hidden
+void OSLDisplay::addMenuBarActionsToDisplay() {
+    this->addAction(ui->actionShowGrid);
+    this->addAction(ui->actionFitDiagramToWindow);
+    this->addAction(ui->actionFullScreen);
+    this->addAction(ui->actionHideBlockTitles);
+    this->addAction(ui->actionHideButtons);
+}
+
 void OSLDisplay::prepareGraphicsView()
 {
     // set different flags
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
-    ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     ui->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
 
@@ -86,38 +96,12 @@ void OSLDisplay::resizeEvent(QResizeEvent *event)
     QMainWindow::resizeEvent(event);    // call parent resize event
 
     this->fitToWindow();
+}
 
-    // fitInView initially scales the view contents down dramatically -- to 0.0410959 in matrix points m11 & m22
-    // I couldn't figure out a reason as to why, so this fixes it
-    if(initScaleFix == false) { // flagged so this only triggers once during initialization
+void OSLDisplay::showEvent(QShowEvent *event){
+    QMainWindow::showEvent(event);
 
-        // get the dimensions of the window
-        int windowWidth = this->width();
-        int windowHeight = this->height();
-
-        // get the dimensions of the diagram
-        int sceneWidth = scene->sceneRect().width();
-        int sceneHeight = scene->sceneRect().height();
-
-        // get the percent difference in size between the two dimensions
-        qreal widthRatio = qreal(windowWidth) / sceneWidth;
-        qreal heightRatio = qreal(windowHeight) / sceneHeight;
-
-        // get the smaller of the two ratios
-        qreal scaleFactor = widthRatio <= heightRatio ? widthRatio : heightRatio;
-
-        // floor the ratio's tenth place
-        scaleFactor = std::floor(scaleFactor*10)/10;
-
-        // create a matrix specifying the transformations made to the diagram shape (e.g. scale, rotate, shear, etc.)
-        QTransform transformer; // robot in disguise
-
-        // scale the diagram by the calculated amount
-        transformer.setMatrix(scaleFactor, 0, 0, 0, scaleFactor, 0, 0, 0, 1);
-
-        ui->graphicsView->setTransform(transformer);    // perform the transformation on the diagram
-        initScaleFix = true;    // update the flag so this isn't executed again
-    }
+    this->fitToWindow();
 }
 
 // code executed when a specific key is pressed
@@ -137,11 +121,6 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Minus:                 // ctrl+- to zoom out
         if(mod == Qt::ControlModifier){zoom(-1);zoom(-1);}
         break;
-    }
-
-    if(ui->menuBar->isHidden()) {
-        ui->menuBar->show();
-        ui->closeButton->show();
     }
 }
 
@@ -212,10 +191,23 @@ void OSLDisplay::mouseReleaseEvent(QMouseEvent *event) {
     QMainWindow::mouseReleaseEvent(event);
 }
 
+void OSLDisplay::mouseMoveEvent(QMouseEvent *event) {
+    QMainWindow::mouseMoveEvent(event);
+    if(event->pos().y() <= 50 && !ui->menuBar->isVisible()) {
+        ui->menuBar->setVisible(true);
+    }
+}
+
 void OSLDisplay::on_actionHideButtons_triggered()
 {
-    ui->closeButton->hide();
-    ui->menuBar->hide();
+    if(ui->menuBar->isVisible()) {
+        ui->closeButton->setVisible(false);
+        ui->menuBar->setVisible(false);
+    }
+    else {
+        ui->closeButton->setVisible(true);
+        ui->menuBar->setVisible(true);
+    }
 }
 
 void OSLDisplay::on_actionFitDiagramToWindow_triggered()

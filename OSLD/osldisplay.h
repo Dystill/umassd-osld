@@ -20,12 +20,14 @@ public:
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 private slots:
     void on_actionFullScreen_triggered();
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
     bool eventFilter(QObject *object, QEvent *event);
     void resizeEvent(QResizeEvent *event);
+    void showEvent(QShowEvent *event);
 
     void on_actionShowGrid_triggered();
 
@@ -50,6 +52,7 @@ private:
     void exitFullScreen();
     void zoom(int px);
     void fitToWindow();
+    void addMenuBarActionsToDisplay();
 };
 
 #endif // OSLDISPLAY_H

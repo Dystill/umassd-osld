@@ -18,6 +18,23 @@ Block::Block(QString id, QPointF loc, QString t, QString desc, QString ht)
     this->isBlock(true);
 }
 
+Block::Block(Block *block) : DiagramItem() {
+    this->setMaxWidth(256);
+    this->setTitleSize(16);
+
+    this->setTitle(block->getTitle());
+    this->setDescription(block->getDescription());
+    this->setToolTip(block->toolTip());
+    this->setColor(block->getColor());  // sets color directly instead of using a status
+    this->setBold(block->getFont().bold());
+    this->setItalics(block->getFont().italic());
+    this->setUnderline(block->getFont().underline());
+    this->setWidth(block->width());
+    this->setHeight(block->height());
+
+    this->isBlock(true);
+}
+
 /*
  *  Block Sizing and Dimensions
  */
@@ -153,6 +170,7 @@ void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if(this->isCurrentlyRoot()) {
         this->setRootLocation(this->pos());
+        this->setCursor(Qt::ArrowCursor);
         QGraphicsItem::mouseReleaseEvent(event);
     }
     else {
@@ -169,6 +187,7 @@ Subdiagram *Block::getChildSubdiagram() const
 void Block::setChildSubdiagram(Subdiagram *value)
 {
     childSubdiagram = value;
+    this->setCursor(Qt::PointingHandCursor);
     this->update();
 }
 

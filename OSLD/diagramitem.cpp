@@ -6,6 +6,11 @@ bool DiagramItem::transparentTitle = false;
  *  CONSTRUCTOR
  */
 
+DiagramItem::DiagramItem()
+{
+
+}
+
 DiagramItem::DiagramItem(QString id, QPointF loc)
 {
     this->itemId = id;      // save the item's id
