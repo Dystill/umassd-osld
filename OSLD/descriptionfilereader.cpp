@@ -63,41 +63,25 @@ void DescriptionFileReader::Read(QString filepath)
     std::string inBuff;
    QString outBuff;
    QString title;
-  // hope = xmlReader.parse (source);
-
-  // qDebug()<<"Parse: "<<hope; //If returns true, it is open.
-
    xmlReader.setDevice(&xmlFile);
-   //xmlReader.readNext();
-qDebug()<< "TEST1";
+    qDebug()<< "TEST1";
    while(!xmlReader.atEnd())
    {
        qDebug()<< "TEST2";
-
        QXmlStreamReader::TokenType token = xmlReader.readNext();
-
-       if(token == QXmlStreamReader::StartDocument){
-       //we don’t want any of this data, it isn’t any element
-       //we need.
-       continue;
+       if(token == QXmlStreamReader::StartDocument)
+       {
+        continue;
        }
 
        if(token == QXmlStreamReader::StartElement)
        {
            qDebug()<< "TEST3";
 
-           //inBuff = (xmlReader.readElementText()).toStdString();
-           //outBuff = QString::fromStdString(inBuff); // Converts data types to make things workable
-
            if (xmlReader.name() == "diagram")
            {
-                qDebug()<< "TEST4";
-                xmlReader.readNext();
-                //this->title = xmlReader.text().toString();
-               outBuff = xmlReader.text().toString();
-                qDebug()<< "TEST5";
-                qDebug()<< " Diagram's name is: "<< outBuff;
-                qDebug()<< "TEST6";
+
+                setDiagramName();
            }
        }
        else
@@ -107,5 +91,21 @@ qDebug()<< "TEST1";
    }
 }
 
+QString DescriptionFileReader::getDiagramName() const
+{
+    return DiagramName;
+}
+
+void DescriptionFileReader::setDiagramName()
+{
+    QString outBuff;
+    QXmlStreamAttributes attributes = xmlReader.attributes();
+    qDebug()<< "TEST4";
+    xmlReader.readNext();
+    outBuff += attributes.value("name").toString();
+    qDebug()<< " Diagram's name is: "<< outBuff;
+
+    DiagramName = outBuff;
+}
 
 
