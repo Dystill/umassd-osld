@@ -5,6 +5,7 @@
 #include <QScrollBar>
 #include <QtCore>
 #include "osldgraphicsengine.h"
+#include "rootitempathscene.h"
 
 namespace Ui {
 class OSLDisplay;
@@ -42,6 +43,7 @@ private slots:
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
+    RootItemPathScene *rootScene;
 
     qreal windowSizePercent = 0.50;
     qreal scaleAmount = 100;
@@ -51,7 +53,7 @@ private:
     void enterFullScreen();
     void exitFullScreen();
     void zoom(int px);
-    void fitToWindow();
+    void fitDiagramToWindow();
     void addMenuBarActionsToDisplay();
 };
 

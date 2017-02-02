@@ -9,7 +9,7 @@ RootItemPathScene::RootItemPathScene(QList<Block *> itemList, PathAlignment pa)
 {
     rootPathList = itemList;
     for(int i = 0; i < rootPathList.count(); i++) {
-        this->addItem(rootPathList.at(i));
+        this->addItem(new Block(rootPathList.at(i)));
     }
     this->setCurrentAlignment(pa);
 }

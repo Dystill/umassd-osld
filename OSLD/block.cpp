@@ -26,6 +26,7 @@ Block::Block(Block *block) : DiagramItem() {
     this->setDescription(block->getDescription());
     this->setToolTip(block->toolTip());
     this->setColor(block->getColor());  // sets color directly instead of using a status
+    this->setTextColor(block->getTextColor());
     this->setBold(block->getFont().bold());
     this->setItalics(block->getFont().italic());
     this->setUnderline(block->getFont().underline());
@@ -170,7 +171,6 @@ void Block::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if(this->isCurrentlyRoot()) {
         this->setRootLocation(this->pos());
-        this->setCursor(Qt::ArrowCursor);
         QGraphicsItem::mouseReleaseEvent(event);
     }
     else {

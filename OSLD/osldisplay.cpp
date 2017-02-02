@@ -9,6 +9,8 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     this->setParent(parent);
     this->addMenuBarActionsToDisplay();
 
+    ui->rootHGraphicsView->hide();
+
     // resize the window to be a certain amount smaller than the screen
     this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
 
@@ -21,8 +23,15 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     // display the scene from the graphics engine in the graphicsView
     ui->graphicsView->setScene(scene);
 
+    //
+    rootScene = new RootItemPathScene(scene->getRootPathList(), Vertical);
+    ui->rootVGraphicsView->setScene(rootScene);
+
+    ui->rootVGraphicsView->setMinimumWidth(parent->logicalDpiX() * 1.5);
+    ui->rootVGraphicsView->setMaximumWidth(parent->logicalDpiX() * 1.5);
+
     // resize the scene to fit in the window
-    this->fitToWindow();
+    this->fitDiagramToWindow();
 
     // starts the application in full screen mode
     //enterFullScreen();
@@ -78,7 +87,7 @@ void OSLDisplay::zoom(int px) {
     //qDebug() << "z" << ui->graphicsView->matrix();
 }
 
-void OSLDisplay::fitToWindow() {
+void OSLDisplay::fitDiagramToWindow() {
     // update scene rect to fit the items
     scene->setSceneRect(scene->itemsBoundingRect().adjusted(-36, -36, 36, 36));
 
@@ -94,14 +103,17 @@ void OSLDisplay::fitToWindow() {
 void OSLDisplay::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);    // call parent resize event
-
-    this->fitToWindow();
+    this->fitDiagramToWindow();
 }
 
-void OSLDisplay::showEvent(QShowEvent *event){
+void OSLDisplay::showEvent(QShowEvent *event)
+{
     QMainWindow::showEvent(event);
 
-    this->fitToWindow();
+    this->fitDiagramToWindow();
+
+    rootScene->setSceneRect(rootScene->itemsBoundingRect().adjusted(-8, -8, 8, 8));
+    ui->rootVGraphicsView->fitInView(rootScene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 // code executed when a specific key is pressed
@@ -202,17 +214,19 @@ void OSLDisplay::on_actionHideButtons_triggered()
 {
     if(ui->menuBar->isVisible()) {
         ui->closeButton->setVisible(false);
+        ui->titleLabel->setVisible(false);
         ui->menuBar->setVisible(false);
     }
     else {
         ui->closeButton->setVisible(true);
+        ui->titleLabel->setVisible(true);
         ui->menuBar->setVisible(true);
     }
 }
 
 void OSLDisplay::on_actionFitDiagramToWindow_triggered()
 {
-    this->fitToWindow();
+    this->fitDiagramToWindow();
 }
 
 void OSLDisplay::on_actionHideBlockTitles_triggered(bool checked)
