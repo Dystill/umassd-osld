@@ -26,12 +26,16 @@ public:
     //Methods
     void Read(QString filepath);
 
+    QString getDiagramName() const;
+    void setDiagramName();
+
 protected:
     QString path;
 private:
     QPushButton *loadButton;
     QLineEdit *filePathLine;
     QXmlStreamReader xmlReader;
+    QString DiagramName;
 };
 
 #endif // DESCRIPTIONFILEREADER_H
