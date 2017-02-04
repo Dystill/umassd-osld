@@ -78,6 +78,8 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
     rootPathList.append(allSubdiagrams.at(0)->getRoot());
     this->drawSubdiagramItems(allSubdiagrams.at(0));
+
+    rootScene = new RootItemPathScene(this->getRootPathList(), Vertical);
 }
 
 Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root, int index) {
@@ -106,6 +108,11 @@ QList<Block *> OSLDGraphicsEngine::getRootPathList() const
 QList<DiagramItem *> OSLDGraphicsEngine::getAllItems() const
 {
     return allItems;
+}
+
+RootItemPathScene *OSLDGraphicsEngine::getRootScene() const
+{
+    return rootScene;
 }
 
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
@@ -211,6 +218,9 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                             pressedBlock->setPos(pressedBlock->getLocation());
                             rootPathList.removeOne(pressedBlock);
                             this->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
+
+                            rootScene->setList(rootPathList);
+                            rootScene->updateItems();
                         }
                     }
                     // else when a regular subdiagram block was pressed
@@ -218,12 +228,15 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                         this->hideSubdiagramItems(currentSubdiagram);
                         rootPathList.append(pressedBlock);
                         this->drawSubdiagramItems(pressedBlock->getChildSubdiagram());
+
+                        rootScene->setList(rootPathList);
+                        rootScene->updateItems();
                     }
 
-                    qDebug() << "\nCurrent path:";
-                    for(int i = 0; i < rootPathList.count(); i++) {
-                        qDebug() << rootPathList.at(i)->getTitle();
-                    }
+                    //qDebug() << "\nCurrent path:";
+                    //for(int i = 0; i < rootPathList.count(); i++) {
+                    //    qDebug() << rootPathList.at(i)->getTitle();
+                    //}
                 }
             }
         }

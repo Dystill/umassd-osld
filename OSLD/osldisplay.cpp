@@ -24,9 +24,8 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     ui->graphicsView->setScene(scene);
 
     //
-    rootScene = new RootItemPathScene(scene->getRootPathList(), Vertical);
-    ui->rootVGraphicsView->setScene(rootScene);
-
+    this->rootScene = scene->getRootScene();
+    ui->rootVGraphicsView->setScene(this->rootScene);
     ui->rootVGraphicsView->setMinimumWidth(parent->logicalDpiX() * 1.5);
     ui->rootVGraphicsView->setMaximumWidth(parent->logicalDpiX() * 1.5);
 

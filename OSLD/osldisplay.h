@@ -5,7 +5,6 @@
 #include <QScrollBar>
 #include <QtCore>
 #include "osldgraphicsengine.h"
-#include "rootitempathscene.h"
 
 namespace Ui {
 class OSLDisplay;
