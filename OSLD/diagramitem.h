@@ -45,6 +45,7 @@ private:
     bool gate = false;  // holds whether or not this item is a gate
 
 public:
+    DiagramItem();
     // constructor
     DiagramItem(QString id, QPointF loc = QPointF(0, 0));  // requires the parent object and id. location defaults to (0,0)
 
@@ -121,18 +122,19 @@ public:
     static bool isTransparent();
     static void setTransparent(bool value);
 
+    int getLineLength() const;
+    void setLineLength(int value);
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
     void setColor(const QColor &value);         // let subclasses manually change their color
+
 
     void isBlock(bool value);   // set if this item is a block
     void isGate(bool value);    // set if this item is a gate
 
     int getCircleRadius() const;
     void setCircleRadius(int value);
-
-    int getLineLength() const;
-    void setLineLength(int value);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);

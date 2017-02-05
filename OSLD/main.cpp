@@ -7,8 +7,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    a.setOverrideCursor(Qt::ArrowCursor);
-
     OSLDisplay w(new QWidget);
     //DescriptionFileReader x;
 
