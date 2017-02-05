@@ -45,6 +45,7 @@ private:
     RootItemPathScene *rootScene;
 
     qreal windowSizePercent = 0.50;
+    qreal rootViewWidth = 1.8;
     qreal scaleAmount = 100;
     bool initScaleFix = false;  // cannot figure out why the scene becomes really small initially, so this helps fix it
 

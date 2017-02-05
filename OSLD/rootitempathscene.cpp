@@ -7,10 +7,7 @@ RootItemPathScene::RootItemPathScene()
 
 RootItemPathScene::RootItemPathScene(QList<Block *> itemList, PathAlignment pa)
 {
-    for(int i = 0; i < itemList.count(); i++) {
-        rootPathList.append(new Block(itemList.at(i)));
-        qDebug() << "root list adding" << rootPathList.at(i)->getTitle();
-    }
+    this->setList(itemList);
     this->setCurrentAlignment(pa);
     this->updateItems();
 }
@@ -33,15 +30,19 @@ void RootItemPathScene::setList(const QList<Block *> &itemList)
     qDebug() << "deleted list";
     for(int i = 0; i < itemList.count(); i++) {
         qDebug() << "adding item" << itemList.at(i)->getTitle();
-        rootPathList.append(new Block(itemList.at(i)));
+        Block *block = new Block(itemList.at(i));
+        block->setIsInDiagram(false);
+        rootPathList.append(block);
     }
     qDebug() << "finished setting list";
+    this->updateItems();
 }
 
 void RootItemPathScene::align(PathAlignment pa)
 {
     qDebug() << "aligning items";
     QPointF position(0,0);
+
     for(int i = 0; i < rootPathList.count(); i++) {
 
         Block *block = rootPathList.at(i);
@@ -66,32 +67,10 @@ void RootItemPathScene::align(PathAlignment pa)
 
 void RootItemPathScene::alignVertically()
 {
-    QPointF position(0,0);
-    for(int i = 0; i < rootPathList.count(); i++) {
-        Block *block = rootPathList.at(i);
-        this->removeItem(block);
-        block->setPos(position);
-        block->setLineLength(0);
-        this->addItem(block);
-        position.setY(position.y() + block->boundingRect().height());
-    }
-    this->setCurrentAlignment(Vertical);
-    this->update();
 }
 
 void RootItemPathScene::alignHorizontally()
 {
-    QPointF position(0,0);
-    for(int i = 0; i < rootPathList.count(); i++) {
-        Block *block = rootPathList.at(i);
-        this->removeItem(block);
-        block->setPos(position);
-        block->setLineLength(0);
-        this->addItem(block);
-        position.setX(position.x() + block->boundingRect().width());
-    }
-    this->setCurrentAlignment(Horizontal);
-    this->update();
 }
 
 PathAlignment RootItemPathScene::getCurrentAlignment() const
@@ -114,4 +93,30 @@ void RootItemPathScene::updateItems()
     }
     this->align(this->getCurrentAlignment());
     this->update();
+    this->setSceneRect(this->itemsBoundingRect().adjusted(-6, -6, 6, 6));
+    this->fitToView();
+}
+
+QGraphicsView *RootItemPathScene::getParentGraphicsView() const
+{
+    return parentGraphicsView;
+}
+
+void RootItemPathScene::setParentGraphicsView(QGraphicsView *value)
+{
+    parentGraphicsView = value;
+}
+
+void RootItemPathScene::fitToView()
+{
+    if(this->getParentGraphicsView() != 0) {
+        QRectF rect = this->sceneRect();
+
+        if(this->getCurrentAlignment() == Vertical)
+            rect.setHeight(1);
+        else
+            rect.setWidth(1);
+
+        this->getParentGraphicsView()->fitInView(rect,Qt::KeepAspectRatio);
+    }
 }

@@ -13,6 +13,9 @@ class RootItemPathScene : public QGraphicsScene
 private:
     QList<Block *> rootPathList;
     PathAlignment currentAlignment;
+
+    QGraphicsView *parentGraphicsView = 0;
+
 public:
     RootItemPathScene();
     RootItemPathScene(QList<Block *> itemList, PathAlignment pa = Vertical);
@@ -24,6 +27,9 @@ public:
     PathAlignment getCurrentAlignment() const;
     void setCurrentAlignment(const PathAlignment &value);
     void updateItems();
+    QGraphicsView *getParentGraphicsView() const;
+    void setParentGraphicsView(QGraphicsView *value);
+    void fitToView();
 };
 
 #endif // ROOTITEMPATHSCENE_H

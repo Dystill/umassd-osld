@@ -23,11 +23,12 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     // display the scene from the graphics engine in the graphicsView
     ui->graphicsView->setScene(scene);
 
-    //
+    // prepare the root list view
     this->rootScene = scene->getRootScene();
+    this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
     ui->rootVGraphicsView->setScene(this->rootScene);
-    ui->rootVGraphicsView->setMinimumWidth(parent->logicalDpiX() * 1.5);
-    ui->rootVGraphicsView->setMaximumWidth(parent->logicalDpiX() * 1.5);
+    ui->rootVGraphicsView->setMinimumWidth(parent->logicalDpiX() * rootViewWidth);
+    ui->rootVGraphicsView->setMaximumWidth(parent->logicalDpiX() * rootViewWidth);
 
     // resize the scene to fit in the window
     this->fitDiagramToWindow();
@@ -92,6 +93,7 @@ void OSLDisplay::fitDiagramToWindow() {
 
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+    rootScene->fitToView();
 }
 
 /*

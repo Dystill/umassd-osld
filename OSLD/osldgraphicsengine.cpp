@@ -225,7 +225,6 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                             this->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
 
                             rootScene->setList(rootPathList);
-                            rootScene->updateItems();
                         }
                     }
                     // else when a regular subdiagram block was pressed
@@ -235,7 +234,6 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                         this->drawSubdiagramItems(pressedBlock->getChildSubdiagram());
 
                         rootScene->setList(rootPathList);
-                        rootScene->updateItems();
                     }
 
                     qDebug() << "\nCurrent path after:";

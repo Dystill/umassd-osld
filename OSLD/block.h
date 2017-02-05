@@ -26,6 +26,7 @@ private:
     Subdiagram *childSubdiagram = 0; // holds subdiagram if this block has one
     QPointF rootLocation = QPointF(0,0);
     bool currentlyRoot = false;
+    bool inDiagram = true;
 
 public:
     // constructor
@@ -51,6 +52,9 @@ public:
 
     bool isCurrentlyRoot() const;
     void setCurrentlyRoot(bool value);
+
+    bool isInDiagram() const;
+    void setIsInDiagram(bool value);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
