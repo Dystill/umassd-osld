@@ -249,6 +249,7 @@ void OSLDisplay::on_actionHideButtons_triggered()
         ui->subtitleLabel->setVisible(true);
         ui->menuBar->setVisible(true);
     }
+    this->fitDiagramToWindow();
 }
 
 void OSLDisplay::on_actionFitDiagramToWindow_triggered()
