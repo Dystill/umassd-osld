@@ -39,6 +39,8 @@ private slots:
 
     void on_actionHideBlockTitles_triggered(bool checked);
 
+    void on_actionSwitchOrientation_triggered();
+
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
@@ -50,6 +52,7 @@ private:
     bool initScaleFix = false;  // cannot figure out why the scene becomes really small initially, so this helps fix it
 
     void prepareGraphicsView();
+    void prepareRootView();
     void enterFullScreen();
     void exitFullScreen();
     void zoom(int px);

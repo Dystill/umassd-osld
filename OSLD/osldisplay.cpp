@@ -22,16 +22,7 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     ui->graphicsView->setScene(scene);
 
     // prepare the root list view
-    ui->rootHGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->rootVGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->rootHGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui->rootVGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui->rootHGraphicsView->hide();
-    this->rootScene = scene->getRootScene();
-    this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
-    ui->rootVGraphicsView->setScene(this->rootScene);
-    ui->rootVGraphicsView->setMinimumWidth(parent->logicalDpiX() * rootViewWidth);
-    ui->rootVGraphicsView->setMaximumWidth(parent->logicalDpiX() * rootViewWidth);
+    this->prepareRootView();
 
     // resize the scene to fit in the window
     this->fitDiagramToWindow();
@@ -54,6 +45,7 @@ void OSLDisplay::addMenuBarActionsToDisplay() {
     this->addAction(ui->actionFullScreen);
     this->addAction(ui->actionHideBlockTitles);
     this->addAction(ui->actionHideButtons);
+    this->addAction(ui->actionSwitchOrientation);
 }
 
 void OSLDisplay::prepareGraphicsView()
@@ -65,6 +57,35 @@ void OSLDisplay::prepareGraphicsView()
 
     // filter mouse scrolling to perform custom functions
     ui->graphicsView->viewport()->installEventFilter(this);
+}
+
+void OSLDisplay::prepareRootView() {
+    // set which scrollbars to remove
+    ui->rootHGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->rootVGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    ui->rootHGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->rootVGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    // hide the horizontal root view on start
+    ui->rootHGraphicsView->hide();
+
+    // get the root scene from the OSLDgraphicsengine
+    this->rootScene = scene->getRootScene();
+
+    // put the root scene into the vertical root view
+    ui->rootVGraphicsView->setScene(this->rootScene);
+
+    // send the vertical root view to the root scene
+    this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
+
+    // set the width for the vertical graphics view
+    ui->rootVGraphicsView->setMinimumWidth(QDesktopWidget().logicalDpiX() * rootViewWidth);
+    ui->rootVGraphicsView->setMaximumWidth(QDesktopWidget().logicalDpiX() * rootViewWidth);
+
+    // set the height for the horizontal graphics view
+    ui->rootHGraphicsView->setMinimumHeight(QDesktopWidget().logicalDpiY() * 0.75);
+    ui->rootHGraphicsView->setMaximumHeight(QDesktopWidget().logicalDpiY() * 0.75);
 }
 
 void OSLDisplay::enterFullScreen()
@@ -219,11 +240,13 @@ void OSLDisplay::on_actionHideButtons_triggered()
     if(ui->menuBar->isVisible()) {
         ui->closeButton->setVisible(false);
         ui->titleLabel->setVisible(false);
+        ui->subtitleLabel->setVisible(false);
         ui->menuBar->setVisible(false);
     }
     else {
         ui->closeButton->setVisible(true);
         ui->titleLabel->setVisible(true);
+        ui->subtitleLabel->setVisible(true);
         ui->menuBar->setVisible(true);
     }
 }
@@ -236,4 +259,39 @@ void OSLDisplay::on_actionFitDiagramToWindow_triggered()
 void OSLDisplay::on_actionHideBlockTitles_triggered(bool checked)
 {
     scene->hideAllItemTitleText(checked);
+}
+
+void OSLDisplay::on_actionSwitchOrientation_triggered()
+{
+    PathAlignment current = rootScene->getCurrentAlignment();
+
+    // hide the horizontal root view on start
+    if(current == Vertical) {
+        ui->rootVGraphicsView->hide();
+
+        // put the root scene into the vertical root view
+        ui->rootHGraphicsView->setScene(this->rootScene);
+
+        // send the vertical root view to the root scene
+        this->rootScene->setParentGraphicsView(ui->rootHGraphicsView);
+
+        this->rootScene->alignHorizontally();
+
+        ui->rootHGraphicsView->show();
+    }
+    else {
+        ui->rootHGraphicsView->hide();
+
+        // put the root scene into the vertical root view
+        ui->rootVGraphicsView->setScene(this->rootScene);
+
+        // send the vertical root view to the root scene
+        this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
+
+        this->rootScene->alignVertically();
+
+        ui->rootVGraphicsView->show();
+    }
+
+    this->fitDiagramToWindow();
 }

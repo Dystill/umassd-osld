@@ -69,10 +69,14 @@ void RootItemPathScene::align(PathAlignment pa)
 
 void RootItemPathScene::alignVertically()
 {
+    this->setCurrentAlignment(Vertical);
+    this->updateItems();
 }
 
 void RootItemPathScene::alignHorizontally()
 {
+    this->setCurrentAlignment(Horizontal);
+    this->updateItems();
 }
 
 PathAlignment RootItemPathScene::getCurrentAlignment() const

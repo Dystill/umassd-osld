@@ -30,14 +30,14 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item alignment="Qt::AlignLeft">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="titleLabel">
         <property name="text">
          <string>Diagram Title</string>
         </property>
        </widget>
       </item>
       <item alignment="Qt::AlignRight">
-       <widget class="QLabel" name="titleLabel">
+       <widget class="QLabel" name="subtitleLabel">
         <property name="text">
          <string>Subdiagram Title</string>
         </property>
@@ -58,7 +58,7 @@
       </item>
      </layout>
     </item>
-    <item>
+    <item alignment="Qt::AlignHCenter">
      <widget class="QPushButton" name="closeButton">
       <property name="text">
        <string>Close Window</string>
@@ -80,14 +80,26 @@
     <property name="title">
      <string>Window</string>
     </property>
-    <addaction name="actionFitDiagramToWindow"/>
-    <addaction name="separator"/>
     <addaction name="actionFullScreen"/>
     <addaction name="actionShowGrid"/>
     <addaction name="separator"/>
     <addaction name="actionHideButtons"/>
+   </widget>
+   <widget class="QMenu" name="menuRoot_View">
+    <property name="title">
+     <string>Root View</string>
+    </property>
+    <addaction name="actionSwitchOrientation"/>
+   </widget>
+   <widget class="QMenu" name="menuDiagram">
+    <property name="title">
+     <string>Diagram</string>
+    </property>
+    <addaction name="actionFitDiagramToWindow"/>
     <addaction name="actionHideBlockTitles"/>
    </widget>
+   <addaction name="menuDiagram"/>
+   <addaction name="menuRoot_View"/>
    <addaction name="menuWindow"/>
   </widget>
   <action name="actionFullScreen">
@@ -146,7 +158,7 @@
     <string>Fit Diagram To Window</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+W</string>
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionHideBlockTitles">
@@ -158,6 +170,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionSwitchOrientation">
+   <property name="text">
+    <string>Switch Orientation</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
  </widget>
