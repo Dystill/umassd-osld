@@ -12,6 +12,10 @@ bool Block::isInDiagram() const
 void Block::setIsInDiagram(bool value)
 {
     inDiagram = value;
+    if(!value) {
+        this->setCircleRadius(0);
+        this->setLineLength(0);
+    }
 }
 
 Block::Block(QString id, QPointF loc, QString t, QString desc, QString ht)

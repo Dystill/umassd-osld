@@ -9,8 +9,6 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     this->setParent(parent);
     this->addMenuBarActionsToDisplay();
 
-    ui->rootHGraphicsView->hide();
-
     // resize the window to be a certain amount smaller than the screen
     this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
 
@@ -24,6 +22,11 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     ui->graphicsView->setScene(scene);
 
     // prepare the root list view
+    ui->rootHGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->rootVGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->rootHGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->rootVGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->rootHGraphicsView->hide();
     this->rootScene = scene->getRootScene();
     this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
     ui->rootVGraphicsView->setScene(this->rootScene);

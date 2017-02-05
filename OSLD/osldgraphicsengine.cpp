@@ -211,10 +211,10 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
                     Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
 
-                    qDebug() << "\nCurrent path before:";
-                    for(int i = 0; i < rootPathList.count(); i++) {
-                        qDebug() << rootPathList.at(i)->getTitle();
-                    }
+                    //qDebug() << "\nCurrent path before:";
+                    //for(int i = 0; i < rootPathList.count(); i++) {
+                    //    qDebug() << rootPathList.at(i)->getTitle();
+                    //}
 
                     // if the root block was pressed and it's not the top level subdiagram
                     if(sub == currentSubdiagram) {
@@ -236,10 +236,10 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                         rootScene->setList(rootPathList);
                     }
 
-                    qDebug() << "\nCurrent path after:";
-                    for(int i = 0; i < rootPathList.count(); i++) {
-                        qDebug() << rootPathList.at(i)->getTitle();
-                    }
+                    //qDebug() << "\nCurrent path after:";
+                    //for(int i = 0; i < rootPathList.count(); i++) {
+                    //    qDebug() << rootPathList.at(i)->getTitle();
+                    //}
                 }
             }
         }

@@ -16,6 +16,8 @@ private:
 
     QGraphicsView *parentGraphicsView = 0;
 
+    int blockMargin = 8;
+
 public:
     RootItemPathScene();
     RootItemPathScene(QList<Block *> itemList, PathAlignment pa = Vertical);

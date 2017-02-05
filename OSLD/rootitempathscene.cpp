@@ -7,9 +7,8 @@ RootItemPathScene::RootItemPathScene()
 
 RootItemPathScene::RootItemPathScene(QList<Block *> itemList, PathAlignment pa)
 {
-    this->setList(itemList);
     this->setCurrentAlignment(pa);
-    this->updateItems();
+    this->setList(itemList);
 }
 
 QList<Block *> RootItemPathScene::getList() const
@@ -19,30 +18,32 @@ QList<Block *> RootItemPathScene::getList() const
 
 void RootItemPathScene::setList(const QList<Block *> &itemList)
 {
-    qDebug() << "deleting items total:" << rootPathList.count();
+    // remove all items from the main root list from the scene
     for(int i = rootPathList.count() - 1; i >= 0; i--) {
-        qDebug() << "removing item" << i;
-        qDebug() << rootPathList.at(i)->getTitle();
         this->removeItem(rootPathList.at(i));
     }
-    qDebug() << "deleting list";
+
+    // clear all items in the root list from memory
     rootPathList.clear();
-    qDebug() << "deleted list";
+
+    // go through all of the items from the passed list
     for(int i = 0; i < itemList.count(); i++) {
-        qDebug() << "adding item" << itemList.at(i)->getTitle();
-        Block *block = new Block(itemList.at(i));
-        block->setIsInDiagram(false);
-        rootPathList.append(block);
+        Block *block = new Block(itemList.at(i));   // create a copy block
+        qDebug() << "block width:" << block->width();
+        block->setIsInDiagram(false);               // set that it isn't in the main diagram
+        rootPathList.append(block);                 // add the new block to the main list
     }
-    qDebug() << "finished setting list";
+
+    // update the items, scene, and view
     this->updateItems();
 }
 
 void RootItemPathScene::align(PathAlignment pa)
 {
     qDebug() << "aligning items";
-    QPointF position(0,0);
+    QPointF position(0,0);  // start at 0
 
+    // go through each item in the root list
     for(int i = 0; i < rootPathList.count(); i++) {
 
         Block *block = rootPathList.at(i);
@@ -51,14 +52,15 @@ void RootItemPathScene::align(PathAlignment pa)
 
         block->setPos(position);
 
-        block->setLineLength(0);
-
         this->addItem(block);
 
         if(pa == Vertical)
-            position.setY(position.y() + block->boundingRect().height());
+            position.setY(position.y() + block->boundingRect().height() + blockMargin);
         else if(pa == Horizontal)
-            position.setX(position.x() + block->boundingRect().width());
+            position.setX(position.x() + block->boundingRect().width() + blockMargin);
+
+
+        qDebug() << "scene rect width 1:" << this->itemsBoundingRect().width();
     }
 
     this->setCurrentAlignment(pa);
@@ -86,14 +88,19 @@ void RootItemPathScene::setCurrentAlignment(const PathAlignment &value)
 void RootItemPathScene::updateItems()
 {
     qDebug() << "updating items";
+
+    // add all of the items to the scene
     for(int i = 0; i < rootPathList.count(); i++) {
-        qDebug() << "root list displaying" << i;
-        qDebug() << rootPathList.at(i)->getTitle();
         this->addItem(rootPathList.at(i));
     }
+
+    // align the items based on the current alignment
     this->align(this->getCurrentAlignment());
+
+    // update the scene
     this->update();
-    this->setSceneRect(this->itemsBoundingRect().adjusted(-6, -6, 6, 6));
+
+    // fit the scene to the view
     this->fitToView();
 }
 
@@ -109,14 +116,34 @@ void RootItemPathScene::setParentGraphicsView(QGraphicsView *value)
 
 void RootItemPathScene::fitToView()
 {
+    qDebug() << "checking for view";
     if(this->getParentGraphicsView() != 0) {
-        QRectF rect = this->sceneRect();
+        qDebug() << "view found, fitting to view";
 
-        if(this->getCurrentAlignment() == Vertical)
-            rect.setHeight(1);
-        else
-            rect.setWidth(1);
+        qDebug() << "recalculating scene rect";
+        // set the scene rect to contain all of the newly added items
+        this->setSceneRect(this->itemsBoundingRect()
+                           .adjusted(-blockMargin, -blockMargin, blockMargin, blockMargin));
 
+        qDebug() << "scene rect width 2:" << this->itemsBoundingRect().width();
+        QRectF rect;
+
+        qDebug() << "getting current alignment";
+        if(this->getCurrentAlignment() == Vertical) {
+            qDebug() << "vertical";
+            rect = QRectF(this->sceneRect().left(),
+                          this->sceneRect().bottom(),
+                          this->sceneRect().width(),
+                          1);
+        } else {
+            qDebug() << "horizontal";
+            rect = QRectF(this->sceneRect().right(),
+                          this->sceneRect().top(),
+                          1,
+                          this->sceneRect().height());
+        }
+
+        qDebug() << "Fit to Rect:" << rect;
         this->getParentGraphicsView()->fitInView(rect,Qt::KeepAspectRatio);
     }
 }
