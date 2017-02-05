@@ -19,7 +19,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     sources["source1"] = sourceInfo;
 
     // create some random subdiagrams with three blocks and a single gate
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 20; i++) {
         QPointF rootPoint(0, 0);
 
         // set the root for the subdiagram
@@ -211,6 +211,11 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
                     Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
 
+                    qDebug() << "\nCurrent path before:";
+                    for(int i = 0; i < rootPathList.count(); i++) {
+                        qDebug() << rootPathList.at(i)->getTitle();
+                    }
+
                     // if the root block was pressed and it's not the top level subdiagram
                     if(sub == currentSubdiagram) {
                         if(pressedBlock->getParentSubdiagram() != 0) {
@@ -233,10 +238,10 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                         rootScene->updateItems();
                     }
 
-                    //qDebug() << "\nCurrent path:";
-                    //for(int i = 0; i < rootPathList.count(); i++) {
-                    //    qDebug() << rootPathList.at(i)->getTitle();
-                    //}
+                    qDebug() << "\nCurrent path after:";
+                    for(int i = 0; i < rootPathList.count(); i++) {
+                        qDebug() << rootPathList.at(i)->getTitle();
+                    }
                 }
             }
         }

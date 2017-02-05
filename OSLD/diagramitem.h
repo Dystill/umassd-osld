@@ -122,6 +122,9 @@ public:
     static bool isTransparent();
     static void setTransparent(bool value);
 
+    int getLineLength() const;
+    void setLineLength(int value);
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
     void setColor(const QColor &value);         // let subclasses manually change their color
@@ -132,9 +135,6 @@ protected:
 
     int getCircleRadius() const;
     void setCircleRadius(int value);
-
-    int getLineLength() const;
-    void setLineLength(int value);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
