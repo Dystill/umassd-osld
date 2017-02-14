@@ -7,6 +7,8 @@
 #include "subdiagram.h"
 #include "rootitempathscene.h"
 
+class OSLDisplay;
+
 // holds data source information
 struct CommonSource {
     QString name;
@@ -72,6 +74,9 @@ public:
     void hideAllItemTitleText(bool b);
 
     RootItemPathScene *getRootScene() const;
+
+    OSLDisplay *getParentWindow() const;
+    void setParentWindow(OSLDisplay *value);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

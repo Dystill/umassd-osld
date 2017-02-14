@@ -219,11 +219,19 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     // if the root block was pressed and it's not the top level subdiagram
                     if(sub == currentSubdiagram) {
                         if(pressedBlock->getParentSubdiagram() != 0) {
+                            // hide the items currently being displayed
                             this->hideSubdiagramItems(currentSubdiagram);
+
+                            // move the pressed block to it's original position
                             pressedBlock->setPos(pressedBlock->getLocation());
+
+                            // remove the pressed block from the root view list
                             rootPathList.removeOne(pressedBlock);
+
+                            // redraw the subdiagram
                             this->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
 
+                            // redraw the root view scene
                             rootScene->setList(rootPathList);
                         }
                     }
