@@ -48,18 +48,40 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
+#ifndef DIAGRAMTEXTITEM_H
+#define DIAGRAMTEXTITEM_H
 
-#include <QApplication>
+#include <QGraphicsTextItem>
+#include <QPen>
 
-int main(int argv, char *args[])
+QT_BEGIN_NAMESPACE
+class QFocusEvent;
+class QGraphicsItem;
+class QGraphicsScene;
+class QGraphicsSceneMouseEvent;
+QT_END_NAMESPACE
+
+//! [0]
+class DiagramTextItem : public QGraphicsTextItem
 {
-    Q_INIT_RESOURCE(diagramscene);
+    Q_OBJECT
 
-    QApplication app(argv, args);
-    MainWindow mainWindow;
-    mainWindow.setGeometry(100, 100, 800, 500);
-    mainWindow.show();
+public:
+    enum { Type = UserType + 3 };
 
-    return app.exec();
-}
+    DiagramTextItem(QGraphicsItem *parent = 0);
+
+    int type() const override { return Type; }
+
+signals:
+    void lostFocus(DiagramTextItem *item);
+    void selectedChange(QGraphicsItem *item);
+
+protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    void focusOutEvent(QFocusEvent *event) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+};
+//! [0]
+
+#endif // DIAGRAMTEXTITEM_H
