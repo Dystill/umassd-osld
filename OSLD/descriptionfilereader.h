@@ -29,13 +29,19 @@ public:
     QString getDiagramName() const;
     void setDiagramName();
 
+    QString getDescription() const;
+    void setDescription();
+
 protected:
     QString path;
 private:
     QPushButton *loadButton;
     QLineEdit *filePathLine;
     QXmlStreamReader xmlReader;
+    QXmlStreamWriter xmlWriter;
+    QString Buff;
     QString DiagramName;
+    QString Description;
 };
 
 #endif // DESCRIPTIONFILEREADER_H

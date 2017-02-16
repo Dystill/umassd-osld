@@ -8,6 +8,7 @@
 #include <QXmlDefaultHandler>
 #include<qDebug>
 #include <QStringList>
+#include <QXmlStreamReader>
 
 
 using namespace std;
@@ -19,16 +20,20 @@ DescriptionFileReader::DescriptionFileReader(QWidget *parent) :
     QString pathAndName;
     QString fileName;
 
-    fileName = "/descriptionFileMockupVer3(grouped-alt).xml"; //NEED TO FIND A WAY TO MAKE THIS DYNAMIC!!
+    fileName = "/descriptionFileMockupVer3(grouped-alt-no-comments)proto.xml"; //NEED TO FIND A WAY TO MAKE THIS DYNAMIC!!
 
     //Opens explorer to browse for location of XML file
     QString filePath = QFileDialog::getOpenFileName(this,tr("Open File"),"/home",tr("XML File(*.xml)"));
+
+
 
 
     QDir d = QFileInfo(filePath).absoluteDir();
     QString path = d.absolutePath(); //Gets path of file from the directory
 
     QFile file(filePath); //represents file that was opened
+
+
     //file.open(QIODevice::ReadOnly);
     file.setFileName(fileName);
 
@@ -59,15 +64,15 @@ void DescriptionFileReader::Read(QString filepath)
    xmlFile.open(QIODevice::ReadOnly);
    QXmlInputSource source (&xmlFile);
 
+    //QXmlStreamReader xmlReader(xmlFile);
 
     std::string inBuff;
    QString outBuff;
    QString title;
    xmlReader.setDevice(&xmlFile);
-    qDebug()<< "TEST1";
+
    while(!xmlReader.atEnd())
    {
-       qDebug()<< "TEST2";
        QXmlStreamReader::TokenType token = xmlReader.readNext();
        if(token == QXmlStreamReader::StartDocument)
        {
@@ -76,12 +81,22 @@ void DescriptionFileReader::Read(QString filepath)
 
        if(token == QXmlStreamReader::StartElement)
        {
-           qDebug()<< "TEST3";
 
            if (xmlReader.name() == "diagram")
            {
 
                 setDiagramName();
+                 xmlReader.readNext();
+           }
+
+           if(xmlReader.name() == "description")
+           {
+               QString outBuff;
+               QXmlStreamAttributes attributes = xmlReader.attributes();
+               xmlReader.readNext();
+               outBuff += attributes.value("desc").toString();
+               qDebug()<< "OutBuff2:" << outBuff;
+               xmlReader.readNext();
            }
        }
        else
@@ -100,12 +115,20 @@ void DescriptionFileReader::setDiagramName()
 {
     QString outBuff;
     QXmlStreamAttributes attributes = xmlReader.attributes();
-    qDebug()<< "TEST4";
     xmlReader.readNext();
     outBuff += attributes.value("name").toString();
-    qDebug()<< " Diagram's name is: "<< outBuff;
-
     DiagramName = outBuff;
+    qDebug()<< "OutBuff1:" << outBuff;
 }
 
+QString DescriptionFileReader::getDescription() const
+{
+    return Description;
+}
+
+void DescriptionFileReader::setDescription()
+{
+
+
+}
 
