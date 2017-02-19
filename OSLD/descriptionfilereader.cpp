@@ -51,7 +51,12 @@ void DescriptionFileReader::readFile(QString filepath)
 
             // get the type of xml element currently being read
             currentToken = this->readNext();
-            qDebug() << ">> Found Token:" << (this->tokenString().replace("Characters", "String"));
+
+            // qDebug string to print current token type
+            // prints every line read in the xml file
+            QString tString = (this->tokenString().replace("Characters", "String") +
+                               (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
+            qDebug() << ">> Found Token:" << tString;
 
             // start of document
             if(currentToken == QXmlStreamReader::StartDocument){
@@ -72,7 +77,7 @@ void DescriptionFileReader::readFile(QString filepath)
                     this->setDiagramName();
                 }
                 else if(currentTag == "meta") {         // meta tag
-                    qDebug()<< "Setting diagram name";
+                    qDebug()<< "calling readMetaData function";
                     this->readMetaData();
                 }
                 if(currentTag == "description") {       // *test* delete this, move to readMetaData
