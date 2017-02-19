@@ -1,6 +1,4 @@
 #include "osldisplay.h"
-#include "descriptionfilereader.h"
-#include "parser.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -9,10 +7,10 @@ int main(int argc, char *argv[])
 
     a.setOverrideCursor(Qt::ArrowCursor);
 
-    //OSLDisplay w(new QWidget);
-    DescriptionFileReader x;
+    DescriptionFileReader x(new QWidget);
 
-    //w.show();
+    // OSLDisplay w(new QWidget);
+    // w.show();
 
     return a.exec();
 }

@@ -6,6 +6,7 @@
 #include <QGraphicsWidget>
 #include "subdiagram.h"
 #include "rootitempathscene.h"
+#include "descriptionfilereader.h"
 
 class OSLDisplay;
 

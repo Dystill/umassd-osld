@@ -2,53 +2,39 @@
 #define DESCRIPTIONFILEREADER_H
 
 #include <QtCore>
-#include <QtWidgets>
-#include <QWidget>
-#include <QObject>
-#include <QTextStream>
-#include <QStringList>
-#include <QXmlDefaultHandler>
-#include <QXmlStreamReader>
+#include <QFileDialog>
 
 #include <QDebug>
-#include "parser.h"
 
-class QPushButton;
-class QLineEdit;
-
-namespace Ui {
-class descriptionfilereader;
-}
-
-class DescriptionFileReader: public QMainWindow
+class DescriptionFileReader: public QXmlStreamReader
 {
-    Q_OBJECT
-
 public:
     DescriptionFileReader(QWidget *parent = 0);
     ~DescriptionFileReader();
 
     //Methods
-    void Read(QString filepath);
+    void readFile(QString filepath);
 
     QString getDiagramName() const;
     void setDiagramName();
 
     QString getDescription() const;
-    void setDescription();
 
     QString cleanString(QString s);
+
+    void readMetaData();
+    void readBlocks();
+    void readGates();
+    void readSubdiagrams();
+
 protected:
     QString path;
 
 private:
-    QPushButton *loadButton;
-    QLineEdit *filePathLine;
-    QXmlStreamReader xmlReader;
-    QXmlStreamWriter xmlWriter;
-    QString Buff;
+    TokenType currentToken;
     QString diagramName;
-    QString Description;
+    QString description;
+
 };
 
 #endif // DESCRIPTIONFILEREADER_H
