@@ -1,9 +1,5 @@
 #include "parser.h"
-#include <stdio.h>
-#include <qstring.h>
-#include <qxml.h>
-#include <QTextStream>
-#include<qDebug>
+
 QTextStream cout (stdout);
 
 //qName = expected tag

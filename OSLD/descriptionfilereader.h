@@ -1,12 +1,17 @@
 #ifndef DESCRIPTIONFILEREADER_H
 #define DESCRIPTIONFILEREADER_H
 
+#include <QtCore>
+#include <QtWidgets>
 #include <QWidget>
 #include <QObject>
-
+#include <QTextStream>
+#include <QStringList>
+#include <QXmlDefaultHandler>
 #include <QXmlStreamReader>
-#include <QtCore>
-#include <QMainWindow>
+
+#include <QDebug>
+#include "parser.h"
 
 class QPushButton;
 class QLineEdit;
@@ -34,6 +39,7 @@ public:
 
 protected:
     QString path;
+
 private:
     QPushButton *loadButton;
     QLineEdit *filePathLine;

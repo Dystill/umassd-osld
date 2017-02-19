@@ -1,8 +1,14 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <qxml.h>
-
+#include <QtCore>
+#include <QtWidgets>
+#include <QWidget>
+#include <QObject>
+#include <QTextStream>
+#include <QStringList>
+#include <QXmlDefaultHandler>
+#include <QXmlStreamReader>
 
 class Parser : public QXmlDefaultHandler
 {
