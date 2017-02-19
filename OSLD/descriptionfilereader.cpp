@@ -65,28 +65,21 @@ void DescriptionFileReader::Read(QString filepath)
             // start of element
             if(token == QXmlStreamReader::StartElement) {
 
+                // get the name of the current tag
                 QString currentTag = xmlReader.name().toString();
-                qDebug()<< "Found element:" << currentTag;
+                qDebug()<< "Reading in tag:" << currentTag;
 
-                if(currentTag == "diagram") {
+                if(currentTag == "diagram") {   // diagram tag
                     qDebug()<< "Setting diagram name";
                     this->setDiagramName();
                 }
-                else if(currentTag == "description") {
-                    qDebug()<< "do description stuff";
-                    /*
-                    qDebug()<< "Found description element";
-                    QXmlStreamAttributes attributes = xmlReader.attributes();
-                    xmlReader.readNext();
-                    outBuff += attributes.value("desc").toString();
-                    qDebug()<< "OutBuff2:" << outBuff;
-                    xmlReader.readNext();
-                    */
+                else if(currentTag == "description") {  // *ANY* description tag
+                    qDebug()<< "Description:" << this->cleanString(xmlReader.readElementText());
                 }
-                else if(currentTag == "common_source") {
+                else if(currentTag == "common_source") {    // common source tag
                     qDebug()<< "do common_source stuff";
                 }
-                else if(currentTag == "status_types") {
+                else if(currentTag == "status_types") { // status types tag
                     qDebug()<< "do status_types stuff";
                 }
             }
@@ -97,17 +90,23 @@ void DescriptionFileReader::Read(QString filepath)
 
 QString DescriptionFileReader::getDiagramName() const
 {
-    return DiagramName;
+    return diagramName;
 }
 
+// obtains the name attribute from the diagram tag
 void DescriptionFileReader::setDiagramName()
 {
-    QXmlStreamAttributes attributes = xmlReader.attributes();
-    xmlReader.readNext();
+    QXmlStreamAttributes attributes = xmlReader.attributes();   // get all attribute keys
 
-    DiagramName = attributes.value("name").toString();
+    diagramName = attributes.value("name").toString();  // get the value of the name attribute
+    xmlReader.readNext();   // go to the next element
 
-    qDebug()<< "Diagram Name:" << DiagramName;
+    qDebug()<< "Diagram Name:" << diagramName;
+}
+
+// removes newlines and tabs from a string
+QString DescriptionFileReader::cleanString(QString s) {
+    return s.replace(QRegExp("\t|\n|\r"),"");
 }
 
 QString DescriptionFileReader::getDescription() const

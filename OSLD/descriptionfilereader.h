@@ -37,6 +37,7 @@ public:
     QString getDescription() const;
     void setDescription();
 
+    QString cleanString(QString s);
 protected:
     QString path;
 
@@ -46,7 +47,7 @@ private:
     QXmlStreamReader xmlReader;
     QXmlStreamWriter xmlWriter;
     QString Buff;
-    QString DiagramName;
+    QString diagramName;
     QString Description;
 };
 
