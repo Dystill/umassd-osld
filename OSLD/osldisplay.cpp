@@ -7,6 +7,7 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setParent(parent);
+    this->addMenuBarActionsToDisplay();
 
     // resize the window to be a certain amount smaller than the screen
     this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
@@ -20,8 +21,11 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     // display the scene from the graphics engine in the graphicsView
     ui->graphicsView->setScene(scene);
 
+    // prepare the root list view
+    this->prepareRootView();
+
     // resize the scene to fit in the window
-    this->fitToWindow();
+    this->fitDiagramToWindow();
 
     // starts the application in full screen mode
     //enterFullScreen();
@@ -33,16 +37,55 @@ OSLDisplay::~OSLDisplay()
     delete ui;
 }
 
+// adds actions in the menu bar to the display
+// allows shortcuts to work while menu bar is hidden
+void OSLDisplay::addMenuBarActionsToDisplay() {
+    this->addAction(ui->actionShowGrid);
+    this->addAction(ui->actionFitDiagramToWindow);
+    this->addAction(ui->actionFullScreen);
+    this->addAction(ui->actionHideBlockTitles);
+    this->addAction(ui->actionHideButtons);
+    this->addAction(ui->actionSwitchOrientation);
+}
+
 void OSLDisplay::prepareGraphicsView()
 {
     // set different flags
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
-    ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     ui->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
 
     // filter mouse scrolling to perform custom functions
     ui->graphicsView->viewport()->installEventFilter(this);
+}
+
+void OSLDisplay::prepareRootView() {
+    // set which scrollbars to remove
+    ui->rootHGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->rootVGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    ui->rootHGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->rootVGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    // hide the horizontal root view on start
+    ui->rootHGraphicsView->hide();
+
+    // get the root scene from the OSLDgraphicsengine
+    this->rootScene = scene->getRootScene();
+
+    // put the root scene into the vertical root view
+    ui->rootVGraphicsView->setScene(this->rootScene);
+
+    // send the vertical root view to the root scene
+    this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
+
+    // set the width for the vertical graphics view
+    ui->rootVGraphicsView->setMinimumWidth(QDesktopWidget().logicalDpiX() * rootViewWidth);
+    ui->rootVGraphicsView->setMaximumWidth(QDesktopWidget().logicalDpiX() * rootViewWidth);
+
+    // set the height for the horizontal graphics view
+    ui->rootHGraphicsView->setMinimumHeight(QDesktopWidget().logicalDpiY() * 0.75);
+    ui->rootHGraphicsView->setMaximumHeight(QDesktopWidget().logicalDpiY() * 0.75);
 }
 
 void OSLDisplay::enterFullScreen()
@@ -68,12 +111,13 @@ void OSLDisplay::zoom(int px) {
     //qDebug() << "z" << ui->graphicsView->matrix();
 }
 
-void OSLDisplay::fitToWindow() {
+void OSLDisplay::fitDiagramToWindow() {
     // update scene rect to fit the items
     scene->setSceneRect(scene->itemsBoundingRect().adjusted(-36, -36, 36, 36));
 
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+    rootScene->fitToView();
 }
 
 /*
@@ -84,40 +128,17 @@ void OSLDisplay::fitToWindow() {
 void OSLDisplay::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);    // call parent resize event
+    this->fitDiagramToWindow();
+}
 
-    this->fitToWindow();
+void OSLDisplay::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
 
-    // fitInView initially scales the view contents down dramatically -- to 0.0410959 in matrix points m11 & m22
-    // I couldn't figure out a reason as to why, so this fixes it
-    if(initScaleFix == false) { // flagged so this only triggers once during initialization
+    this->fitDiagramToWindow();
 
-        // get the dimensions of the window
-        int windowWidth = this->width();
-        int windowHeight = this->height();
-
-        // get the dimensions of the diagram
-        int sceneWidth = scene->sceneRect().width();
-        int sceneHeight = scene->sceneRect().height();
-
-        // get the percent difference in size between the two dimensions
-        qreal widthRatio = qreal(windowWidth) / sceneWidth;
-        qreal heightRatio = qreal(windowHeight) / sceneHeight;
-
-        // get the smaller of the two ratios
-        qreal scaleFactor = widthRatio <= heightRatio ? widthRatio : heightRatio;
-
-        // floor the ratio's tenth place
-        scaleFactor = std::floor(scaleFactor*10)/10;
-
-        // create a matrix specifying the transformations made to the diagram shape (e.g. scale, rotate, shear, etc.)
-        QTransform transformer; // robot in disguise
-
-        // scale the diagram by the calculated amount
-        transformer.setMatrix(scaleFactor, 0, 0, 0, scaleFactor, 0, 0, 0, 1);
-
-        ui->graphicsView->setTransform(transformer);    // perform the transformation on the diagram
-        initScaleFix = true;    // update the flag so this isn't executed again
-    }
+    rootScene->setSceneRect(rootScene->itemsBoundingRect().adjusted(-8, -8, 8, 8));
+    ui->rootVGraphicsView->fitInView(rootScene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 // code executed when a specific key is pressed
@@ -137,11 +158,6 @@ void OSLDisplay::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Minus:                 // ctrl+- to zoom out
         if(mod == Qt::ControlModifier){zoom(-1);zoom(-1);}
         break;
-    }
-
-    if(ui->menuBar->isHidden()) {
-        ui->menuBar->show();
-        ui->closeButton->show();
     }
 }
 
@@ -212,18 +228,71 @@ void OSLDisplay::mouseReleaseEvent(QMouseEvent *event) {
     QMainWindow::mouseReleaseEvent(event);
 }
 
+void OSLDisplay::mouseMoveEvent(QMouseEvent *event) {
+    QMainWindow::mouseMoveEvent(event);
+    if(event->pos().y() <= 50 && !ui->menuBar->isVisible()) {
+        ui->menuBar->setVisible(true);
+    }
+}
+
 void OSLDisplay::on_actionHideButtons_triggered()
 {
-    ui->closeButton->hide();
-    ui->menuBar->hide();
+    if(ui->menuBar->isVisible()) {
+        ui->closeButton->setVisible(false);
+        ui->titleLabel->setVisible(false);
+        ui->subtitleLabel->setVisible(false);
+        ui->menuBar->setVisible(false);
+    }
+    else {
+        ui->closeButton->setVisible(true);
+        ui->titleLabel->setVisible(true);
+        ui->subtitleLabel->setVisible(true);
+        ui->menuBar->setVisible(true);
+    }
+    this->fitDiagramToWindow();
 }
 
 void OSLDisplay::on_actionFitDiagramToWindow_triggered()
 {
-    this->fitToWindow();
+    this->fitDiagramToWindow();
 }
 
 void OSLDisplay::on_actionHideBlockTitles_triggered(bool checked)
 {
     scene->hideAllItemTitleText(checked);
+}
+
+void OSLDisplay::on_actionSwitchOrientation_triggered()
+{
+    PathAlignment current = rootScene->getCurrentAlignment();
+
+    // hide the horizontal root view on start
+    if(current == Vertical) {
+        ui->rootVGraphicsView->hide();
+
+        // put the root scene into the vertical root view
+        ui->rootHGraphicsView->setScene(this->rootScene);
+
+        // send the vertical root view to the root scene
+        this->rootScene->setParentGraphicsView(ui->rootHGraphicsView);
+
+        this->rootScene->alignHorizontally();
+
+        ui->rootHGraphicsView->show();
+    }
+    else {
+        ui->rootHGraphicsView->hide();
+
+        // put the root scene into the vertical root view
+        ui->rootVGraphicsView->setScene(this->rootScene);
+
+        // send the vertical root view to the root scene
+        this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
+
+        this->rootScene->alignVertically();
+
+        ui->rootVGraphicsView->show();
+    }
+
+    this->fitDiagramToWindow();
 }

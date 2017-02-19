@@ -5,6 +5,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include "subdiagram.h"
+#include "rootitempathscene.h"
+
+class OSLDisplay;
 
 // holds data source information
 struct CommonSource {
@@ -24,6 +27,7 @@ private:
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
     QList<DiagramItem *> allItems;  // a list of both blocks and gates
 
+    RootItemPathScene *rootScene;
     QList<Block *> rootPathList;    // holds the chain of root items to the current subdiagram
 
     QVarLengthArray<QLineF> backgroundGrid;
@@ -68,6 +72,11 @@ public:
     QList<DiagramItem *> getAllItems() const;
 
     void hideAllItemTitleText(bool b);
+
+    RootItemPathScene *getRootScene() const;
+
+    OSLDisplay *getParentWindow() const;
+    void setParentWindow(OSLDisplay *value);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

@@ -4,6 +4,20 @@
  *  CONSTRUCTOR
  */
 
+bool Block::isInDiagram() const
+{
+    return inDiagram;
+}
+
+void Block::setIsInDiagram(bool value)
+{
+    inDiagram = value;
+    if(!value) {
+        this->setCircleRadius(0);
+        this->setLineLength(0);
+    }
+}
+
 Block::Block(QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(id, loc)
 {
@@ -14,6 +28,24 @@ Block::Block(QString id, QPointF loc, QString t, QString desc, QString ht)
     this->setDescription(desc);
     this->setToolTip(ht);
     this->setBlockSizing(this->getTitle());
+
+    this->isBlock(true);
+}
+
+Block::Block(Block *block) : DiagramItem() {
+    this->setMaxWidth(256);
+    this->setTitleSize(16);
+
+    this->setTitle(block->getTitle());
+    this->setDescription(block->getDescription());
+    this->setToolTip(block->toolTip());
+    this->setColor(block->getColor());  // sets color directly instead of using a status
+    this->setTextColor(block->getTextColor());
+    this->setBold(block->getFont().bold());
+    this->setItalics(block->getFont().italic());
+    this->setUnderline(block->getFont().underline());
+    this->setWidth(block->width());
+    this->setHeight(block->height());
 
     this->isBlock(true);
 }
@@ -74,16 +106,18 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     rect.setLeft(rect.left() + this->getCircleRadius());
     rect.setRight(rect.right() - this->getCircleRadius());
 
-    // make points to place the connector entry circles
-    QPointF middleLeft = QPointF(rect.left(), rect.center().y());
-    QPointF middleRight = QPointF(rect.right(), rect.center().y());
+    if(inDiagram) {
+        // make points to place the connector entry circles
+        QPointF middleLeft = QPointF(rect.left(), rect.center().y());
+        QPointF middleRight = QPointF(rect.right(), rect.center().y());
 
-    // draw the line crossing the block
-    painter->drawLine(middleLeft, middleRight);
+        // draw the line crossing the block
+        painter->drawLine(middleLeft, middleRight);
 
-    // draw the connector circles
-    painter->drawEllipse(middleLeft, this->getCircleRadius(), this->getCircleRadius());
-    painter->drawEllipse(middleRight, this->getCircleRadius(), this->getCircleRadius());
+        // draw the connector circles
+        painter->drawEllipse(middleLeft, this->getCircleRadius(), this->getCircleRadius());
+        painter->drawEllipse(middleRight, this->getCircleRadius(), this->getCircleRadius());
+    }
 
     //// Drawing the Block
     // resize the painting area to make the block
@@ -120,8 +154,11 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     texto.setAlignment(Qt::AlignCenter);                            // center align
 
     // set the color and font for the text
-    if(this->isTransparent()) pen.setColor(Qt::transparent);
-    else pen.setColor(this->getTextColor());
+    if(this->isTransparent() && this->isInDiagram())
+        pen.setColor(Qt::transparent);
+    else
+        pen.setColor(this->getTextColor());
+
     painter->setFont(this->getFont());
     painter->setPen(pen);
 
@@ -169,6 +206,7 @@ Subdiagram *Block::getChildSubdiagram() const
 void Block::setChildSubdiagram(Subdiagram *value)
 {
     childSubdiagram = value;
+    this->setCursor(Qt::PointingHandCursor);
     this->update();
 }
 

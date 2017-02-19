@@ -26,13 +26,16 @@ private:
     Subdiagram *childSubdiagram = 0; // holds subdiagram if this block has one
     QPointF rootLocation = QPointF(0,0);
     bool currentlyRoot = false;
+    bool inDiagram = true;
 
 public:
     // constructor
-    Block(QString id, QPointF loc,     // blocks must have the parent object, id, and location, which is handled by the parent class
+    Block(QString id, QPointF loc,     // blocks must have at least the id and location
           QString t = "Block Title",
           QString desc = "Block Description",
           QString ht = "Block Hovertext");
+    Block(Block *block);    // copy constructor
+
     // QGraphicsItem stuff
     QRectF boundingRect() const;    // returns the rectagular container for this item
     void setGeometry(const QRectF &rect);   // used by QGraphicsItem to resize and update graphics elements
@@ -49,6 +52,9 @@ public:
 
     bool isCurrentlyRoot() const;
     void setCurrentlyRoot(bool value);
+
+    bool isInDiagram() const;
+    void setIsInDiagram(bool value);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
