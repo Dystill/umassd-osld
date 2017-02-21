@@ -256,6 +256,7 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
             qDebug() << "halp" << pressedBlock->getTitle() << pressedBlock->getDescription();
+            QMessageBox::information(event->widget(),pressedBlock->getTitle(),pressedBlock->getDescription());
 
         }
     }
