@@ -252,10 +252,8 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
     }
     else if(event->button() == Qt::RightButton) {
-
         if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
-            qDebug() << "halp" << pressedBlock->getTitle() << pressedBlock->getDescription();
             QMessageBox::information(event->widget(),pressedBlock->getTitle(),pressedBlock->getDescription());
 
         }

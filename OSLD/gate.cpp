@@ -94,7 +94,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     //// Drawing the Gate
     // create the gate shape
-    QPainterPath *gatePath;
+    QPainterPath *gatePath = 0;
     if(this->gateType == AndGate) {
         gatePath = this->drawANDGatePath(rect.width() - 2*this->getLineLength(), rect.height());
     }
