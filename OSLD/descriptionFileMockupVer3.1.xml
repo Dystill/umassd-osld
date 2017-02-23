@@ -74,7 +74,7 @@
 				</data>
 			</status_info>
 		</block>
-		<block id="block_2">
+		<block id="block_2" source="source1">
 			<dimensions>
 				<width>217</width>
 				<height>68</height>
@@ -102,7 +102,12 @@
 				</data>
 			</status_info>
 		</block>
-		<block id="block_1" source="source1">
+		<!--
+			this block has a reference id which means that it look for the data of the
+			referred diagram item in the external system.
+			items without a ref_id will substitute the main id as the reference id.
+		-->
+		<block id="block_1" ref_id="block_3" source="source1">
 			<dimensions>
 				<width>128</width>
 				<height>32</height>
@@ -218,7 +223,8 @@
 				</data>
 			</status_info>
 		</gate>
-		<gate id="gate_2_1" source="source1" type="OR">
+		<!-- gates can also have reference ids -->
+		<gate id="gate_2_1" ref_id="block_3" source="source1" type="OR">
 			<dimensions>
 				<width>32</width>
 				<height>32</height>
