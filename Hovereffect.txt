@@ -1,0 +1,16 @@
+USE [OSLD]
+GO
+/****** Object:  UserDefinedFunction [dbo].[udfobtain]    Script Date: 21-Jan-17 2:05:42 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[udfobtain] (@name nvarchar(10) )
+RETURNS TABLE
+AS
+RETURN(SELECT [id]
+      ,[name]
+      ,[descripton]
+      ,[hovertext]
+  FROM [OSLD].[dbo].[items] 
+  WHERE [name] = @name)

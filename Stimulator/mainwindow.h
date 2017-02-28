@@ -1,5 +1,5 @@
-#ifndef STIMULATORMAINWINDOW_H
-#define STIMULATORMAINWINDOW_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QLabel>
 #include <QLineEdit>

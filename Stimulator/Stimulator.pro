@@ -23,16 +23,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-SOURCES +=\
+SOURCES += main.cpp\
+        mainwindow.cpp \
     stimulatorinterface.cpp \
-    stimulator.cpp \
-    stimulatormain.cpp \
-    stimulatormainwindow.cpp
+    stimulator.cpp
 
-HEADERS  += \
+HEADERS  += mainwindow.h \
     stimulatorinterface.h \
-    stimulator.h \
-    stimulatormainwindow.h
+    stimulator.h
 
-FORMS    += \
-    stimulatormainwindow.ui
+FORMS    += mainwindow.ui

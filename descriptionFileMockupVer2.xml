@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram name="Missile Away Qualifiers">
+	<meta>
+		<description>
+			About Missile Away Qualifiers
+		</description>
+		<common_source>
+			<source id="source1">
+				<name>Combat System Database</name>
+				<type>SQLite Database</type>
+			</source>
+			<source id="source2">
+				<name>Some other Source</name>
+				<type>Some other data storing method</type>
+			</source>
+		</common_source>
+		<dimensions>
+			<unit dpi="96">
+				<width>20</width>
+				<height>20</height>
+			</unit>
+			<full_width>550</full_width>
+			<full_height>550</full_height>
+		</dimensions>
+		<status_types>
+			<status id="Valid">
+				<color>#8BC34A</color>
+			</status>
+			<status id="Invalid">
+				<color>#EF5350</color>
+			</status>
+			<status id="Unknown">
+				<color>#888888</color>
+			</status>
+		</status_types>
+		<final_block id="block_dQw4" source="source1" contains="true">
+			<location layout="absolute">
+				<X>512</X>
+				<Y>256</Y>
+			</location>
+			<information default="Unknown">
+				<data id="Valid">
+					<name column="name"></name>
+					<description column="desc"></description>
+					<hovertext column="hover"></hovertext>
+				</data>
+				<data id="Invalid">
+					<name column="name"></name>
+					<description column="desc"></description>
+					<hovertext column="hover"></hovertext>
+				</data>
+				<data id="Unknown">
+					<name column="name"></name>
+					<description column="desc"></description>
+					<hovertext column="hover"></hovertext>
+				</data>
+			</information>
+		</final_block>
+	</meta>
+	<subdiagrams>
+		<subdiagram show_outline="false">
+			<subdiagram_data>
+				<name column="name">Final output group</name>
+				<description column="desc">the last gate leading into the final output block</description>
+				<hovertext column="hover">function code - ::lastpart::</hovertext>
+			</subdiagram_data>
+			<gate id="gate_7sdv" source="source1" type="AND">
+				<output_items>
+					<id>block_dQw4</id>
+				</output_items>
+				<location layout="relative" anchor="block_dQw4">
+					<X>-20</X>
+					<Y>0</Y>
+				</location>
+			</gate>
+			<block id="block_w9Wg" source="source1" contains="true">
+				<output_items>
+					<id>gate_7sdv</id>
+				</output_items>
+				<location layout="relative" anchor="block_dQw4">
+					<X>-40</X>
+					<Y>-6</Y>
+				</location>
+				<information default="Valid">
+					<data id="Valid">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+					<data id="Invalid">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+					<data id="Unknown">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+				</information>
+			</block>
+			<block id="block_XcQ" source="source1" contains="false">
+				<output_items>
+					<id>gate_7sdv</id>
+				</output_items>
+				<location layout="absolute">
+					<X>480</X>
+					<Y>200</Y>
+				</location>
+				<information default="Unknown">
+					<data id="Valid">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+					<data id="Invalid">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+					<data id="Unknown">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+				</information>
+			</block>
+		</subdiagram>
+		<subdiagram show_outline="true">
+			<subdiagram_data>
+				<name column="name"></name>
+				<description column="desc"></description>
+				<hovertext column="hover"></hovertext>
+			</subdiagram_data>
+			<gate id="gate_h5si" source="source1" type="OR">
+				<output_items>
+					<id>block_w9Wg</id>
+					<id>block_XcQ</id>
+				</output_items>
+				<location layout="relative" anchor="block_dQw4">
+					<X>-60</X>
+					<Y>0</Y>
+				</location>
+			</gate>
+			<block id="block_w9Wg" source="source1" contains="true">
+				<output_items>
+					<id>gate_h5si</id>
+				</output_items>
+				<location layout="relative" anchor="block_XcQ">
+					<X>-10</X>
+					<Y>0</Y>
+				</location>
+				<information default="Invalid">
+					<data id="Valid">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+					<data id="Invalid">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+					<data id="Unknown">
+						<name column="name"></name>
+						<description column="desc"></description>
+						<hovertext column="hover"></hovertext>
+					</data>
+				</information>
+			</block>
+		</subdiagram>
+	</subdiagrams>
+</diagram>
