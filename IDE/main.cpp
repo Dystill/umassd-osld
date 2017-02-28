@@ -51,6 +51,8 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include<QtGui>
+#include<QtCore>
 
 int main(int argv, char *args[])
 {
