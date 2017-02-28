@@ -1,0 +1,15 @@
+USE [OSLD]
+GO
+/****** Object:  UserDefinedFunction [dbo].[viewdate]    Script Date: 21-Jan-17 2:07:46 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[viewdate] ()
+RETURNS TABLE
+AS
+RETURN(SELECT [id]
+      ,[name]
+      ,[descripton]
+      ,[hovertext]
+  FROM [OSLD].[dbo].[items] )
