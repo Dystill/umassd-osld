@@ -33,7 +33,6 @@ SOURCES += main.cpp\
     gate.cpp \
     osldgraphicsengine.cpp \
     descriptionfilereader.cpp \
-    parser.cpp \
     diagramitem.cpp \
     connector.cpp \
     subdiagram.cpp \
@@ -44,7 +43,6 @@ HEADERS  += osldisplay.h \
     gate.h \
     osldgraphicsengine.h \
     descriptionfilereader.h \
-    parser.h \
     diagramitem.h \
     connector.h \
     subdiagram.h \

@@ -53,8 +53,6 @@
 #include "diagramscene.h"
 #include "diagramtextitem.h"
 #include "mainwindow.h"
-#include <QLabel>
-
 
 #include <QtWidgets>
 
@@ -336,92 +334,20 @@ void MainWindow::createToolBox()
     buttonGroup->setExclusive(false);
     connect(buttonGroup, SIGNAL(buttonClicked(int)),
             this, SLOT(buttonGroupClicked(int)));
-
-
     QGridLayout *layout = new QGridLayout;
-
-    //QLabel *lbl = new QLabel;
-    //QPixmap pix(":/images/connector.png");
-
     layout->addWidget(createCellWidget(tr("Conditional"), DiagramItem::Conditional), 0, 0);
-    layout->addWidget(createCellWidget(tr("Rectangle"), DiagramItem::Step),0, 1);
-    //layout->addWidget(lbl->setPixmap(pix),1,0);
-
+    layout->addWidget(createCellWidget(tr("Process"), DiagramItem::Step),0, 1);
+    layout->addWidget(createCellWidget(tr("Input/Output"), DiagramItem::Io), 1, 0);
 //! [21]
-//!
-//!
-//!
-    //display subdiagrame on frontend
 
-    QLabel *textButton1 = new QLabel;
-    //textButton1->setCheckable(true);
-    //buttonGroup->addButton(textButton, InsertTextButton);
-    //textButton1->setIcon(QIcon(QPixmap(":/images/textpointer.png")));
-    //textButton1->setIcon(QIcon(QPixmap(":/images/connector.png")));
-    textButton1->setPixmap(QPixmap(":/images/subdiagrame.png"));
-    //textButton1->setPixmapSize(QSize(50, 50));
-    QGridLayout *textLayout1 = new QGridLayout;
-    textLayout1->addWidget(textButton1, 2, 0);
-    textLayout1->addWidget(new QLabel(tr("Subdiagram")), 3, 0);
-    QWidget *textWidget1 = new QWidget;
-    textWidget1->setLayout(textLayout1);
-    layout->addWidget(textWidget1, 2, 0);
-
-    // here code to display connecter on frent end
-    QLabel *textButton2 = new QLabel;
-    textButton2->setPixmap(QPixmap(":/images/connector.png"));
-    QGridLayout *textLayout2 = new QGridLayout;
-    textLayout2->addWidget(textButton2, 1, 0);
-    textLayout2->addWidget(new QLabel(tr("connector")), 2, 0);
-    QWidget *textWidget2 = new QWidget;
-    textWidget2->setLayout(textLayout2);
-    layout->addWidget(textWidget2, 1, 0);
-
-
-    // here code to display orgate on frent end
-    QLabel *textButton3 = new QLabel;
-    textButton3->setPixmap(QPixmap(":/images/orgate.png"));
-    QGridLayout *textLayout3 = new QGridLayout;
-    textLayout3->addWidget(textButton3, 8, 0);
-    textLayout3->addWidget(new QLabel(tr("OR")), 9, 0);
-    QWidget *textWidget3 = new QWidget;
-    textWidget3->setLayout(textLayout3);
-    layout->addWidget(textWidget3, 8, 0);
-
-
-    // here code to display andgate on frent end
-    QLabel *textButton4 = new QLabel;
-    textButton4->setPixmap(QPixmap(":/images/andgate.png"));
-    QGridLayout *textLayout4 = new QGridLayout;
-    textLayout4->addWidget(textButton4, 8, 1);
-    textLayout4->addWidget(new QLabel(tr("AND")), 9, 1);
-    QWidget *textWidget4 = new QWidget;
-    textWidget4->setLayout(textLayout4);
-    layout->addWidget(textWidget4, 8, 1);
-
-
-    // here code to display notgate on frent end
-    QLabel *textButton5 = new QLabel;
-    textButton5->setPixmap(QPixmap(":/images/notgate.png"));
-    QGridLayout *textLayout5 = new QGridLayout;
-    textLayout5->addWidget(textButton5, 8, 2);
-    textLayout5->addWidget(new QLabel(tr("NOT")), 9, 2);
-    QWidget *textWidget5 = new QWidget;
-    textWidget5->setLayout(textLayout5);
-    layout->addWidget(textWidget5, 8, 2);
-
-    //this is the code for the displaying the lines
     QToolButton *textButton = new QToolButton;
     textButton->setCheckable(true);
-    //buttonGroup->addButton(textButton, InsertTextButton);
-    textButton->setIcon(QIcon(QPixmap(":/images/lines.png")));
-    //textButton->setIcon(QIcon(QPixmap(":/images/connector.png")));
-    //textButton->setIcon(QIcon(QPixmap(":/images/subdiagrame.png")));
+    buttonGroup->addButton(textButton, InsertTextButton);
+    textButton->setIcon(QIcon(QPixmap(":/images/textpointer.png")));
     textButton->setIconSize(QSize(50, 50));
     QGridLayout *textLayout = new QGridLayout;
     textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
-    //textLayout->addWidget(new QLabel(tr("Text")), 1, 0, Qt::AlignCenter);
-    textLayout->addWidget(new QLabel(tr("Lines")), 1, 0, Qt::AlignCenter);
+    textLayout->addWidget(new QLabel(tr("Text")), 1, 0, Qt::AlignCenter);
     QWidget *textWidget = new QWidget;
     textWidget->setLayout(textLayout);
     layout->addWidget(textWidget, 1, 1);
