@@ -64,6 +64,8 @@ void DescriptionFileReader::readFile(QString filepath)
                 continue;
             }
 
+
+
             // start of element
             if(currentToken == QXmlStreamReader::StartElement) {
 
@@ -78,11 +80,10 @@ void DescriptionFileReader::readFile(QString filepath)
                 }
                 else if(currentTag == "meta") {         // meta tag
                     qDebug()<< "calling readMetaData function";
-                    this->readMetaData();
+                    this->readMetaData(currentTag);
                 }
-                if(currentTag == "description") {       // *test* delete this, move to readMetaData
-                    qDebug()<< "Description:" << this->cleanString(this->readElementText());
-                }
+
+
                 else if(currentTag == "blocks") {       // blocks tag
                     qDebug()<< "do blocks stuff";
                     this->readBlocks();
@@ -106,9 +107,26 @@ QString DescriptionFileReader::cleanString(QString s) {
     return s.replace(QRegExp("\t|\n|\r"),"");
 }
 
-void DescriptionFileReader::readMetaData()
+void DescriptionFileReader::readMetaData(QString tag)
 {
-    // loop through each line in the meta element
+     currentToken = this->readNext();
+    if(currentToken == QXmlStreamReader::StartElement) {
+        bool processed = false;
+        this->readNextStartElement();
+        qDebug()<<"Hellooooooooooooooooooooooo" + tag;
+        this->readNextStartElement();
+            while(!processed == true)
+            {
+                if(tag == "description")
+                {       // *test* delete this, move to readMetaData
+                    qDebug()<< "Description: " << this->cleanString(this->readElementText());
+                    qDebug()<<" ";
+                    qDebug()<<"Yo";
+                }
+            //processed = true;
+        }
+    }
+        // loop through each line in the meta element
 
     // get description text
 

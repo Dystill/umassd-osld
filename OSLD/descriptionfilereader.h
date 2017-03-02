@@ -22,7 +22,7 @@ public:
 
     QString cleanString(QString s);
 
-    void readMetaData();
+    void readMetaData(QString tag);
     void readBlocks();
     void readGates();
     void readSubdiagrams();
