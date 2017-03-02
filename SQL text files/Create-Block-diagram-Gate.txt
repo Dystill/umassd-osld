@@ -1,0 +1,97 @@
+USE [OSLD]
+GO
+/****** Object:  UserDefinedFunction [dbo].[gatdig]    Script Date: 21-Jan-17 2:05:11 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[gatdig](@name1 nchar(10), @op1 nchar(10), @name2 nchar(10), @op2 nchar(10), @name3 nchar(10))
+RETURNS nchar(50)
+
+AS
+BEGIN
+DECLARE @result nchar(50)
+     
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT1';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT2';
+	  IF((@name1 = 'Gate') AND (@op1 = 'OR') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT12';
+	  IF((@name1 = 'Block') AND (@op1 = 'OR') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT14';
+	  IF((@name1 = 'Diagram') AND (@op1 = 'OR') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT15';
+	  IF((@name1 = 'Gate') AND (@op1 = 'OR') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT13';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT3';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT4';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT5';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT6';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'OR') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT16';
+	  IF((@name1 = 'Block') AND (@op1 = 'AND') AND ((@name2 = 'Gate') AND (@op2 = 'OR') AND (@name3 = 'Diagram')))
+	  SET @result = 'THIS IS RESULT17';
+	  IF((@name1 = 'Block') AND (@op1 = 'AND') AND (@name2 = 'Gate') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT18';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT7';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT8';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT9';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT10';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT11';
+	  IF((@name1 = 'Block') AND (@op1 = 'AND') AND (@name2 = 'Diagram') AND (@op2 = 'AND') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT19';
+	  IF((@name1 = 'Block') AND (@op1 = 'OR') AND (@name2 = 'Diagram') AND (@op2 = 'AND') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT20';
+	  IF((@name1 = 'Block') AND (@op1 = 'OR') AND (@name2 = 'Diagram') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT21';
+	  IF((@name1 = 'Block') AND (@op1 = 'AND') AND (@name2 = 'Diagram') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT22';
+	  IF((@name1 = 'Diagram') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT23';
+	  IF((@name1 = 'Diagram') AND (@op1 = 'OR') AND (@name2 = 'Block') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT24';
+	  IF((@name1 = 'Diagram') AND (@op1 = 'AND') AND (@name2 = 'Gate') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT25';
+	  IF((@name1 = 'Diagram') AND (@op1 = 'OR') OR (@name2 = 'Gate') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT26';
+	  IF((@name1 = 'Gate') AND (@op1 = 'OR') AND (@name2 = 'Diagram') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT27';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Diagram') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT28';
+	  IF((@name1 = 'Gate') AND (@op1 = 'OR') AND (@name2 = 'Block') OR (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT29';
+	  IF((@name1 = 'Gate') AND (@op1 = 'AND') AND (@name2 = 'Block') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT30';
+	  
+	  IF((@name1 = 'Bock') AND (@op1 = 'OR') AND (@name2 = 'Diagram') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT31';
+	  IF((@name1 = 'Block') AND (@op1 = 'AND') AND (@name2 = 'Diagram') AND (@op2 = 'OR') AND (@name3 = 'Gate'))
+	  SET @result = 'THIS IS RESULT32';
+	  IF((@name1 = 'Block') AND (@op1 = 'OR') AND (@name2 = 'Gate') AND (@op2 = 'OR') OR (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT33';
+	  IF((@name1 = 'Block') AND (@op1 = 'AND') AND (@name2 = 'Gate') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT34';
+	  IF((@name1 = 'Block') AND (@op1 = 'OR') OR (@name2 = 'Gate') AND (@op2 = 'AND') AND (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT35';
+	  IF((@name1 = 'Block') AND (@op1 = 'AND') AND (@name2 = 'Gate') AND (@op2 = 'OR') OR (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT36';
+	  IF((@name1 = 'Block') AND (@op1 = 'AND') AND (@name2 = 'Diagram') AND (@op2 = 'OR') OR (@name3 = 'Diagram'))
+	  SET @result = 'THIS IS RESULT37';
+	  IF((@name1 = 'Diagram') AND (@op1 = 'AND') AND (@name2 = 'Gate') AND (@op2 = 'OR') OR (@name3 = 'Block'))
+	  SET @result = 'THIS IS RESULT38';
+
+
+	 RETURN @result	 
+END
