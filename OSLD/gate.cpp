@@ -8,18 +8,20 @@ Gate::Gate(QString id, QPointF loc, GateType type)
     : DiagramItem(id, loc)
 {
     gateType = type;            // set the gate type
-    this->setGateSizing();
 
     QString hovertext = id;
 
     if(type == AndGate) {
         hovertext.append(" - AND gate");
+        this->setGateSizing(64);
     }
     else if(type == OrGate) {
         hovertext.append(" - OR gate");
+        this->setGateSizing(64);
     }
     else if(type == NotGate) {
         hovertext.append(" - NOT gate");
+        this->setGateSizing(48);
     }
 
     this->setToolTip(hovertext);
@@ -36,6 +38,14 @@ void Gate::setGateSizing()
 {
     this->setWidth(64);
     this->setHeight(64);
+    this->setInputPointOffset(QPointF(this->width() / 4,0));
+}
+
+void Gate::setGateSizing(int size)
+{
+    this->setWidth(size);
+    this->setHeight(size);
+    this->setInputPointOffset(QPointF(this->width() / 4,0));
 }
 
 /*
@@ -83,9 +93,6 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     // make points for the connector entry areas
     QPointF middleLeft = QPointF(rect.left(), rect.center().y());
     QPointF middleRight = QPointF(rect.right(), rect.center().y());
-
-    // draw middle line
-    painter->drawLine(middleLeft, middleRight);
 
     // draw the connector circles
     painter->drawEllipse(middleLeft, this->getCircleRadius(), this->getCircleRadius());
@@ -170,7 +177,10 @@ QPainterPath *Gate::drawORGatePath(int width, int height)
     QPointF topLeft(0, 0);
     QPointF bottomLeft(0, height);
     QPointF right(width, height / 2);
-    QPointF inner(width*0.25, height / 2);
+    QPointF innerCurveMiddle(width*0.25, height / 2);
+
+    this->setInputPointOffset(QPointF((this->width() / 4) + 16, 0));
+    this->updateConnectors();
 
     QPainterPath *path = new QPainterPath(topLeft);
 
@@ -184,7 +194,7 @@ QPainterPath *Gate::drawORGatePath(int width, int height)
 
     // inner-bottom quarter curve
     path->cubicTo(QPointF(width*0.125, height*0.90),
-                  QPointF(width*0.25, height*0.725), inner);
+                  QPointF(width*0.25, height*0.725), innerCurveMiddle);
 
     // inner-top quarter curve
     path->cubicTo(QPointF(width*0.25, height*0.275),
@@ -195,14 +205,14 @@ QPainterPath *Gate::drawORGatePath(int width, int height)
 
 QPainterPath *Gate::drawNOTGatePath(int width, int height)
 {
-    int gateHeight = height / 2;      // the height of the gate
-    int triangleWidth = width / 2.5;     // the width of the triangle
-    int dotRadius = width / 10;         // the radius for the circle
+    int gateHeight = height;      // the height of the gate
+    int dotRadius = width / 6;         // the radius for the circle
+    int triangleWidth = width - (dotRadius*2);     // the width of the triangle
 
     // defining corners for the triangle
-    QPointF topLeft((width - triangleWidth) / 2, (height - gateHeight) / 2);
-    QPointF bottomLeft((width - triangleWidth) / 2, (height + gateHeight) / 2);
-    QPointF right((width + triangleWidth) / 2, (height / 2));
+    QPointF topLeft(0, 0);
+    QPointF bottomLeft(0, gateHeight);
+    QPointF right(triangleWidth, (height / 2));
 
     // create a painter path object to store the shape
     QPainterPath *path = new QPainterPath(topLeft);
@@ -218,3 +228,4 @@ QPainterPath *Gate::drawNOTGatePath(int width, int height)
 
     return path;
 }
+

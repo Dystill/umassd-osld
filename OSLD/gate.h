@@ -37,6 +37,7 @@ public:
 protected:
     // function to set the size for the gate
     void setGateSizing();
+    void setGateSizing(int size);
 
 signals:
 
