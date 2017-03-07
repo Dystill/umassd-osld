@@ -6,6 +6,16 @@ bool DiagramItem::transparentTitle = false;
  *  CONSTRUCTOR
  */
 
+QPointF DiagramItem::getInputPointOffset() const
+{
+    return inputPointOffset;
+}
+
+void DiagramItem::setInputPointOffset(const QPointF &value)
+{
+    inputPointOffset = value;
+}
+
 DiagramItem::DiagramItem()
 {
 
@@ -18,9 +28,6 @@ DiagramItem::DiagramItem(QString id, QPointF loc)
     this->location = loc;
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsMovable);
-
-    this->lineLength = (24);
-    this->circleRadius = (3);
 }
 
 
@@ -138,7 +145,10 @@ QSizeF DiagramItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 // get the point where connectors can enter this item
 QPointF DiagramItem::inputPoint() const
 {
-    return this->pos() + QPoint(this->boundingRect().left() + circleRadius, this->boundingRect().center().y());
+    qDebug() << this->getTitle() << this->getInputPointOffset();
+    return this->pos() + QPoint(this->boundingRect().left() + this->getCircleRadius(),
+                                this->boundingRect().center().y()) +
+            this->getInputPointOffset();
 }
 
 // get the point where connectors can leave this item

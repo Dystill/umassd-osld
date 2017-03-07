@@ -56,6 +56,7 @@ Block::Block(Block *block) : DiagramItem() {
 
 void Block::setBlockSizing(QString title)
 {
+    this->setInputPointOffset(QPointF(this->width() / 4,0));
     DiagramItem::setItemSizing(title);
 }
 

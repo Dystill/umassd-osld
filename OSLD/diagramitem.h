@@ -38,8 +38,10 @@ private:
     int itemWidth;  // the width of this item
     int itemHeight; // the height of this item
 
-    int circleRadius;
-    int lineLength;
+    int circleRadius = 0;   // radius of the circle used for input and output points
+    int lineLength = 0;     // line to extend from input and output points
+
+    QPointF inputPointOffset;    // offset for the input
 
     bool block = false; // holds whether or not this item is a block
     bool gate = false;  // holds whether or not this item is a gate
@@ -124,6 +126,9 @@ public:
 
     int getLineLength() const;
     void setLineLength(int value);
+
+    QPointF getInputPointOffset() const;
+    void setInputPointOffset(const QPointF &value);
 
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text

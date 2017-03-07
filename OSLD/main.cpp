@@ -7,10 +7,10 @@ int main(int argc, char *argv[])
 
     a.setOverrideCursor(Qt::ArrowCursor);
 
-    DescriptionFileReader x(new QWidget);
+    // DescriptionFileReader x(new QWidget);
 
-    // OSLDisplay w(new QWidget);
-    // w.show();
+    OSLDisplay w(new QWidget);
+    w.show();
 
     return a.exec();
 }
