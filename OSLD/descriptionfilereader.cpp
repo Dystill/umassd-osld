@@ -52,19 +52,20 @@ void DescriptionFileReader::readFile(QString filepath)
             // get the type of xml element currently being read
             currentToken = this->readNext();
 
+
             // qDebug string to print current token type
             // prints every line read in the xml file
+
             QString tString = (this->tokenString().replace("Characters", "String") +
                                (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
             qDebug() << ">> Found Token:" << tString;
+
 
             // start of document
             if(currentToken == QXmlStreamReader::StartDocument){
                 qDebug()<< "Start of document";
                 continue;
             }
-
-
 
             // start of element
             if(currentToken == QXmlStreamReader::StartElement) {
@@ -109,23 +110,33 @@ QString DescriptionFileReader::cleanString(QString s) {
 
 void DescriptionFileReader::readMetaData(QString tag)
 {
-     currentToken = this->readNext();
-    if(currentToken == QXmlStreamReader::StartElement) {
+        tag = this->name().toString();
         bool processed = false;
-        this->readNextStartElement();
-        qDebug()<<"Hellooooooooooooooooooooooo" + tag;
-        this->readNextStartElement();
-            while(!processed == true)
+        qDebug()<<"TAG 1 is: " << tag << endl;
+        while (!processed)
+        {
+            currentToken = this->readNext();
+            QString tString = (this->tokenString().replace("Characters", "String") +
+                               (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
+
+            if(currentToken == QXmlStreamReader::StartElement)
             {
-                if(tag == "description")
-                {       // *test* delete this, move to readMetaData
-                    qDebug()<< "Description: " << this->cleanString(this->readElementText());
-                    qDebug()<<" ";
-                    qDebug()<<"Yo";
-                }
-            //processed = true;
+                // get the name of the current tag
+
+                QString currentTag = this->name().toString();
+                qDebug()<<"-------------------------TAG 2 is: " << currentTag << endl;
+            }
+
+            if(currentToken == QXmlStreamReader::EndElement && tString == "EndElement meta")
+            {
+                qDebug() << "FINISHED PROCESSING META" << endl;
+                processed = true;
+            }
         }
-    }
+
+            //processed = true;
+
+
         // loop through each line in the meta element
 
     // get description text
