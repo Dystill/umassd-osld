@@ -125,6 +125,15 @@ void DescriptionFileReader::readMetaData(QString tag)
 
                 QString currentTag = this->name().toString();
                 qDebug()<<"-------------------------TAG 2 is: " << currentTag << endl;
+
+                if(currentTag == "description")
+                {
+                    QXmlStreamAttributes attributes = this->attributes();   // get all attribute keys
+                   description = attributes.value("name").toString();  // get the value of the name attribute
+                    this->readNext();   // go to the next element
+                    qDebug()<<"Description: " << description <<endl;
+                }
+
             }
 
             if(currentToken == QXmlStreamReader::EndElement && tString == "EndElement meta")
@@ -133,10 +142,6 @@ void DescriptionFileReader::readMetaData(QString tag)
                 processed = true;
             }
         }
-
-            //processed = true;
-
-
         // loop through each line in the meta element
 
     // get description text
@@ -144,8 +149,6 @@ void DescriptionFileReader::readMetaData(QString tag)
     // get and save common sources to a QMap
 
     // get and save status types to another QMap
-
-    // end loop when currentToken is EndElement and element name is "meta"
 }
 
 void DescriptionFileReader::readBlocks()
@@ -243,7 +246,6 @@ QString DescriptionFileReader::getDiagramName() const
 void DescriptionFileReader::setDiagramName()
 {
     QXmlStreamAttributes attributes = this->attributes();   // get all attribute keys
-
     diagramName = attributes.value("name").toString();  // get the value of the name attribute
     this->readNext();   // go to the next element
 
