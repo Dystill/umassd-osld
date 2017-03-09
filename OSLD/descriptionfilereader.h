@@ -3,8 +3,13 @@
 
 #include <QtCore>
 #include <QFileDialog>
-
 #include <QDebug>
+
+
+struct CommonSource {
+    QString name;
+    QString type;
+};
 
 class DescriptionFileReader: public QXmlStreamReader
 {

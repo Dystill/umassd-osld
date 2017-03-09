@@ -122,17 +122,23 @@ void DescriptionFileReader::readMetaData(QString tag)
             if(currentToken == QXmlStreamReader::StartElement)
             {
                 // get the name of the current tag
-
                 QString currentTag = this->name().toString();
                 qDebug()<<"-------------------------TAG 2 is: " << currentTag << endl;
-
                 if(currentTag == "description")
                 {
-                    QXmlStreamAttributes attributes = this->attributes();   // get all attribute keys
-                   description = attributes.value("name").toString();  // get the value of the name attribute
+                    this->readNext();
+                    //QXmlStreamAttributes text = this->text();   // get all attribute keys
+                    description = cleanString(QXmlStreamReader::text().toString());  // get the value of the name attribute
                     this->readNext();   // go to the next element
                     qDebug()<<"Description: " << description <<endl;
                 }
+                /**
+                if(currentTag == "source")
+                {
+                    this->readNext();   // go to the next element
+                    if(currenTag == "name")
+                        CommonSource.name =
+                }*/
 
             }
 

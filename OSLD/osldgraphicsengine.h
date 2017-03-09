@@ -11,10 +11,7 @@
 class OSLDisplay;
 
 // holds data source information
-struct CommonSource {
-    QString name;
-    QString type;
-};
+
 
 class OSLDGraphicsEngine : public QGraphicsScene
 {
