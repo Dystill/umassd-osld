@@ -135,10 +135,10 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
         // prepare a gradient going down the block
         QLinearGradient gradient(rect.center().x(), rect.top(), rect.center().x(), rect.bottom());
-            gradient.setColorAt(0, this->getColor().lighter(150));
+            gradient.setColorAt(0, this->getColor().lighter(175));
             gradient.setColorAt(0.45, this->getColor());
             gradient.setColorAt(0.65, this->getColor());
-            gradient.setColorAt(1, this->getColor().darker(175));
+            gradient.setColorAt(1, this->getColor().darker(200));
 
         painter->fillRect(rect, gradient);
         painter->drawRect(rect);

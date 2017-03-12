@@ -34,13 +34,6 @@ Gate::Gate(QString id, QPointF loc, GateType type)
  *  Gate Sizing and Dimensions
  */
 
-void Gate::setGateSizing()
-{
-    this->setWidth(64);
-    this->setHeight(64);
-    this->setInputPointOffset(QPointF(this->width() / 4,0));
-}
-
 void Gate::setGateSizing(int size)
 {
     this->setWidth(size);
