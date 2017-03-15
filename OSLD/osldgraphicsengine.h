@@ -36,6 +36,7 @@ private:
 
     int gridUnitSize = 20;
     bool showGridBackground = false;
+    QColor backgroundColor = QColor("#fafafa");
 
     QGraphicsItem *pressedItem;
     QPointF pressPosition;
@@ -78,6 +79,8 @@ public:
 
     OSLDisplay *getParentWindow() const;
     void setParentWindow(OSLDisplay *value);
+
+    Subdiagram *getCurrentSubdiagram() const;
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

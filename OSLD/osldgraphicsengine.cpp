@@ -79,7 +79,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     rootPathList.append(allSubdiagrams.at(0)->getRoot());
     this->drawSubdiagramItems(allSubdiagrams.at(0));
 
-    rootScene = new RootItemPathScene(this->getRootPathList(), Vertical);
+    rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
 }
 
 Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root, int index) {
@@ -115,6 +115,11 @@ RootItemPathScene *OSLDGraphicsEngine::getRootScene() const
     return rootScene;
 }
 
+Subdiagram *OSLDGraphicsEngine::getCurrentSubdiagram() const
+{
+    return currentSubdiagram;
+}
+
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
 
     int random = qrand() % 123456;  // make a random number
@@ -145,7 +150,7 @@ Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
 // overrides to draw a grid for the background
 void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    painter->fillRect(rect, QBrush(QColor("#fafafa")));
+    painter->fillRect(rect, QBrush(backgroundColor));
 
     if(showGridBackground) {
         QPen pen;

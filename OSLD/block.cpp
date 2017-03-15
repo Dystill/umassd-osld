@@ -46,6 +46,7 @@ Block::Block(Block *block) : DiagramItem() {
     this->setUnderline(block->getFont().underline());
     this->setWidth(block->width());
     this->setHeight(block->height());
+    this->setChildSubdiagram(block->getChildSubdiagram());
 
     this->isBlock(true);
 }

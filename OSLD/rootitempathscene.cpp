@@ -1,4 +1,5 @@
 #include "rootitempathscene.h"
+#include "osldgraphicsengine.h"
 
 /*
  *  CONSTRUCTORS
@@ -10,10 +11,11 @@ RootItemPathScene::RootItemPathScene()
 }
 
 // Constructor that sets the inital alignment and then sets the initial list
-RootItemPathScene::RootItemPathScene(QList<Block *> itemList, PathAlignment pa)
+RootItemPathScene::RootItemPathScene(OSLDGraphicsEngine *diagram, QList<Block *> itemList, PathAlignment pa)
 {
     this->setCurrentAlignment(pa);
     this->setList(itemList);
+    pairedDiagram = diagram;
 }
 
 // returns the current list being displayed
@@ -166,4 +168,80 @@ void RootItemPathScene::fitToView()
         //qDebug() << "Fit to Rect:" << rect;
         this->getParentGraphicsView()->fitInView(rect,Qt::KeepAspectRatio);
     }
+}
+
+void RootItemPathScene::drawBackground(QPainter *painter, const QRectF &rect)
+{
+    painter->fillRect(rect, QBrush(backgroundColor));
+}
+
+void RootItemPathScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    pressedItem = itemAt(event->scenePos(), QTransform());  // store the item that was clicked down on
+    QGraphicsScene::mousePressEvent(event);
+    update();
+}
+
+void RootItemPathScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());   // get the item that was released
+    Block *pressedBlock;    // to store a pointer to the clicked block
+
+    // if the click was from the left button
+    if(event->button() == Qt::LeftButton) {
+        // if the item was released at the same position, i.e. mouse wasn't moved away during click
+        if(releaseItem == pressedItem) {
+
+            if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
+
+                // check if the block has a subdiagram
+                if(pressedBlock->hasChildSubdiagram()) {
+
+                    Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
+
+                    //qDebug() << "\nCurrent path before:";
+                    //for(int i = 0; i < rootPathList.count(); i++) {
+                    //    qDebug() << rootPathList.at(i)->getTitle();
+                    //}
+
+                    // if the root block was pressed and it's not the top level subdiagram
+                    if(sub == pairedDiagram->getCurrentSubdiagram()) {
+                        if(pressedBlock->getParentSubdiagram() != 0) {
+                            // hide the items currently being displayed
+                            pairedDiagram->hideSubdiagramItems(pairedDiagram->getCurrentSubdiagram());
+
+                            // move the pressed block to it's original position
+                            pressedBlock->setPos(pressedBlock->getLocation());
+
+                            // remove the pressed block from the root view list
+                            rootPathList.removeOne(pressedBlock);
+
+                            // redraw the subdiagram
+                            pairedDiagram->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
+
+                            // redraw the root view scene
+                            this->setList(pairedDiagram->getRootPathList());
+                        }
+                    }
+                    // else when a regular subdiagram block was pressed
+                    else {
+                        pairedDiagram->hideSubdiagramItems(pairedDiagram->getCurrentSubdiagram());
+                        pairedDiagram->getRootPathList().append(pressedBlock);
+                        pairedDiagram->drawSubdiagramItems(pressedBlock->getChildSubdiagram());
+
+                        this->setList(pairedDiagram->getRootPathList());
+                    }
+
+                    //qDebug() << "\nCurrent path after:";
+                    //for(int i = 0; i < rootPathList.count(); i++) {
+                    //    qDebug() << rootPathList.at(i)->getTitle();
+                    //}
+                }
+            }
+        }
+    }
+
+    QGraphicsScene::mouseReleaseEvent(event);
+    pairedDiagram->update();
+    update();
 }
