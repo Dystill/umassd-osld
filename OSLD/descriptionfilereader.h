@@ -7,15 +7,30 @@
 
 
 struct CommonSource {
+    QString sourceNum;
     QString name;
     QString type;
 };
+
+struct statusTypes {
+    QString status;
+    QString color;
+    QString textColor;
+    QString typeFaceFlagString;
+    bool    typeFaceFlag;
+};
+
+
 
 class DescriptionFileReader: public QXmlStreamReader
 {
 public:
     DescriptionFileReader(QWidget *parent = 0);
     ~DescriptionFileReader();
+
+    QMap <QString, statusTypes> statuses;
+
+
 
     //Methods
     void readFile(QString filepath);
@@ -26,6 +41,9 @@ public:
     QString getDescription() const;
 
     QString cleanString(QString s);
+    void storeStatusData(QString s, statusTypes t, QString currentTag, QXmlStreamAttributes a);
+    bool StringConvert (statusTypes t);
+    void multiReadNext(int i);
 
     void readMetaData(QString tag);
     void readBlocks();

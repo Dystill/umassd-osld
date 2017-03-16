@@ -80,7 +80,7 @@ void DescriptionFileReader::readFile(QString filepath)
                     this->setDiagramName();
                 }
                 else if(currentTag == "meta") {         // meta tag
-                    qDebug()<< "calling readMetaData function";
+                    qDebug()<< "calling readMetaData function"<<endl;
                     this->readMetaData(currentTag);
                 }
 
@@ -108,38 +108,216 @@ QString DescriptionFileReader::cleanString(QString s) {
     return s.replace(QRegExp("\t|\n|\r"),"");
 }
 
+void DescriptionFileReader::multiReadNext(int i)
+{
+    int x;
+    for(x = 0; x<i; x++)
+    {
+        this->readNext();
+    }
+}
+
+bool DescriptionFileReader::StringConvert (statusTypes t)
+{
+    if(t.typeFaceFlagString == "true")
+        return true;
+    else
+        return false;
+}
+
+void DescriptionFileReader::storeStatusData(QString s, statusTypes t, QString currentTag, QXmlStreamAttributes a)
+{
+    t.status = s;
+    qDebug()<<"Status is: "<< t.status;
+    this->multiReadNext(2);
+    currentTag = this->name().toString();
+    if(currentTag == "color")
+    {
+        this->readNext();
+        t.color = cleanString(QXmlStreamReader::text().toString());
+        qDebug()<<"Color is: "<< t.color;
+        this->readNext();
+    }
+
+    this->multiReadNext(2);
+    currentTag = this->name().toString();
+    if(currentTag == "textcolor")
+    {
+        this->readNext();
+        t.textColor = cleanString(QXmlStreamReader::text().toString());
+        qDebug()<<"TextColor is: "<< t.textColor;
+        this->readNext();
+    }
+    this->multiReadNext(2);
+    currentTag = this->name().toString();
+
+    if(currentTag == "italics")
+    {
+        qDebug()<<"Typeface type: " << currentTag;
+        this->readNext();
+        t.typeFaceFlagString = cleanString(QXmlStreamReader::text().toString());
+        qDebug()<<"Typeface flag: " << t.typeFaceFlagString << endl;
+        t.typeFaceFlag = StringConvert (t);
+        this->readNext();
+        currentTag = this->name().toString();
+    }
+
+    if(currentTag == "bold")
+    {
+        qDebug()<<"Typeface type: " << currentTag;
+        this->readNext();
+        t.typeFaceFlagString = cleanString(QXmlStreamReader::text().toString());
+        qDebug()<<"Typeface flag: " << t.typeFaceFlagString << endl;
+        t.typeFaceFlag = StringConvert (t);
+        this->readNext();
+        currentTag = this->name().toString();
+    }
+
+    if(currentTag == "underline")
+    {
+        qDebug()<<"Typeface type: " << currentTag;
+        this->readNext();
+        t.typeFaceFlagString = cleanString(QXmlStreamReader::text().toString());
+        qDebug()<<"Typeface flag: " << t.typeFaceFlagString << endl;
+        t.typeFaceFlag = StringConvert (t);
+        this->readNext();
+        currentTag = this->name().toString();
+    }
+
+}
+
 void DescriptionFileReader::readMetaData(QString tag)
 {
-        tag = this->name().toString();
-        bool processed = false;
-        qDebug()<<"TAG 1 is: " << tag << endl;
-        while (!processed)
-        {
-            currentToken = this->readNext();
-            QString tString = (this->tokenString().replace("Characters", "String") +
+    statusTypes status1;
+    statusTypes status2;
+    statusTypes status3;
+    int statCount = 1; //Will be incremented for each status type read, being able to check for another status after scanning through the current one
+    tag = this->name().toString();
+    bool processed = false;
+    ////////V-Magic Starts Here-V////////
+    while (!processed)
+    {
+        currentToken = this->readNext();
+        QString tString = (this->tokenString().replace("Characters", "String") +
                                (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
+        if(currentToken == QXmlStreamReader::StartElement)
+        {
+            // get the name of the current tag
+            QString currentTag = this->name().toString();
+            //qDebug()<<"-------------------------TAG 2 is: " << currentTag << endl;
 
-            if(currentToken == QXmlStreamReader::StartElement)
-            {
-                // get the name of the current tag
-                QString currentTag = this->name().toString();
-                qDebug()<<"-------------------------TAG 2 is: " << currentTag << endl;
                 if(currentTag == "description")
                 {
                     this->readNext();
-                    //QXmlStreamAttributes text = this->text();   // get all attribute keys
+                    //   // get all attribute keys
                     description = cleanString(QXmlStreamReader::text().toString());  // get the value of the name attribute
                     this->readNext();   // go to the next element
                     qDebug()<<"Description: " << description <<endl;
                 }
-                /**
+                ///////////////////////////////////////////////////
                 if(currentTag == "source")
                 {
-                    this->readNext();   // go to the next element
-                    if(currenTag == "name")
-                        CommonSource.name =
-                }*/
+                    CommonSource A;
+                    CommonSource B;
+                    QXmlStreamAttributes attributes = this->attributes();
+                    if(attributes.value("id").toString() == "source1")
+                    {
 
+                        A.sourceNum = attributes.value("id").toString();
+                        qDebug()<<"Source is: "<< A.sourceNum;
+                        this->multiReadNext(2); //Needs to readNext() twice because it parse to the next start element tag to the actual body of the start element tag.
+                        currentTag = this->name().toString();
+
+                        if(currentTag == "name")
+                        {
+                            this->readNext();
+                            A.name = cleanString(QXmlStreamReader::text().toString());
+                            this->readNext();
+                            qDebug()<<"Name is: "<< A.name;
+                        }
+                        this->multiReadNext(2);//Needs to readNext() twice because it parse to the next start element tag to the actual body of the start element tag.
+                        currentTag = this->name().toString();
+
+                        if(currentTag == "type")
+                        {
+                            this->readNext();
+                            A.type = cleanString(QXmlStreamReader::text().toString());
+                            this->readNext();
+                            qDebug()<<"Type is: "<< A.type<<endl;
+                        }
+
+                    }
+                    if(attributes.value("id").toString() == "source2")
+                    {
+
+                        B.sourceNum = attributes.value("id").toString();
+                        qDebug()<<"Source is: "<< B.sourceNum;
+                        this->multiReadNext(2);
+                        currentTag = this->name().toString();
+
+                        if(currentTag == "name")
+                        {
+                            this->readNext();
+                            B.name = cleanString(QXmlStreamReader::text().toString());
+                            this->readNext();
+                            qDebug()<<"Name is: "<< B.name;
+                        }
+                        this->multiReadNext(2);
+                        currentTag = this->name().toString();
+
+                        if(currentTag == "type")
+                        {
+                            this->readNext();
+                            B.type = cleanString(QXmlStreamReader::text().toString());
+                            this->readNext();
+                            qDebug()<<"Type is: "<< B.type<<endl;
+                        }
+
+                    }
+                }
+                ///////////////////////////////////////////////////
+                if(currentTag == "status")
+                {
+                    if(statCount == 1)
+                    {
+                        QXmlStreamAttributes attributes;
+                        attributes = this->attributes();
+                        currentTag = this->name().toString();
+                            if(attributes.value("id").toString() == "Valid")//Need way to make "attributes.value("id").toString()" able to be compared with a variable beforehand to make it fully dynamic for status naming. Needs a pre-scanning
+                            {
+                                storeStatusData(attributes.value("id").toString(), status1, currentTag, attributes);
+                                statCount = statCount + 1;
+                            }
+                        this->multiReadNext(4);
+                        statuses.insert(status1.status,status1);
+                    }
+                    if(statCount == 2)
+                    {
+                        QXmlStreamAttributes attributes;
+                        attributes = this->attributes();
+                        currentTag = this->name().toString();
+                        if(attributes.value("id").toString() == "Invalid")
+                        {
+                            storeStatusData(attributes.value("id").toString(), status2, currentTag, attributes);
+                            statCount = statCount + 1;
+                        }
+                        this->multiReadNext(4);
+                        statuses.insert(status2.status,status2);
+                    }
+                    if(statCount == 3)
+                    {
+                        QXmlStreamAttributes attributes;
+                        attributes = this->attributes();
+                        currentTag = this->name().toString();
+                        if(attributes.value("id").toString() == "Unknown")
+                        {
+                            storeStatusData(attributes.value("id").toString(), status3, currentTag, attributes);
+                            statCount = statCount + 1;
+                        }
+                        statuses.insert(status3.status,status3);
+                    }
+                }
+                ///////////////////////////////////////////////////
             }
 
             if(currentToken == QXmlStreamReader::EndElement && tString == "EndElement meta")
@@ -148,13 +326,8 @@ void DescriptionFileReader::readMetaData(QString tag)
                 processed = true;
             }
         }
-        // loop through each line in the meta element
 
-    // get description text
 
-    // get and save common sources to a QMap
-
-    // get and save status types to another QMap
 }
 
 void DescriptionFileReader::readBlocks()
@@ -262,4 +435,5 @@ QString DescriptionFileReader::getDescription() const
 {
     return description;
 }
+
 
