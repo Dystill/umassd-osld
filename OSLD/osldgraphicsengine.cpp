@@ -215,40 +215,17 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
                     Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
 
-
-                    qDebug() << "\nCurrent path before:";
-                    for(int i = 0; i < rootPathList.count(); i++) {
-                        qDebug() << rootPathList.at(i)->getTitle();
-                    }
-
                     // if the current subdiagram's root block was pressed and it's not the top level subdiagram
                     // then go back to previous subdiagram
                     if(sub == currentSubdiagram) {
                         if(pressedBlock->getParentSubdiagram() != 0) {
-                            // hide the items currently being displayed
-                            this->hideSubdiagramItems(currentSubdiagram);
-
-                            // move the pressed block to it's original position
-                            pressedBlock->setPos(pressedBlock->getLocation());
-
-                            // remove the pressed block from the root view list
-                            rootPathList.removeOne(pressedBlock);
-
-                            // redraw the subdiagram
-                            this->drawSubdiagramItems(pressedBlock->getParentSubdiagram());
-
-                            // redraw the root view scene
-                            rootScene->setList(rootPathList);
+                            // go to previous subdiagram
+                            this->goToSubdiagram(pressedBlock->getParentSubdiagram()->getRoot());
                         }
                     }
                     // else when a regular subdiagram block was pressed
                     else {
                         this->goToSubdiagram(pressedBlock);
-                    }
-
-                    qDebug() << "\nCurrent path after:";
-                    for(int i = 0; i < rootPathList.count(); i++) {
-                        qDebug() << rootPathList.at(i)->getTitle();
                     }
                 }
             }

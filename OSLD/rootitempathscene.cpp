@@ -38,6 +38,16 @@ void RootItemPathScene::setList(const QList<Block *> &itemList)
     // go through all of the items from the passed in list
     for(int i = 0; i < itemList.count(); i++) {
         Block *block = new Block(itemList.at(i));   // create a copy of the current block
+
+        // turn every block gray except for the last
+        if(i < (itemList.count() - 1)) {
+            block->setColor(QColor(Qt::gray));
+            block->setTextColor(QColor(Qt::black));
+            block->setBold(false);
+            block->setItalics(false);
+            block->setUnderline(false);
+        }
+
         // qDebug() << "block width:" << block->width();
         block->setIsInDiagram(false);               // set block so it knows it isn't in the main diagram
         rootPathList.append(block);                 // add the new block to the main list

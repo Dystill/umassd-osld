@@ -100,7 +100,8 @@ public:
     QString getStatus() const;
     QColor getColor() const;
 
-    void setStatus(const QString &value, QMap<QString, QString> colorMap);  // sets both status and color. color cannot be changed directly
+    void setStatus(const QString &value, QMap<QString, QString> colorMap);  // sets both status and color
+    void setColor(const QColor &value);
 
     QColor getTextColor() const;
     void setTextColor(const QColor &value);
@@ -133,7 +134,6 @@ public:
 
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
-    void setColor(const QColor &value);         // let subclasses manually change their color
 
     void setItemId(const QString &value);
 
