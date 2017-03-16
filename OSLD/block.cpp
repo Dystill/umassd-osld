@@ -36,6 +36,7 @@ Block::Block(Block *block) : DiagramItem() {
     this->setMaxWidth(256);
     this->setTitleSize(16);
 
+    this->setItemId(block->id());
     this->setTitle(block->getTitle());
     this->setDescription(block->getDescription());
     this->setToolTip(block->toolTip());

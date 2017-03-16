@@ -215,12 +215,14 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
                     Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
 
-                    //qDebug() << "\nCurrent path before:";
-                    //for(int i = 0; i < rootPathList.count(); i++) {
-                    //    qDebug() << rootPathList.at(i)->getTitle();
-                    //}
 
-                    // if the root block was pressed and it's not the top level subdiagram
+                    qDebug() << "\nCurrent path before:";
+                    for(int i = 0; i < rootPathList.count(); i++) {
+                        qDebug() << rootPathList.at(i)->getTitle();
+                    }
+
+                    // if the current subdiagram's root block was pressed and it's not the top level subdiagram
+                    // then go back to previous subdiagram
                     if(sub == currentSubdiagram) {
                         if(pressedBlock->getParentSubdiagram() != 0) {
                             // hide the items currently being displayed
@@ -241,17 +243,13 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                     }
                     // else when a regular subdiagram block was pressed
                     else {
-                        this->hideSubdiagramItems(currentSubdiagram);
-                        rootPathList.append(pressedBlock);
-                        this->drawSubdiagramItems(pressedBlock->getChildSubdiagram());
-
-                        rootScene->setList(rootPathList);
+                        this->goToSubdiagram(pressedBlock);
                     }
 
-                    //qDebug() << "\nCurrent path after:";
-                    //for(int i = 0; i < rootPathList.count(); i++) {
-                    //    qDebug() << rootPathList.at(i)->getTitle();
-                    //}
+                    qDebug() << "\nCurrent path after:";
+                    for(int i = 0; i < rootPathList.count(); i++) {
+                        qDebug() << rootPathList.at(i)->getTitle();
+                    }
                 }
             }
         }
@@ -268,19 +266,62 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     update();
 }
 
+void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
+
+    this->hideSubdiagramItems(currentSubdiagram);   // hide current subdiagram
+
+    int rootBlockListIndex = -1;    // index for the rootBlock in the rootPathList
+
+    // search for the rootBlock in the rootPathList and save the index if found
+    for(int i = 0; i < rootPathList.count(); i++) {
+        if(rootPathList.at(i)->id() == rootBlock->id()) {
+            rootBlockListIndex = i;
+        }
+    }
+
+    // if not found
+    if(rootBlockListIndex == -1) {
+        rootPathList.append(rootBlock); // add new block to the end
+    }
+    // else if found
+    else {
+        // start from end of rootPathList and remove blocks up to the saved index
+        for(int i = (rootPathList.count() - 1); i > rootBlockListIndex; i--) {
+            rootPathList.removeAt(i);
+        }
+    }
+
+    // draw rootBlock's subdiagram
+    this->drawSubdiagramItems(rootBlock->getChildSubdiagram());
+
+    rootScene->setList(rootPathList);
+}
+
+
 void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
 {
+    // draw all of this subdiagram's connecting lines
     for(int i = 0; i < sub->getConnectors().count(); i++) {
         //qDebug() << "Drawing Connector" << i;
         this->addItem(sub->getConnectors().at(i));
     }
+
+    // draw all of the items except for the rootBlock
     for(int i = 0; i < sub->getInputItems().count(); i++) {
         //qDebug() << "Drawing Block" << i;
-        this->addItem(sub->getInputItems().at(i));
+        DiagramItem *item = sub->getInputItems().at(i);
+        item->setPos(item->getLocation());
+        this->addItem(item);
     }
+
+    // get the subdiagram's root item
     Block *root = sub->getRoot();
+
+    // set it's position to the root location
     root->setPos(root->getRootLocation());
+
     root->setCurrentlyRoot(true);
+
     this->addItem(root);
     currentSubdiagram = sub;
 }

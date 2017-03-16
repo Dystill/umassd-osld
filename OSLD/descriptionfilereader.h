@@ -6,6 +6,7 @@
 #include <QDebug>
 
 
+// holds data source information
 struct CommonSource {
     QString sourceNum;
     QString name;

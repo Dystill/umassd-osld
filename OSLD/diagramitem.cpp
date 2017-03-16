@@ -6,14 +6,9 @@ bool DiagramItem::transparentTitle = false;
  *  CONSTRUCTOR
  */
 
-QPointF DiagramItem::getInputPointOffset() const
+void DiagramItem::setItemId(const QString &value)
 {
-    return inputPointOffset;
-}
-
-void DiagramItem::setInputPointOffset(const QPointF &value)
-{
-    inputPointOffset = value;
+    itemId = value;
 }
 
 DiagramItem::DiagramItem()
@@ -145,7 +140,6 @@ QSizeF DiagramItem::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 // get the point where connectors can enter this item
 QPointF DiagramItem::inputPoint() const
 {
-    qDebug() << this->getTitle() << this->getInputPointOffset();
     return this->pos() + QPoint(this->boundingRect().left() + this->getCircleRadius(),
                                 this->boundingRect().center().y()) +
             this->getInputPointOffset();
@@ -395,6 +389,16 @@ bool DiagramItem::isTransparent()
 void DiagramItem::setTransparent(bool value)
 {
     transparentTitle = value;
+}
+
+QPointF DiagramItem::getInputPointOffset() const
+{
+    return inputPointOffset;
+}
+
+void DiagramItem::setInputPointOffset(const QPointF &value)
+{
+    inputPointOffset = value;
 }
 
 

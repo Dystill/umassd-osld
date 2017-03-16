@@ -130,10 +130,12 @@ public:
     QPointF getInputPointOffset() const;
     void setInputPointOffset(const QPointF &value);
 
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
     void setColor(const QColor &value);         // let subclasses manually change their color
 
+    void setItemId(const QString &value);
 
     void isBlock(bool value);   // set if this item is a block
     void isGate(bool value);    // set if this item is a gate
