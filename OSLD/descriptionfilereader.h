@@ -4,6 +4,8 @@
 #include <QtCore>
 #include <QFileDialog>
 #include <QDebug>
+#include "block.h"
+#include "gate.h"
 
 
 // holds data source information
@@ -51,6 +53,14 @@ public:
     void readGates();
     void readSubdiagrams();
 
+    QList<Subdiagram *> getAllSubdiagrams() const;
+
+    QList<Block *> getAllBlocks() const;
+
+    QList<Gate *> getAllGates() const;
+
+    QList<DiagramItem *> getAllItems() const;
+
 protected:
     QString path;
 
@@ -59,6 +69,14 @@ private:
     QString diagramName;
     QString description;
 
+    QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
+    QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
+    QList<Gate *> allGates;         // a list of all of the gates in the diagram
+    QList<DiagramItem *> allItems;  // a list of both blocks and gates
+
+    QMap<QString, int> getDimensions();
+    QPointF getLocationPoint();
+    void getStatusInfo();
 };
 
 #endif // DESCRIPTIONFILEREADER_H

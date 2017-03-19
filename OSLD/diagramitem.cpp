@@ -6,21 +6,10 @@ bool DiagramItem::transparentTitle = false;
  *  CONSTRUCTOR
  */
 
-void DiagramItem::setItemId(const QString &value)
-{
-    itemId = value;
-}
-
-DiagramItem::DiagramItem()
-{
-
-}
-
 DiagramItem::DiagramItem(QString id, QPointF loc)
 {
     this->itemId = id;      // save the item's id
-    this->setPos(loc);      // position the item
-    this->location = loc;
+    this->setLocation(loc);
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsMovable);
 }
@@ -399,6 +388,32 @@ QPointF DiagramItem::getInputPointOffset() const
 void DiagramItem::setInputPointOffset(const QPointF &value)
 {
     inputPointOffset = value;
+}
+
+void DiagramItem::setItemId(const QString &value)
+{
+    itemId = value;
+}
+
+QString DiagramItem::getSourceId() const
+{
+    return sourceId;
+}
+
+void DiagramItem::setSourceId(const QString &value)
+{
+    sourceId = value;
+}
+
+void DiagramItem::setLocation(const QPointF &value)
+{
+    location = value;
+    this->setPos(value);      // position the item
+}
+
+DiagramItem::DiagramItem()
+{
+
 }
 
 

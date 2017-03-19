@@ -9,12 +9,15 @@
 
 class Subdiagram;
 
+
+
 class DiagramItem : public QGraphicsWidget
 {
 private:
     static bool transparentTitle;
 
     QString itemId;     // the unique identifier for this item. cannot be changed once item is constructed
+    QString sourceId;     // the source for this item's information
 
     QList<DiagramItem *> outputItem;    // the item this item outputs to if applicable
 
@@ -131,6 +134,11 @@ public:
     QPointF getInputPointOffset() const;
     void setInputPointOffset(const QPointF &value);
 
+
+    QString getSourceId() const;
+    void setSourceId(const QString &value);
+
+    void setLocation(const QPointF &value);
 
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text

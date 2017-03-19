@@ -4,7 +4,7 @@
  *  CONSTRUCTOR
  */
 
-Gate::Gate(QString id, QPointF loc, GateType type)
+Gate::Gate(QString id, GateType type, QPointF loc)
     : DiagramItem(id, loc)
 {
     gateType = type;            // set the gate type
@@ -13,15 +13,15 @@ Gate::Gate(QString id, QPointF loc, GateType type)
 
     if(type == AndGate) {
         hovertext.append(" - AND gate");
-        this->setGateSizing(64);
+        this->setGateSizing(defaultSize);
     }
     else if(type == OrGate) {
         hovertext.append(" - OR gate");
-        this->setGateSizing(64);
+        this->setGateSizing(defaultSize);
     }
     else if(type == NotGate) {
         hovertext.append(" - NOT gate");
-        this->setGateSizing(48);
+        this->setGateSizing(defaultSize/1.5);
     }
 
     this->setToolTip(hovertext);
@@ -38,6 +38,24 @@ void Gate::setGateSizing(int size)
 {
     this->setWidth(size);
     this->setHeight(size);
+    this->setInputPointOffset(QPointF(this->width() / 4,0));
+}
+
+void Gate::setGateSizing(int w, int h)
+{
+    // set width to defaultSize if 0 is passed for width
+    if(w == 0)
+        this->setWidth(defaultSize);
+    else
+        this->setWidth(w);
+
+    // set height to default size of 0 is passed for height
+    if(h == 0)
+        this->setHeight(defaultSize);
+    else
+        this->setHeight(h);
+
+    // move input point in slightly
     this->setInputPointOffset(QPointF(this->width() / 4,0));
 }
 
@@ -133,6 +151,22 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         painter->drawText(rect, this->getTitle(), texto);
     }
 
+}
+
+void Gate::setGateType(QString type)
+{
+    if(type.contains(QRegExp("[Aa][Nn][Dd]"))) {
+        this->gateType = AndGate;
+    }
+    else if(type.contains(QRegExp("[Oo][Rr]"))) {
+        this->gateType = OrGate;
+    }
+    else if(type.contains(QRegExp("[Nn][Oo][Tt]"))) {
+        this->gateType = NotGate;
+    }
+    else {
+        qDebug() << "GateType not recognized.";
+    }
 }
 
 QPainterPath *Gate::drawANDGatePath(int width, int height)

@@ -139,7 +139,7 @@ Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
         type = NotGate;
     }
 
-    Gate *gate = new Gate(id, pos, type);
+    Gate *gate = new Gate(id, type, pos);
 
     gate->setStatus("Valid", statuses);
 
