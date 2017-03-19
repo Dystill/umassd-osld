@@ -9,6 +9,17 @@
 
 class Subdiagram;
 
+struct DiagramItemData {
+    QString title;
+    QString description;
+    QString hovertext;
+    QString status;
+    QColor textColor = QColor(Qt::black);
+    bool italics = false;
+    bool bold = false;
+    bool underline = false;
+};
+
 class DiagramItem : public QGraphicsWidget
 {
 private:

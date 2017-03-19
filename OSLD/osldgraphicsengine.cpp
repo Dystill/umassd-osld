@@ -343,38 +343,38 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
 
     QPointF position = pos;
 
-    // create a BlockData structure to store the block data
-    BlockData bd;
-    bd.title = QString("Block %1 Title").arg(random);
-    bd.description = QString("Block %1 Description").arg(random);
-    bd.hovertext = QString("Block %1 Hovertext").arg(random);
-    bd.status = (random % 2 == 0 ? "Valid" : "Invalid");
+    // create a DiagramItemData structure to store the block data
+    DiagramItemData itemData;
+    itemData.title = QString("Block %1 Title").arg(random);
+    itemData.description = QString("Block %1 Description").arg(random);
+    itemData.hovertext = QString("Block %1 Hovertext").arg(random);
+    itemData.status = (random % 2 == 0 ? "Valid" : "Invalid");
 
     int random2 = qrand() % 2;
     if(random2 == 0) {
-        bd.textColor = QColor(Qt::white);
+        itemData.textColor = QColor(Qt::white);
     }
     random2 = qrand() % 2;
     if(random2 == 0) {
-        bd.bold = true;
+        itemData.bold = true;
     }
     random2 = qrand() % 2;
     if(random2 == 1) {
-        bd.underline = true;
+        itemData.underline = true;
     }
     random2 = qrand() % 2;
     if(random2 == 1) {
-        bd.italics = true;
+        itemData.italics = true;
     }
 
     // for testing large title strings
     // if(random % 3 == 0) bd.title.append("@@@@@ @@@@@@@@@ @@@@@@@ @@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@ @@@@@ @@@@ @@@@@@@@@@@@@@@@ @@@ @ @@@@@@@@@@@@ @@@@@@@@@ @@@ @@@@@@@@@@@@@@@@@@ @@@@ @");
 
-    return buildBlock(id, position, bd);
+    return buildBlock(id, position, itemData);
 }
 
 // adds data to a block
-Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, BlockData data)
+Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, DiagramItemData data)
 {
     // qDebug() << "Creating Block" << id;
 
