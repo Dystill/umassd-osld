@@ -384,62 +384,64 @@ void DescriptionFileReader::readGates()
     // update token and tag
     currentToken = this->readNext();
     QString currentTag = this->name().toString();
-    QString tString = "";
     QXmlStreamAttributes attributes;
 
-    qDebug() << "==================================START GATE==================================";
+    qDebug() << "==================================START GATES==================================";
     while(currentTag != "gates" || currentToken != QXmlStreamReader::EndElement) {
 
-        Gate *gate;
-
-        // print to qdebug the current token type
-        tString = (this->tokenString().replace("Characters", "String") +
-                               (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
-        //qDebug() << ">> Found Token:" << tString;
+        Gate *gate; // gate pointer
 
         // get gate attributes
         if(currentTag == "gate" && currentToken == QXmlStreamReader::StartElement) {
             qDebug() << "------ Start reading gate ------";
+            // get the gate attributes
             attributes = this->attributes();
 
+            // create a gate object with the id
             if(attributes.hasAttribute("id")) {
-                attributes.value("type").toString();
-                gate = new Gate(attributes.value("id").toString());
+                gate = new Gate(attributes.value("id").toString()); // create a new gate
                 qDebug() << "Found gate id" << gate->id();
 
             }
+            // get and save the gate type to the gate
             if(attributes.hasAttribute("type")) {
                 gate->setGateType(attributes.value("type").toString());
                 qDebug() << "Found gate type" << attributes.value("type").toString();
             }
+            // get and save the source id to the gate
             if(attributes.hasAttribute("source")) {
                 gate->setSourceId(attributes.value("source").toString());
                 qDebug() << "Found gate source" << gate->getSourceId();
 
-                // CONTACT STIMULATOR HERE
+                // CONTACT STIMULATOR HERE -> save and use ref_id if available
 
                 // gate->setXXX
             }
         }
         // get dimensions data
         else if(currentTag == "dimensions" && currentToken == QXmlStreamReader::StartElement) {
+            // call function to save the dimensions as a QMap
             QMap<QString, int> dimension = this->getDimensions();
+
+            // set the gate's width and height
             gate->setGateSizing(dimension["width"],dimension["height"]);
+
+            // print to make sure they were save properly
             qDebug() << "Dimensions Set!" << gate->width() << gate->height();
         }
         // get location data
         else if(currentTag == "location" && currentToken == QXmlStreamReader::StartElement) {
-            QPointF location = this->getLocationPoint();
-            gate->setLocation(location);
-            qDebug() << "Location Set!" << gate->pos();
+            QPointF location = this->getLocationPoint();    // call get location point function
+            gate->setLocation(location);                    // set the gate's location
+            qDebug() << "Location Set!" << gate->pos();     // print
         }
         // get status info
         else if(currentTag == "status_info" && currentToken == QXmlStreamReader::StartElement) {
-            this->getStatusInfo();
+            this->getStatusInfo();  // call get status info function
         }
         // at end of gate element
         else if(currentTag == "gate" && currentToken == QXmlStreamReader::EndElement) {
-            allGates.append(gate);
+            allGates.append(gate);  // add gate pointer to allGates list in header file
             qDebug() << "------ Stored gate! ------";
         }
 
@@ -448,9 +450,10 @@ void DescriptionFileReader::readGates()
         currentTag = this->name().toString();
     }
 
+    // print amount of items in allGates list
     qDebug() << "Gates stored:" << allGates.count();
 
-    qDebug() << "===================================END GATE===================================";
+    qDebug() << "===================================END GATES===================================";
     // for each gate - NEED TO CHECK STIMULATOR AS WELL
 
         // create a gate object pointer
@@ -524,6 +527,8 @@ void DescriptionFileReader::readSubdiagrams()
 
     // end loop when currentToken is EndElement and element name is "subdiagrams"
 }
+
+
 
 void DescriptionFileReader::getStatusInfo() {
 
@@ -618,6 +623,9 @@ QMap<QString, int> DescriptionFileReader::getDimensions() {
 
     return dimension;
 }
+
+
+
 
 QString DescriptionFileReader::getDiagramName() const
 {
