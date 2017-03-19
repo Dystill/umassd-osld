@@ -6,9 +6,9 @@ bool DiagramItem::transparentTitle = false;
  *  CONSTRUCTOR
  */
 
-void DiagramItem::setItemId(const QString &value)
+void DiagramItem::setStatusInfoDataList(const QMap<QString, DiagramItemData> &value)
 {
-    itemId = value;
+    statusInfoDataList = value;
 }
 
 DiagramItem::DiagramItem()
@@ -220,38 +220,45 @@ void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
  *  ATTRIBUTE GETTERS AND SETTERS
  */
 
-// returns this item's unique id
+// id
+
 QString DiagramItem::id() const
 {
     return itemId;
 }
 
-// returns the width of this item
+void DiagramItem::setItemId(const QString &value)
+{
+    itemId = value;
+}
+
+// width
+
 int DiagramItem::width() const
 {
     return itemWidth;
 }
 
-// sets the width for this item
 // QGraphicsItem::update() may have to be called afterwards
 void DiagramItem::setWidth(int value)
 {
     itemWidth = value;
 }
 
-// returns the height of this item
+// height
+
 int DiagramItem::height() const
 {
     return itemHeight;
 }
 
-// sets the height for this item
 // QGraphicsItem::update() may have to be called afterwards
 void DiagramItem::setHeight(int value)
 {
     itemHeight = value;
 }
 
+// is this item a block or gate?
 
 bool DiagramItem::isBlock() const
 {
@@ -273,6 +280,8 @@ void DiagramItem::isGate(bool value)
     gate = value;
 }
 
+// get circle radius for extension lines endpoints
+
 int DiagramItem::getCircleRadius() const
 {
     return circleRadius;
@@ -282,6 +291,8 @@ void DiagramItem::setCircleRadius(int value)
 {
     circleRadius = value;
 }
+
+// the extensions lines' length
 
 int DiagramItem::getLineLength() const
 {
@@ -293,72 +304,93 @@ void DiagramItem::setLineLength(int value)
     lineLength = value;
 }
 
+
+// setters and getters for statusInfoData
+
+// text color
 QColor DiagramItem::getTextColor() const
 {
-    return textColor;
+    return currentStatusInfo.textColor;
 }
 
-void DiagramItem::setTextColor(const QColor &value)
+void DiagramItem::setTextColor(QColor value)
 {
-    textColor = value;
+    currentStatusInfo.textColor = value;
 }
 
 QString DiagramItem::getTitle() const
 {
-    return title;
+    return currentStatusInfo.title;
 }
 
-void DiagramItem::setTitle(const QString &value)
+void DiagramItem::setTitle(QString value)
 {
-    this->title = value;
-    this->setItemSizing(this->title);
+    currentStatusInfo.title = value;
 }
 
 QString DiagramItem::getDescription() const
 {
-    return description;
+    return currentStatusInfo.description;
 }
 
-void DiagramItem::setDescription(const QString &value)
+void DiagramItem::setDescription(QString value)
 {
-    description = value;
+    currentStatusInfo.description = value;
 }
 
 QString DiagramItem::getStatus() const
 {
-    return status;
+    return currentStatus;
 }
 
 void DiagramItem::setStatus(const QString &value, QMap<QString, QString> colorMap)
 {
     //qDebug() << value;
-    status = value;
+    currentStatus = value;
+    currentStatusInfo = statusInfoDataList[currentStatus];
 
     //qDebug() << colorMap[status];
-    color = QColor(colorMap[status]);
+    currentStatusInfo.color = QColor(colorMap[currentStatus]);
+
+}
+
+void DiagramItem::updateStatusInfo() {
+    this->setTextColor(currentStatusInfo.textColor);
+    this->setTitle(currentStatusInfo.title);
+    this->setDescription(currentStatusInfo.description);
+    this->setToolTip(currentStatusInfo.hovertext);
+    this->setTextColor(currentStatusInfo.textColor);
+    this->setItalics(currentStatusInfo.italics);
+    this->setUnderline(currentStatusInfo.underline);
+    this->setBold(currentStatusInfo.bold);
 }
 
 QColor DiagramItem::getColor() const
 {
-    return color;
+    return currentStatusInfo.color;
+}
+
+void DiagramItem::setColor(const QColor &value)
+{
+    currentStatusInfo.color = value;
 }
 
 void DiagramItem::setItalics(bool b)
 {
     font.setItalic(b);
-    this->setItemSizing(this->title);
+    this->setItemSizing(currentStatusInfo.title);
 }
 
 void DiagramItem::setBold(bool b)
 {
     font.setBold(b);
-    this->setItemSizing(this->title);
+    this->setItemSizing(currentStatusInfo.title);
 }
 
 void DiagramItem::setUnderline(bool b)
 {
     font.setUnderline(b);
-    this->setItemSizing(this->title);
+    this->setItemSizing(currentStatusInfo.title);
 }
 
 Subdiagram *DiagramItem::getParentSubdiagram() const
@@ -374,11 +406,6 @@ void DiagramItem::setParentSubdiagram(Subdiagram *value)
 QPointF DiagramItem::getLocation() const
 {
     return location;
-}
-
-void DiagramItem::setColor(const QColor &value)
-{
-    color = value;
 }
 
 bool DiagramItem::isTransparent()

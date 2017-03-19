@@ -4,20 +4,6 @@
  *  CONSTRUCTOR
  */
 
-bool Block::isInDiagram() const
-{
-    return inDiagram;
-}
-
-void Block::setIsInDiagram(bool value)
-{
-    inDiagram = value;
-    if(!value) {
-        this->setCircleRadius(0);
-        this->setLineLength(0);
-    }
-}
-
 Block::Block(QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(id, loc)
 {
@@ -109,6 +95,7 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     rect.setLeft(rect.left() + this->getCircleRadius());
     rect.setRight(rect.right() - this->getCircleRadius());
 
+    // if this block will be in the diagram rather than the rootScene
     if(inDiagram) {
         // make points to place the connector entry circles
         QPointF middleLeft = QPointF(rect.left(), rect.center().y());
@@ -245,4 +232,20 @@ bool Block::isCurrentlyRoot() const
 void Block::setCurrentlyRoot(bool value)
 {
     currentlyRoot = value;
+}
+
+
+// holds whether or not this block is being drawn in the diagram or the root list
+bool Block::isInDiagram() const
+{
+    return inDiagram;
+}
+
+void Block::setIsInDiagram(bool value)
+{
+    inDiagram = value;
+    if(!value) {
+        this->setCircleRadius(0);
+        this->setLineLength(0);
+    }
 }

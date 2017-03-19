@@ -6,20 +6,6 @@
 
 class Subdiagram;
 
-// builder structure that holds block data
-// used to store a block's data before passing it into a function
-// makes function parameters neater and smaller
-struct BlockData {
-    QString title;
-    QString description;
-    QString hovertext;
-    QString status;
-    QColor textColor = QColor(Qt::black);
-    bool italics = false;
-    bool bold = false;
-    bool underline = false;
-};
-
 class Block : public DiagramItem
 {
 private:
