@@ -343,51 +343,61 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
 
     QPointF position = pos;
 
+    QMap<QString, DiagramItemData> dataList;
+
     // create a DiagramItemData structure to store the block data
     DiagramItemData itemData;
     itemData.title = QString("Block %1 Title").arg(random);
     itemData.description = QString("Block %1 Description").arg(random);
     itemData.hovertext = QString("Block %1 Hovertext").arg(random);
-    itemData.status = (random % 2 == 0 ? "Valid" : "Invalid");
 
-    int random2 = qrand() % 2;
-    if(random2 == 0) {
-        itemData.textColor = QColor(Qt::white);
-    }
-    random2 = qrand() % 2;
-    if(random2 == 0) {
-        itemData.bold = true;
-    }
-    random2 = qrand() % 2;
-    if(random2 == 1) {
-        itemData.underline = true;
-    }
-    random2 = qrand() % 2;
-    if(random2 == 1) {
-        itemData.italics = true;
+    for(int i = 0; i < statuses.count(); i++) {
+        int random2 = qrand() % 2;
+        if(random2 == 0) {
+            itemData.textColor = QColor(Qt::white);
+        }
+        random2 = qrand() % 2;
+        if(random2 == 0) {
+            itemData.bold = true;
+        }
+        random2 = qrand() % 2;
+        if(random2 == 1) {
+            itemData.underline = true;
+        }
+        random2 = qrand() % 2;
+        if(random2 == 1) {
+            itemData.italics = true;
+        }
+
+        dataList[statuses.keys().at(i)] = itemData;
     }
 
     // for testing large title strings
     // if(random % 3 == 0) bd.title.append("@@@@@ @@@@@@@@@ @@@@@@@ @@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@ @@@@@ @@@@ @@@@@@@@@@@@@@@@ @@@ @ @@@@@@@@@@@@ @@@@@@@@@ @@@ @@@@@@@@@@@@@@@@@@ @@@@ @");
 
-    return buildBlock(id, position, itemData);
+    return buildBlock(id, position, dataList);
 }
 
 // adds data to a block
-Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, DiagramItemData data)
+Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, QMap<QString, DiagramItemData> data)
 {
     // qDebug() << "Creating Block" << id;
 
+    int random = qrand() % 2;
+
     Block *block = new Block(id, position);
 
-    block->setTitle(data.title);
-    block->setDescription(data.description);
-    block->setToolTip(data.hovertext);
-    block->setStatus(data.status, statuses);
-    block->setTextColor(data.textColor);
-    block->setItalics(data.italics);
-    block->setUnderline(data.underline);
-    block->setBold(data.bold);
+    QString status = (random == 0 ? "Valid" : "Invalid");
+
+    block->setStatusInfoDataList(data);
+    block->setStatus(status, statuses);
+    block->setTitle(data[status].title);
+    block->setDescription(data[status].description);
+    block->setToolTip(data[status].hovertext);
+    block->setTextColor(data[status].textColor);
+    block->setItalics(data[status].italics);
+    block->setUnderline(data[status].underline);
+    block->setBold(data[status].bold);
 
     return block;
 }
