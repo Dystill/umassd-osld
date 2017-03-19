@@ -45,8 +45,8 @@ private:
 
     int maxWidth;                               // the maximum width of the block before word wraping the title
 
-    int itemWidth;  // the width of this item
-    int itemHeight; // the height of this item
+    int itemWidth = 0;  // the width of this item
+    int itemHeight = 0; // the height of this item
 
     int circleRadius = 0;   // radius of the circle used for input and output points
     int lineLength = 0;     // line to extend from input and output points
@@ -143,6 +143,8 @@ public:
 
     void setStatusInfoDataList(const QMap<QString, DiagramItemData> &value);
 
+    void updateStatusInfo();
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
 
@@ -157,7 +159,6 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
-
 };
 
 #endif // DIAGRAMITEM_H

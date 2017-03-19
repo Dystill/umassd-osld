@@ -326,7 +326,6 @@ QString DiagramItem::getTitle() const
 void DiagramItem::setTitle(QString value)
 {
     currentStatusInfo.title = value;
-    this->setItemSizing(value);
 }
 
 QString DiagramItem::getDescription() const
@@ -353,8 +352,17 @@ void DiagramItem::setStatus(const QString &value, QMap<QString, QString> colorMa
     //qDebug() << colorMap[status];
     currentStatusInfo.color = QColor(colorMap[currentStatus]);
 
-    this->setTextColor(currentStatus);
+}
 
+void DiagramItem::updateStatusInfo() {
+    this->setTextColor(currentStatusInfo.textColor);
+    this->setTitle(currentStatusInfo.title);
+    this->setDescription(currentStatusInfo.description);
+    this->setToolTip(currentStatusInfo.hovertext);
+    this->setTextColor(currentStatusInfo.textColor);
+    this->setItalics(currentStatusInfo.italics);
+    this->setUnderline(currentStatusInfo.underline);
+    this->setBold(currentStatusInfo.bold);
 }
 
 QColor DiagramItem::getColor() const

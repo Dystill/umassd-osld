@@ -368,7 +368,6 @@ Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
         if(random2 == 1) {
             itemData.italics = true;
         }
-
         dataList[statuses.keys().at(i)] = itemData;
     }
 
@@ -391,13 +390,10 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, QMap<QString
 
     block->setStatusInfoDataList(data);
     block->setStatus(status, statuses);
-    block->setTitle(data[status].title);
-    block->setDescription(data[status].description);
-    block->setToolTip(data[status].hovertext);
-    block->setTextColor(data[status].textColor);
-    block->setItalics(data[status].italics);
-    block->setUnderline(data[status].underline);
-    block->setBold(data[status].bold);
+    block->updateStatusInfo();
+
+    // qDebug() << block->getTextColor();
+    // qDebug() << data[status].textColor;
 
     return block;
 }
