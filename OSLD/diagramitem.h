@@ -49,6 +49,9 @@ private:
     int itemWidth = 0;  // the width of this item
     int itemHeight = 0; // the height of this item
 
+    int defaultWidth = 128;
+    int defaultHeight = 64;
+
     int circleRadius = 0;   // radius of the circle used for input and output points
     int lineLength = 0;     // line to extend from input and output points
 
@@ -151,6 +154,8 @@ public:
 
     void setLocation(const QPointF &value);
 
+    void setItemSizing(int w, int h);
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
 
@@ -161,6 +166,12 @@ protected:
 
     int getCircleRadius() const;
     void setCircleRadius(int value);
+
+    int getDefaultWidth() const;
+    void setDefaultWidth(int value);
+
+    int getDefaultHeight() const;
+    void setDefaultHeight(int value);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);

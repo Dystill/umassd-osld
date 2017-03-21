@@ -69,6 +69,21 @@ void DiagramItem::setItemSizing(QString title)
     this->updateConnectors();
 }
 
+void DiagramItem::setItemSizing(int w, int h)
+{
+    // set width to defaultSize if 0 is passed for width
+    if(w == 0)
+        this->setWidth(defaultWidth);
+    else
+        this->setWidth(w);
+
+    // set height to default size of 0 is passed for height
+    if(h == 0)
+        this->setHeight(defaultHeight);
+    else
+        this->setHeight(h);
+}
+
 int DiagramItem::getMaxWidth() const
 {
     return maxWidth;
@@ -427,11 +442,6 @@ void DiagramItem::setInputPointOffset(const QPointF &value)
     inputPointOffset = value;
 }
 
-void DiagramItem::setItemId(const QString &value)
-{
-    itemId = value;
-}
-
 QString DiagramItem::getSourceId() const
 {
     return sourceId;
@@ -448,9 +458,24 @@ void DiagramItem::setLocation(const QPointF &value)
     this->setPos(value);      // position the item
 }
 
-DiagramItem::DiagramItem()
+int DiagramItem::getDefaultWidth() const
 {
+    return defaultWidth;
+}
 
+void DiagramItem::setDefaultWidth(int value)
+{
+    defaultWidth = value;
+}
+
+int DiagramItem::getDefaultHeight() const
+{
+    return defaultHeight;
+}
+
+void DiagramItem::setDefaultHeight(int value)
+{
+    defaultHeight = value;
 }
 
 

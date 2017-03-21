@@ -11,6 +11,11 @@ Gate::Gate(QString id, GateType type, QPointF loc)
 
     QString hovertext = id;
 
+    // set default size for this object
+    this->setDefaultWidth(defaultSize);
+    this->setDefaultHeight(defaultSize);
+
+    // determine type of block and resize based on that
     if(type == AndGate) {
         hovertext.append(" - AND gate");
         this->setGateSizing(defaultSize);
@@ -43,17 +48,8 @@ void Gate::setGateSizing(int size)
 
 void Gate::setGateSizing(int w, int h)
 {
-    // set width to defaultSize if 0 is passed for width
-    if(w == 0)
-        this->setWidth(defaultSize);
-    else
-        this->setWidth(w);
-
-    // set height to default size of 0 is passed for height
-    if(h == 0)
-        this->setHeight(defaultSize);
-    else
-        this->setHeight(h);
+    // call parent
+    DiagramItem::setItemSizing(w,h);
 
     // move input point in slightly
     this->setInputPointOffset(QPointF(this->width() / 4,0));

@@ -16,10 +16,10 @@ private:
 
 public:
     // constructor
-    Block(QString id, QPointF loc,     // blocks must have at least the id and location
-          QString t = "Block Title",
-          QString desc = "Block Description",
-          QString ht = "Block Hovertext");
+    Block(QString id, QPointF loc = QPointF(0,0),     // blocks must have at least the id and location
+          QString t = "Default Block Title",
+          QString desc = "Default Block Description",
+          QString ht = "Default Block Hovertext");
     Block(Block *block);    // copy constructor
 
     // QGraphicsItem stuff

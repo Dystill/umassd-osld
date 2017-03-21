@@ -367,7 +367,7 @@ void DescriptionFileReader::readBlocks()
             QMap<QString, int> dimension = this->getDimensions();
 
             // set the block's width and height
-            block->setBlockSizing(dimension["width"],dimension["height"]);
+            block->setItemSizing(dimension["width"],dimension["height"]);
 
             // print to make sure they were save properly
             qDebug() << "Dimensions Set!" << block->width() << block->height();
