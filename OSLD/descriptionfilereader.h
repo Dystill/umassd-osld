@@ -61,6 +61,7 @@ public:
 
     QList<DiagramItem *> getAllItems() const;
 
+    void getStatusBlockInfo();
 protected:
     QString path;
 
