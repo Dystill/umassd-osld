@@ -40,7 +40,7 @@ private:
 
     // functions for creating blocks
     Block *getBlockInfoFromDescriptionFile(QPointF pos);    // get information from the description file reader
-    Block *buildBlock(QString id, QPointF position, BlockData data);    // passes data into a block
+    Block *buildBlock(QString id, QPointF position, QMap<QString, DiagramItemData> data);    // passes data into a block
 
 
 public:

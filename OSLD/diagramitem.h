@@ -9,7 +9,16 @@
 
 class Subdiagram;
 
-
+struct DiagramItemData {
+    QColor color = QColor("#888888");
+    QColor textColor = QColor(Qt::black);
+    QString title;
+    QString description;
+    QString hovertext;
+    bool italics = false;
+    bool bold = false;
+    bool underline = false;
+};
 
 class DiagramItem : public QGraphicsWidget
 {
@@ -24,12 +33,11 @@ private:
     QList<Connector *> inputConn;   // the set of connectors that lead into this item
     QList<Connector *> outputConn;  // the set of connectors that exit from this item
 
-    QString status = "No Status Available";     // holds the text of the block's status, which is used to access a QMap of status/color combos
-    QColor color = QColor("#888888");           // the color of the block is stored here for easier access
-    QColor textColor;
-    QString title;                              // the name of the step this block represents
-    QString description;                        // the description of this block
-    QString hovertext;                          // the text that shows when the user hovers over the block
+    // data for this item
+    QMap<QString, DiagramItemData> statusInfoDataList;
+    DiagramItemData currentStatusInfo;
+    QString currentStatus = "No Status Available";  // holds the text of the block's status, which is used to access a QMap of status/color combos
+
     QPointF location = QPointF(0,0);
 
     Subdiagram *parentSubdiagram = 0;
@@ -38,8 +46,8 @@ private:
 
     int maxWidth;                               // the maximum width of the block before word wraping the title
 
-    int itemWidth;  // the width of this item
-    int itemHeight; // the height of this item
+    int itemWidth = 0;  // the width of this item
+    int itemHeight = 0; // the height of this item
 
     int circleRadius = 0;   // radius of the circle used for input and output points
     int lineLength = 0;     // line to extend from input and output points
@@ -95,10 +103,10 @@ public:
 
     // getter and setter functions
     QString getTitle() const;
-    void setTitle(const QString &value);
+    void setTitle(QString value);
 
     QString getDescription() const;
-    void setDescription(const QString &value);
+    void setDescription(QString value);
 
     QString getStatus() const;
     QColor getColor() const;
@@ -107,7 +115,7 @@ public:
     void setColor(const QColor &value);
 
     QColor getTextColor() const;
-    void setTextColor(const QColor &value);
+    void setTextColor(QColor value);
 
     int getMaxWidth() const;
     void setMaxWidth(int value);
@@ -134,6 +142,9 @@ public:
     QPointF getInputPointOffset() const;
     void setInputPointOffset(const QPointF &value);
 
+    void setStatusInfoDataList(const QMap<QString, DiagramItemData> &value);
+
+    void updateStatusInfo();
 
     QString getSourceId() const;
     void setSourceId(const QString &value);
@@ -154,7 +165,6 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
-
 };
 
 #endif // DIAGRAMITEM_H
