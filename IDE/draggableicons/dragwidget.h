@@ -48,18 +48,38 @@
 **
 ****************************************************************************/
 
-#include "mainwindow.h"
+#ifndef DRAGWIDGET_H
+#define DRAGWIDGET_H
 
-#include <QApplication>
+#include <QFrame>
+#include<QFileDialog>
 
-int main(int argv, char *args[])
+QT_BEGIN_NAMESPACE
+class QDragEnterEvent;
+class QDropEvent;
+QT_END_NAMESPACE
+
+//! [0]
+class DragWidget : public QFrame
 {
-    Q_INIT_RESOURCE(diagramscene);
+public:
+    DragWidget(QWidget *parent = 0);
 
-    QApplication app(argv, args);
-    MainWindow mainWindow;
-    mainWindow.setGeometry(100, 100, 800, 500);
-    mainWindow.show();
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void on_mbutton_clicked();
 
-    return app.exec();
-}
+
+/*public slots:
+    void on_mbutton_clicked();
+
+       signals:
+    void displayimage();
+*/
+};
+//! [0]
+
+#endif // DRAGWIDGET_H
