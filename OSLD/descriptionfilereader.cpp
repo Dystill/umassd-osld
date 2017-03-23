@@ -388,7 +388,7 @@ void DescriptionFileReader::readBlocks()
             qDebug() << "------ Stored Block! ------";
         }
 
-        // update token and tag
+        // update token and tag to read next element
         currentToken = this->readNext();
         currentTag = this->name().toString();
     }
@@ -504,7 +504,7 @@ void DescriptionFileReader::readGates()
             qDebug() << "------ Stored gate! ------";
         }
 
-        // update token and tag
+        // update token and tag to read next element
         currentToken = this->readNext();
         currentTag = this->name().toString();
     }
@@ -513,46 +513,29 @@ void DescriptionFileReader::readGates()
     qDebug() << "Gates stored:" << allGates.count();
 
     qDebug() << "===================================END GATES===================================";
-    // for each gate - NEED TO CHECK STIMULATOR AS WELL
 
-        // create a gate object pointer
-
-        // get id and source attributes and save to gate object
-
-        // loop through each line in gate
-
-        // get dimensions - handle situation when width and height are empty
-
-        // get location, save as QPointF object, set gate location
-
-        // *check stimulator for gate status*
-            // otherwise get status_info default_status attribute
-
-        // loop through each line in status_info
-
-            // get data element with correct for_status attribute
-
-            // for each of name, description, hovertext
-
-                // save column attribute to array if present
-
-                // check for hard-coded text
-                    // if present, save text to gate object
-                    // otherwise, go to stimulator
-
-            // end loop when currentToken is EndElement and element name is "status_info"
-
-        // end loop when currentToken is EndElement and element name is "gate"
-
-        // append gate object pointer to a QList
-
-    // end loop when currentToken is EndElement and element name is "gates"
 }
 
 void DescriptionFileReader::readSubdiagrams()
 {
     // loop through each line in the subdiagrams element
         // **be careful not to overuse "currentToken = this->readNext();"
+
+
+    // update token and tag
+    currentToken = this->readNext();
+    QString currentTag = this->name().toString();
+    QString tString;
+    QXmlStreamAttributes attributes;
+
+    qDebug() << "==================================START SUBDIAGRAMS==================================";
+
+    while(currentTag != "subdiagrams" || currentToken != QXmlStreamReader::EndElement) {
+
+
+        tString = (this->tokenString().replace("Characters", "String") +
+                           (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
+        qDebug() << ">> Found Token:" << tString;
 
     // for each subdiagram element
 
@@ -585,6 +568,15 @@ void DescriptionFileReader::readSubdiagrams()
         // end loop when currentToken is EndElement and element name is "subdiagram"
 
     // end loop when currentToken is EndElement and element name is "subdiagrams"
+
+        // update token and tag to read next element
+        currentToken = this->readNext();
+        currentTag = this->name().toString();
+    }
+    // print amount of items in allSubdiagrams list
+    qDebug() << "Subdiagrams stored:" << allSubdiagrams.count();
+
+    qDebug() << "===================================END SUBDIAGRAMS===================================";
 }
 
 
@@ -754,3 +746,38 @@ QList<DiagramItem *> DescriptionFileReader::getAllItems() const
     return allItems;
 }
 
+
+// for each gate - NEED TO CHECK STIMULATOR AS WELL
+
+    // create a gate object pointer
+
+    // get id and source attributes and save to gate object
+
+    // loop through each line in gate
+
+    // get dimensions - handle situation when width and height are empty
+
+    // get location, save as QPointF object, set gate location
+
+    // *check stimulator for gate status*
+        // otherwise get status_info default_status attribute
+
+    // loop through each line in status_info
+
+        // get data element with correct for_status attribute
+
+        // for each of name, description, hovertext
+
+            // save column attribute to array if present
+
+            // check for hard-coded text
+                // if present, save text to gate object
+                // otherwise, go to stimulator
+
+        // end loop when currentToken is EndElement and element name is "status_info"
+
+    // end loop when currentToken is EndElement and element name is "gate"
+
+    // append gate object pointer to a QList
+
+// end loop when currentToken is EndElement and element name is "gates"
