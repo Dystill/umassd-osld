@@ -7,6 +7,13 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
     this->setParent(parent);
 
+    DescriptionFileReader descriptionFile(parent);
+
+    this->allBlocks = descriptionFile.getAllBlocks();
+    this->allGates = descriptionFile.getAllGates();
+
+    qDebug() << "OSLD blocks" << this->allBlocks.count() << "/ OSLD gates" << this->allGates.count();
+
     // get the status types for this diagram
     statuses["Valid"] = "#8BC34A";
     statuses["Invalid"] = "#EF5350";
