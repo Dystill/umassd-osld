@@ -9,6 +9,20 @@
 
 class Subdiagram;
 
+// holds data source information
+struct CommonSource {
+    QString name;
+    QString type;
+};
+
+struct StatusTypes {
+    QString color;
+    QString textColor;
+    bool    italics = false;
+    bool    bold = false;
+    bool    underline = false;
+};
+
 struct DiagramItemData {
     QColor color = QColor("#888888");
     QColor textColor = QColor(Qt::black);
@@ -114,7 +128,7 @@ public:
     QString getStatus() const;
     QColor getColor() const;
 
-    void setStatus(const QString &value, QMap<QString, QString> colorMap);  // sets both status and color
+    void setStatus(const QString &value, QMap<QString, StatusTypes> colorMap);  // sets both status and color
     void setColor(const QColor &value);
 
     QColor getTextColor() const;

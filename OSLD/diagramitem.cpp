@@ -357,14 +357,18 @@ QString DiagramItem::getStatus() const
     return currentStatus;
 }
 
-void DiagramItem::setStatus(const QString &value, QMap<QString, QString> colorMap)
+void DiagramItem::setStatus(const QString &value, QMap<QString, StatusTypes> colorMap)
 {
     //qDebug() << value;
     currentStatus = value;
     currentStatusInfo = statusInfoDataList[currentStatus];
 
     //qDebug() << colorMap[status];
-    currentStatusInfo.color = QColor(colorMap[currentStatus]);
+    currentStatusInfo.color = QColor(colorMap[currentStatus].color);
+    currentStatusInfo.textColor = QColor(colorMap[currentStatus].textColor);
+    currentStatusInfo.italics = colorMap[currentStatus].italics;
+    currentStatusInfo.bold = colorMap[currentStatus].bold;
+    currentStatusInfo.underline = colorMap[currentStatus].underline;
 
 }
 

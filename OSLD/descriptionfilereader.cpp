@@ -132,6 +132,19 @@ bool DescriptionFileReader::stringToBool(QString boolString)
         return false;
 }
 
+// find an item in allItems list by id
+DiagramItem *DescriptionFileReader::findDiagramItemById(QString itemid) {
+    // go through all items in allItems
+    for(int i = 0; i < allItems.count(); i++) {
+        if(allItems.at(i)->id().compare(itemid) == 0) { // if item was found
+            qDebug() << allItems.at(i)->id() << "equals" << itemid;
+            return allItems.at(i);
+        }
+    }
+
+    return 0;
+}
+
 
 /*
  * MAIN SECTION FUNCTIONS
@@ -537,10 +550,23 @@ void DescriptionFileReader::readSubdiagrams()
             qDebug() << "-- Start connections";
             while(currentTag != "connections" || currentToken != QXmlStreamReader::EndElement) {
 
-                // QMap<QString, QString> inputOutput = this->makeConnectMap();
-                tString = (this->tokenString().replace("Characters", "String") +
-                                   (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
-                qDebug() << ">> Found Token:" << tString;
+                // process a connection
+                if(currentTag == "connect" && currentToken == QXmlStreamReader::StartElement) {
+                    // get the ids for the input and output
+                    QMap<QString, QString> inputOutput = this->makeConnectMap();
+
+                    // get the diagramitems from the diagram item list
+                    DiagramItem *input = findDiagramItemById(inputOutput["input"]);
+                    DiagramItem *output = findDiagramItemById(inputOutput["output"]);
+
+                    // add output and input as input items for the subdiagram
+                    subdiagram->addInputItem(input);
+                    subdiagram->addInputItem(output);
+
+                    // connect the two items
+                    subdiagram->connectItems(input, output);
+                    qDebug() << "connected items" << inputOutput["input"] << inputOutput["output"];
+                }
 
                 // update token and tag to read next element
                 currentToken = this->readNext();
@@ -549,6 +575,8 @@ void DescriptionFileReader::readSubdiagrams()
             qDebug() << "-- End connections";
         }
         else if(currentTag == "subdiagram" && currentToken == QXmlStreamReader::EndElement) {
+
+            // add diagram to front if it is the main diagram
             if(isMainDiagram)
                 allSubdiagrams.prepend(subdiagram);
             else
@@ -572,6 +600,32 @@ void DescriptionFileReader::readSubdiagrams()
 /*
  * INDIVIDUAL TAG FUNCTIONS
  */
+
+// read connect tag in a subdiagram's connections tag
+// return a QMap with input and output item id
+QMap<QString, QString> DescriptionFileReader::makeConnectMap()
+{
+    QMap<QString, QString> inputOutput;
+
+    currentToken = this->readNext();
+    QString currentTag = this->name().toString();
+
+    while(currentTag != "connect" || currentToken != QXmlStreamReader::EndElement) {
+
+        if(currentTag == "input" && currentToken == QXmlStreamReader::StartElement) {
+            inputOutput["input"] = this->readElementText();
+        }
+        else if(currentTag == "output" && currentToken == QXmlStreamReader::StartElement) {
+            inputOutput["output"] = this->readElementText();
+        }
+
+        // update token and tag to read next element
+        currentToken = this->readNext();
+        currentTag = this->name().toString();
+    }
+
+    return inputOutput;
+}
 
 // read status_info of a block or gate
 void DescriptionFileReader::getStatusInfo() {
@@ -632,6 +686,16 @@ QPointF DescriptionFileReader::getLocationPoint(QString tagName) {
 }
 
 // function to read a dimensions tag with a width and height subtag
+QMap<QString, CommonSource> DescriptionFileReader::getSources() const
+{
+    return sources;
+}
+
+QMap<QString, StatusTypes> DescriptionFileReader::getStatuses() const
+{
+    return statuses;
+}
+
 QMap<QString, int> DescriptionFileReader::getDimensions() {
 
     //qDebug() << "--\nStart reading dimensions tag";

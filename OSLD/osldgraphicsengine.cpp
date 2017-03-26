@@ -7,23 +7,24 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
     this->setParent(parent);
 
+    // process description file
     DescriptionFileReader descriptionFile(parent);
 
-    this->allBlocks = descriptionFile.getAllBlocks();
-    this->allGates = descriptionFile.getAllGates();
+    // get all information from description file reader
+    this->diagramName = descriptionFile.getDiagramName();
+    this->diagramDescription = descriptionFile.getDescription();
+    //this->allBlocks = descriptionFile.getAllBlocks();
+    //this->allGates = descriptionFile.getAllGates();
+    //this->allItems = descriptionFile.getAllItems();
+    //this->allSubdiagrams = descriptionFile.getAllSubdiagrams();
 
-    qDebug() << "OSLD blocks" << this->allBlocks.count() << "/ OSLD gates" << this->allGates.count();
+    this->sources = descriptionFile.getSources();
+    this->statuses = descriptionFile.getStatuses();
 
-    // get the status types for this diagram
-    statuses["Valid"] = "#8BC34A";
-    statuses["Invalid"] = "#EF5350";
-    statuses["Unknown"] = "#888888";
-
-    // get the sources for this diagram
-    CommonSource sourceInfo;
-    sourceInfo.name = "Combat System Database";
-    sourceInfo.type = "SQLite Database";
-    sources["source1"] = sourceInfo;
+    qDebug() << "OSLD blocks" << this->allBlocks.count();
+    qDebug() << "OSLD gates" << this->allGates.count();
+    qDebug() << "OSLD items" << this->allItems.count();
+    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
 
     // create some random subdiagrams with three blocks and a single gate
     for(int i = 0; i < 20; i++) {
@@ -125,6 +126,26 @@ RootItemPathScene *OSLDGraphicsEngine::getRootScene() const
 Subdiagram *OSLDGraphicsEngine::getCurrentSubdiagram() const
 {
     return currentSubdiagram;
+}
+
+QString OSLDGraphicsEngine::getDiagramName() const
+{
+    return diagramName;
+}
+
+void OSLDGraphicsEngine::setDiagramName(const QString &value)
+{
+    diagramName = value;
+}
+
+QString OSLDGraphicsEngine::getDiagramDescription() const
+{
+    return diagramDescription;
+}
+
+void OSLDGraphicsEngine::setDiagramDescription(const QString &value)
+{
+    diagramDescription = value;
 }
 
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {

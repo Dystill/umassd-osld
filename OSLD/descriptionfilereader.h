@@ -7,21 +7,6 @@
 #include "subdiagram.h"
 
 
-// holds data source information
-struct CommonSource {
-    QString name;
-    QString type;
-};
-
-struct StatusTypes {
-    QString color;
-    QString textColor;
-    bool    italics = false;
-    bool    bold = false;
-    bool    underline = false;
-};
-
-
 
 class DescriptionFileReader: public QXmlStreamReader
 {
@@ -41,6 +26,7 @@ private:
     QMap<QString, int> getDimensions();
     QPointF getLocationPoint(QString tagName);
     void getStatusInfo();
+    QMap<QString, QString> makeConnectMap();
 
 public:
     DescriptionFileReader(QWidget *parent = 0);
@@ -57,6 +43,8 @@ public:
 
     bool stringToBool (QString boolString);
 
+    DiagramItem *findDiagramItemById(QString itemid);
+
     void readMetaData();
     void readBlocks();
     void readGates();
@@ -69,6 +57,8 @@ public:
     QList<Gate *> getAllGates() const;
 
     QList<DiagramItem *> getAllItems() const;
+    QMap<QString, CommonSource> getSources() const;
+    QMap<QString, StatusTypes> getStatuses() const;
 };
 
 #endif // DESCRIPTIONFILEREADER_H
