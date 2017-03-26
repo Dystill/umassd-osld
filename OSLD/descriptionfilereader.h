@@ -4,8 +4,7 @@
 #include <QtCore>
 #include <QFileDialog>
 #include <QDebug>
-#include "block.h"
-#include "gate.h"
+#include "subdiagram.h"
 
 
 // holds data source information
@@ -40,7 +39,7 @@ private:
     QList<DiagramItem *> allItems;  // a list of both blocks and gates
 
     QMap<QString, int> getDimensions();
-    QPointF getLocationPoint();
+    QPointF getLocationPoint(QString tagName);
     void getStatusInfo();
 
 public:
