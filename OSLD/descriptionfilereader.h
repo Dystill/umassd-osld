@@ -57,7 +57,6 @@ public:
     QString cleanString(QString s);
 
     bool stringToBool (QString boolString);
-    void multiReadNext(int i);
 
     void readMetaData();
     void readBlocks();
@@ -71,9 +70,6 @@ public:
     QList<Gate *> getAllGates() const;
 
     QList<DiagramItem *> getAllItems() const;
-
-    void getStatusBlockInfo();
 };
 
 #endif // DESCRIPTIONFILEREADER_H
-//Disregard

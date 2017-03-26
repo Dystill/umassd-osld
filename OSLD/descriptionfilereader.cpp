@@ -1,5 +1,9 @@
 #include "descriptionfilereader.h"
 
+/*
+ * CONSTRUCTORS
+ */
+
 DescriptionFileReader::DescriptionFileReader(QWidget *parent)
 {
     qDebug() << "Asking user for description file location";
@@ -25,6 +29,10 @@ DescriptionFileReader::~DescriptionFileReader()
 
 }
 
+
+/*
+ * INIT FUNCTION
+ */
 
 void DescriptionFileReader::readFile(QString filepath)
 {
@@ -105,20 +113,17 @@ void DescriptionFileReader::readFile(QString filepath)
     }
 }
 
+
+/*
+ * UTILITIES
+ */
+
 // removes newlines and tabs from a string
 QString DescriptionFileReader::cleanString(QString s) {
     return s.replace(QRegExp("\t|\n|\r"),"");
 }
 
-void DescriptionFileReader::multiReadNext(int i)
-{
-    int x;
-    for(x = 0; x<i; x++)
-    {
-        this->readNext();
-    }
-}
-
+// converts a string to a bool
 bool DescriptionFileReader::stringToBool(QString boolString)
 {
     if(boolString == "true")
@@ -127,69 +132,12 @@ bool DescriptionFileReader::stringToBool(QString boolString)
         return false;
 }
 
+
 /*
-void DescriptionFileReader::storeStatusData(QString s, statusTypes t, QString currentTag, QXmlStreamAttributes a)
-{
-    t.status = s;
-    qDebug()<<"Status is: "<< t.status;
-    this->multiReadNext(2);
-    currentTag = this->name().toString();
-    if(currentTag == "color")
-    {
-        this->readNext();
-        t.color = cleanString(QXmlStreamReader::text().toString());
-        qDebug()<<"Color is: "<< t.color;
-        this->readNext();
-    }
+ * MAIN SECTION FUNCTIONS
+ */
 
-    this->multiReadNext(2);
-    currentTag = this->name().toString();
-    if(currentTag == "textcolor")
-    {
-        this->readNext();
-        t.textColor = cleanString(QXmlStreamReader::text().toString());
-        qDebug()<<"TextColor is: "<< t.textColor;
-        this->readNext();
-    }
-    this->multiReadNext(2);
-    currentTag = this->name().toString();
-
-    if(currentTag == "italics")
-    {
-        qDebug()<<"Typeface type: " << currentTag;
-        this->readNext();
-        t.typeFaceFlagString = cleanString(QXmlStreamReader::text().toString());
-        qDebug()<<"Typeface flag: " << t.typeFaceFlagString << endl;
-        t.typeFaceFlag = stringToBool (t);
-        this->readNext();
-        currentTag = this->name().toString();
-    }
-
-    if(currentTag == "bold")
-    {
-        qDebug()<<"Typeface type: " << currentTag;
-        this->readNext();
-        t.typeFaceFlagString = cleanString(QXmlStreamReader::text().toString());
-        qDebug()<<"Typeface flag: " << t.typeFaceFlagString << endl;
-        t.typeFaceFlag = stringToBool (t);
-        this->readNext();
-        currentTag = this->name().toString();
-    }
-
-    if(currentTag == "underline")
-    {
-        qDebug()<<"Typeface type: " << currentTag;
-        this->readNext();
-        t.typeFaceFlagString = cleanString(QXmlStreamReader::text().toString());
-        qDebug()<<"Typeface flag: " << t.typeFaceFlagString << endl;
-        t.typeFaceFlag = stringToBool (t);
-        this->readNext();
-        currentTag = this->name().toString();
-    }
-
-}
-*/
-
+// read meta section of description file
 void DescriptionFileReader::readMetaData()
 {
     currentToken = this->readNext();
@@ -317,6 +265,7 @@ void DescriptionFileReader::readMetaData()
 
 }
 
+// read blocks section of description file
 void DescriptionFileReader::readBlocks()
 {
     currentToken = this->readNext();
@@ -424,6 +373,7 @@ void DescriptionFileReader::readBlocks()
 
 }
 
+// read gates section of description file
 void DescriptionFileReader::readGates()
 {
 
@@ -503,6 +453,7 @@ void DescriptionFileReader::readGates()
 
 }
 
+// read subdiagrams section of description file
 void DescriptionFileReader::readSubdiagrams()
 {
     // loop through each line in the subdiagrams element
@@ -568,6 +519,11 @@ void DescriptionFileReader::readSubdiagrams()
 
 
 
+/*
+ * INDIVIDUAL TAG FUNCTIONS
+ */
+
+// read status_info of a block or gate
 void DescriptionFileReader::getStatusInfo() {
 
     qDebug() << "--\nStart reading status_info tag";
@@ -588,34 +544,7 @@ void DescriptionFileReader::getStatusInfo() {
     qDebug() << "End reading status_info tag\n--";
 }
 
-void DescriptionFileReader::getStatusBlockInfo() {
-
-    qDebug() << "--\nStart reading status_info tag";
-
-    currentToken = this->readNext();
-    QString currentTag = this->name().toString();
-
-    while(!(currentTag == "status_info" && currentToken == QXmlStreamReader::EndElement)) {
-        if(currentTag == "data" && currentToken == QXmlStreamReader::StartElement) {
-            qDebug() << "Found data tag";
-            currentToken = this->readNext();
-            currentTag = this->name().toString();
-
-            if(currentTag == "name" && currentToken == QXmlStreamReader::StartElement)
-            {
-
-            }
-        }
-
-        // update token and tag
-        currentToken = this->readNext();
-        currentTag = this->name().toString();
-    }
-
-    qDebug() << "End reading status_info tag\n--";
-}
-
-// function to read a dimensions tag with a X and Y subtag
+// function to read a location tag with a X and Y subtag
 QPointF DescriptionFileReader::getLocationPoint() {
 
     qDebug() << "--\nStart reading location tag";
@@ -690,7 +619,9 @@ QMap<QString, int> DescriptionFileReader::getDimensions() {
 }
 
 
-
+/*
+ * GETTERS
+ */
 
 QString DescriptionFileReader::getDiagramName() const
 {
