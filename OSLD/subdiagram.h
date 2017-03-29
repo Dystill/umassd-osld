@@ -18,7 +18,9 @@ private:
 
 public:
     Subdiagram();
-    Subdiagram(Block *root, QString name, QString description);
+    Subdiagram(Block *root,
+               QString name = "Default Subdiagram name",
+               QString description = "Default Subdiagram description");
 
     void connectItems(DiagramItem *input, DiagramItem *output);    // creates a connector from a gate to another item
 

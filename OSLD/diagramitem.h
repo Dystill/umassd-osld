@@ -9,15 +9,38 @@
 
 class Subdiagram;
 
+// holds data source information
+struct CommonSource {
+    QString name;
+    QString type;
+};
+
+struct StatusTypes {
+    QString color;
+    QString textColor;
+    bool    italics = false;
+    bool    bold = false;
+    bool    underline = false;
+};
+
 struct DiagramItemData {
     QColor color = QColor("#888888");
     QColor textColor = QColor(Qt::black);
-    QString title;
-    QString description;
-    QString hovertext;
+    QString title = "Default item title";
+    QString description = "Default item description";
+    QString hovertext = "Default item hovertext";
+    QString defaultStatus;
+    QString forStatus;
     bool italics = false;
     bool bold = false;
     bool underline = false;
+
+public:
+    void setDefaultStatus(const QString &value);
+    void setForStatus(const QString &value);
+    void setTitle(const QString &value);
+    void setDescription(const QString &value);
+    void setHovertext(const QString &value);
 };
 
 class DiagramItem : public QGraphicsWidget
@@ -26,6 +49,7 @@ private:
     static bool transparentTitle;
 
     QString itemId;     // the unique identifier for this item. cannot be changed once item is constructed
+    QString sourceId;     // the source for this item's information
 
     QList<DiagramItem *> outputItem;    // the item this item outputs to if applicable
 
@@ -47,6 +71,9 @@ private:
 
     int itemWidth = 0;  // the width of this item
     int itemHeight = 0; // the height of this item
+
+    int defaultWidth = 128;
+    int defaultHeight = 64;
 
     int circleRadius = 0;   // radius of the circle used for input and output points
     int lineLength = 0;     // line to extend from input and output points
@@ -110,7 +137,7 @@ public:
     QString getStatus() const;
     QColor getColor() const;
 
-    void setStatus(const QString &value, QMap<QString, QString> colorMap);  // sets both status and color
+    void setStatus(const QString &value, QMap<QString, StatusTypes> colorMap);  // sets both status and color
     void setColor(const QColor &value);
 
     QColor getTextColor() const;
@@ -145,6 +172,13 @@ public:
 
     void updateStatusInfo();
 
+    QString getSourceId() const;
+    void setSourceId(const QString &value);
+
+    void setLocation(const QPointF &value);
+
+    void setItemSizing(int w, int h);
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
 
@@ -155,6 +189,12 @@ protected:
 
     int getCircleRadius() const;
     void setCircleRadius(int value);
+
+    int getDefaultWidth() const;
+    void setDefaultWidth(int value);
+
+    int getDefaultHeight() const;
+    void setDefaultHeight(int value);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);

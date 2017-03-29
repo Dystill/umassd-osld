@@ -4,62 +4,64 @@
 #include <QtCore>
 #include <QFileDialog>
 #include <QDebug>
-
-
-// holds data source information
-struct CommonSource {
-    QString sourceNum;
-    QString name;
-    QString type;
-};
-
-struct statusTypes {
-    QString status;
-    QString color;
-    QString textColor;
-    QString typeFaceFlagString;
-    bool    typeFaceFlag;
-};
+#include "subdiagram.h"
+#include "diagramItem.h"
 
 
 
 class DescriptionFileReader: public QXmlStreamReader
 {
+private:
+    TokenType currentToken;
+    QString diagramName;
+    QString diagramDescription;
+
+    QMap <QString, CommonSource> sources;
+    QMap <QString, StatusTypes> statuses;
+    QMap <DiagramItemData,int> blockStatuses; // First QString should be id/"for_status" of block..LINE 744!!!
+
+    QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
+    QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
+    QList<Gate *> allGates;         // a list of all of the gates in the diagram
+    QList<DiagramItem *> allItems;  // a list of both blocks and gates
+
+    QMap<QString, int> getDimensions();
+    QPointF getLocationPoint(QString tagName);
+    QMap<QString, DiagramItemData> getStatusInfo();
+    void getStatusInfo(Block *b);
+    QMap<QString, QString> makeConnectMap();
+
 public:
     DescriptionFileReader(QWidget *parent = 0);
     ~DescriptionFileReader();
-
-    QMap <QString, statusTypes> statuses;
-
-
 
     //Methods
     void readFile(QString filepath);
 
     QString getDiagramName() const;
-    void setDiagramName();
 
     QString getDescription() const;
 
     QString cleanString(QString s);
-    void storeStatusData(QString s, statusTypes t, QString currentTag, QXmlStreamAttributes a);
-    bool StringConvert (statusTypes t);
-    void multiReadNext(int i);
 
-    void readMetaData(QString tag);
+    bool stringToBool (QString boolString);
+
+    DiagramItem *findDiagramItemById(QString itemid);
+
+    void readMetaData();
     void readBlocks();
     void readGates();
     void readSubdiagrams();
 
-protected:
-    QString path;
+    QList<Subdiagram *> getAllSubdiagrams() const;
 
-private:
-    TokenType currentToken;
-    QString diagramName;
-    QString description;
+    QList<Block *> getAllBlocks() const;
 
+    QList<Gate *> getAllGates() const;
+
+    QList<DiagramItem *> getAllItems() const;
+    QMap<QString, CommonSource> getSources() const;
+    QMap<QString, StatusTypes> getStatuses() const;
 };
 
 #endif // DESCRIPTIONFILEREADER_H
-//Disregard

@@ -14,9 +14,12 @@ class OSLDGraphicsEngine : public QGraphicsScene
 {
 private:
     QMap<QString, CommonSource> sources;    // maps source ids to their name and type
-    QMap<QString, QString> statuses;    // maps status names to different colors
+    QMap<QString, StatusTypes> statuses;    // maps status names to different colors
 
     Subdiagram *currentSubdiagram = 0;
+
+    QString diagramName = "Diagram Name";
+    QString diagramDescription = "Diagram Description";
     QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
@@ -49,8 +52,8 @@ public:
     QMap<QString, CommonSource> getSources() const { return sources; }
     void setSources(const QMap<QString, CommonSource> &value) { sources = value; }
 
-    QMap<QString, QString> getStatuses() const { return statuses; }
-    void setStatuses(const QMap<QString, QString> &value) { statuses = value; }
+    QMap<QString, StatusTypes> getStatuses() const { return statuses; }
+    void setStatuses(const QMap<QString, StatusTypes> &value) { statuses = value; }
 
     QList<Subdiagram *> getAllSubdiagrams() const;
 
@@ -77,6 +80,12 @@ public:
     Subdiagram *getCurrentSubdiagram() const;
 
     void goToSubdiagram(Block *rootBlock);
+    QString getDiagramName() const;
+    void setDiagramName(const QString &value);
+
+    QString getDiagramDescription() const;
+    void setDiagramDescription(const QString &value);
+
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

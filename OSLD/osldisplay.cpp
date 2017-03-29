@@ -18,6 +18,10 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     // create an instance of the OSLD graphics engine
     scene = new OSLDGraphicsEngine(ui->graphicsView);
 
+    // set the diagram title and description
+    ui->titleLabel->setText(scene->getDiagramName());
+    ui->subtitleLabel->setText(scene->getCurrentSubdiagram()->getName());
+
     // display the scene from the graphics engine in the graphicsView
     ui->graphicsView->setScene(scene);
 

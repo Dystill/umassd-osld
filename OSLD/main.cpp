@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    // DescriptionFileReader x(new QWidget);
+    // DescriptionFileReader instance has been moved into OSLDGraphicsEngine
 
     OSLDisplay w(new QWidget);
     w.show();

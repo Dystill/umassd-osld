@@ -1,4 +1,5 @@
 #include "osldgraphicsengine.h"
+#include "osldisplay.h"
 
 OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
@@ -7,17 +8,26 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
     this->setParent(parent);
 
-    // get the status types for this diagram
-    statuses["Valid"] = "#8BC34A";
-    statuses["Invalid"] = "#EF5350";
-    statuses["Unknown"] = "#888888";
+    // process description file
+    DescriptionFileReader descriptionFile(parent);
 
-    // get the sources for this diagram
-    CommonSource sourceInfo;
-    sourceInfo.name = "Combat System Database";
-    sourceInfo.type = "SQLite Database";
-    sources["source1"] = sourceInfo;
+    // get all information from description file reader
+    this->diagramName = descriptionFile.getDiagramName();
+    this->diagramDescription = descriptionFile.getDescription();
+    this->allBlocks = descriptionFile.getAllBlocks();
+    this->allGates = descriptionFile.getAllGates();
+    this->allItems = descriptionFile.getAllItems();
+    this->allSubdiagrams = descriptionFile.getAllSubdiagrams();
 
+    this->sources = descriptionFile.getSources();
+    this->statuses = descriptionFile.getStatuses();
+
+    qDebug() << "OSLD blocks" << this->allBlocks.count();
+    qDebug() << "OSLD gates" << this->allGates.count();
+    qDebug() << "OSLD items" << this->allItems.count();
+    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
+
+    /*
     // create some random subdiagrams with three blocks and a single gate
     for(int i = 0; i < 20; i++) {
         QPointF rootPoint(0, 0);
@@ -75,6 +85,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
         allSubdiagrams.append(sub);
     }
+    */
 
     rootPathList.append(allSubdiagrams.at(0)->getRoot());
     this->drawSubdiagramItems(allSubdiagrams.at(0));
@@ -120,6 +131,26 @@ Subdiagram *OSLDGraphicsEngine::getCurrentSubdiagram() const
     return currentSubdiagram;
 }
 
+QString OSLDGraphicsEngine::getDiagramName() const
+{
+    return diagramName;
+}
+
+void OSLDGraphicsEngine::setDiagramName(const QString &value)
+{
+    diagramName = value;
+}
+
+QString OSLDGraphicsEngine::getDiagramDescription() const
+{
+    return diagramDescription;
+}
+
+void OSLDGraphicsEngine::setDiagramDescription(const QString &value)
+{
+    diagramDescription = value;
+}
+
 Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
 
     int random = qrand() % 123456;  // make a random number
@@ -139,7 +170,7 @@ Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
         type = NotGate;
     }
 
-    Gate *gate = new Gate(id, pos, type);
+    Gate *gate = new Gate(id, type, pos);
 
     gate->setStatus("Valid", statuses);
 
@@ -201,12 +232,14 @@ void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());   // get the item that was released
-    Block *pressedBlock;    // to store a pointer to the clicked block
+
 
     // if the click was from the left button
     if(event->button() == Qt::LeftButton) {
         // if the item was released at the same position, i.e. mouse wasn't moved away during click
         if(releaseItem == pressedItem && pressPosition == event->scenePos()) {
+
+            Block *pressedBlock;    // to store a pointer to the clicked block
 
             if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
@@ -232,9 +265,12 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
     }
     else if(event->button() == Qt::RightButton) {
-        if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
-            QMessageBox::information(event->widget(),pressedBlock->getTitle(),pressedBlock->getDescription());
+        DiagramItem *pressedItem;    // to store a pointer to the clicked block
+
+        if((pressedItem = dynamic_cast<DiagramItem *>(releaseItem))) {   // store pointer to the item that was clicked
+
+            QMessageBox::information(event->widget(),pressedItem->getTitle(),pressedItem->getDescription());
 
         }
     }
