@@ -2,6 +2,7 @@
 #define STIMULATOR_H
 
 #include "stimulatorinterface.h"
+#include <QtSql>
 
 namespace stimulator {
 
@@ -15,20 +16,21 @@ class Stimulator : StimulatorInterface {
  public:
   Stimulator();
   bool searchFor(QString key);
-  QList<QString> getBlockData(QString key);
-  QList<QString> getDiagramData(QString key);
+  QMap<QString, QVariant> getItemData(QString id);
+  QMap<QString, QVariant> getDiagramData();
   int getPollingRate();
   bool getBlockVisibility();
   bool getDiagramTextVisibility();
-  void addBlockData(QList<QString> data);
+  void addBlockData(QMap<QString, QVariant> data);
   void removeBlockData(QString id);
-  void addDiagramData(QList<QString> data);
+  void addDiagramData(QMap<QString, QVariant> data);
   void removeDiagramData(QString id);
 
  private:
   int pollingRate;
   bool hideBlockText;
   bool hideDiagramText;
+  QMap<QString, QVariant> recordToQMap(QSqlRecord record);
 };
 
 }  // namespace stimulator
