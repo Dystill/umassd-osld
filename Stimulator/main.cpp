@@ -1,11 +1,14 @@
-#include "mainwindow.h"
 #include <QApplication>
+#include "mainwindow.h"
+#include "stimulator.h"
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+int main(int argc, char *argv[]) {
+  QApplication a(argc, argv);
+  MainWindow w;
+  w.show();
 
-    return a.exec();
+  stimulator::Stimulator stim;
+  qDebug() << stim.getItemData("ABC123")["width"].toString();
+
+  return a.exec();
 }
