@@ -29,9 +29,18 @@ struct DiagramItemData {
     QString title;
     QString description;
     QString hovertext;
+    QString defaultStatus;
+    QString forStatus;
     bool italics = false;
     bool bold = false;
     bool underline = false;
+
+public:
+    void setDefaultStatus(const QString &value);
+    void setForStatus(const QString &value);
+    void setTitle(const QString &value);
+    void setDescription(const QString &value);
+    void setHovertext(const QString &value);
 };
 
 class DiagramItem : public QGraphicsWidget

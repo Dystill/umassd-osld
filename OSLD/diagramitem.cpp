@@ -490,3 +490,28 @@ void DiagramItem::setDefaultHeight(int value)
 
 
 
+
+void DiagramItemData::setForStatus(const QString &value)
+{
+    forStatus = value;
+}
+
+void DiagramItemData::setTitle(const QString &value)
+{
+    title = value;
+}
+
+void DiagramItemData::setDescription(const QString &value)
+{
+    description = value;
+}
+
+void DiagramItemData::setHovertext(const QString &value)
+{
+    hovertext = value;
+}
+
+void DiagramItemData::setDefaultStatus(const QString &value)
+{
+    defaultStatus = value;
+}

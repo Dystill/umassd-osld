@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "subdiagram.h"
+#include "diagramItem.h"
 
 
 
@@ -17,6 +18,7 @@ private:
 
     QMap <QString, CommonSource> sources;
     QMap <QString, StatusTypes> statuses;
+    QMap <DiagramItemData,int> blockStatuses; // First QString should be id/"for_status" of block..LINE 744!!!
 
     QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
@@ -26,6 +28,7 @@ private:
     QMap<QString, int> getDimensions();
     QPointF getLocationPoint(QString tagName);
     void getStatusInfo();
+    void getStatusInfo(Block *b);
     QMap<QString, QString> makeConnectMap();
 
 public:

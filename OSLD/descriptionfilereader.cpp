@@ -329,7 +329,8 @@ void DescriptionFileReader::readBlocks()
         }
         // get status info
         else if(currentTag == "status_info" && currentToken == QXmlStreamReader::StartElement) {
-            this->getStatusInfo();  // call get status info function
+            this->getStatusInfo(block);
+
         }
         // at end of block element
         else if(currentTag == "block" && currentToken == QXmlStreamReader::EndElement) {
@@ -395,6 +396,7 @@ void DescriptionFileReader::readGates()
     currentToken = this->readNext();
     QString currentTag = this->name().toString();
     QXmlStreamAttributes attributes;
+    QMap<DiagramItemData,int>;
 
     qDebug() << "==================================START GATES==================================";
     while(currentTag != "gates" || currentToken != QXmlStreamReader::EndElement) {
@@ -630,6 +632,7 @@ QMap<QString, QString> DescriptionFileReader::makeConnectMap()
 // read status_info of a block or gate
 void DescriptionFileReader::getStatusInfo() {
 
+
     qDebug() << "--\nStart reading status_info tag";
 
     currentToken = this->readNext();
@@ -646,6 +649,58 @@ void DescriptionFileReader::getStatusInfo() {
     }
 
     qDebug() << "End reading status_info tag\n--";
+}
+
+void DescriptionFileReader::getStatusInfo(Block *b)
+{
+    DiagramItemData blockData;
+    QXmlStreamAttributes attributes;
+    QString currentTag;
+
+    attributes = this->attributes();
+    while(currentTag != "status_info" || currentToken != QXmlStreamReader::EndElement) {
+        // for a given source
+        attributes = this->attributes();
+        if(attributes.hasAttribute("default_status"))
+        {
+            blockData.setDefaultStatus(attributes.value("default_status").toString());
+            qDebug()<< "Block Default Status: "<< blockData.defaultStatus<<endl;
+        }
+
+        if(attributes.hasAttribute("for_status"))
+        {
+           blockData.setForStatus(attributes.value("for_status").toString());
+           qDebug()<< "Block For Status: "<< blockData.forStatus<<endl;
+        }
+
+        if (currentTag == "name" && attributes.value("column").toString() == "name" && currentToken == QXmlStreamReader::StartElement)
+        {
+            blockData.setTitle((cleanString(this->readElementText())));
+            qDebug()<< "Block Title: "<< blockData.title<<endl;
+
+        }
+
+        if (currentTag == "description" && attributes.value("column").toString() == "desc" && currentToken == QXmlStreamReader::StartElement)
+        {
+            blockData.setDescription((cleanString(this->readElementText())));
+            qDebug()<< "Block Description: "<< blockData.description<<endl;
+
+        }
+
+        if (currentTag == "hovertext" && attributes.value("column").toString() == "hover" && currentToken == QXmlStreamReader::StartElement)
+        {
+            blockData.setHovertext((cleanString(this->readElementText())));
+            qDebug()<< "Block Hovertext: "<< blockData.hovertext<<endl;
+
+        }
+
+        currentToken = this->readNext();
+        currentTag = this->name().toString();
+    }
+
+    //blockStatuses.insert(b,blockData);
+    //blockStatuses[b] = this->readElementText().toInt();
+
 }
 
 // function to read a location tag with a X and Y subtag
