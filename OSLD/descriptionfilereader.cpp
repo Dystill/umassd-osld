@@ -354,43 +354,6 @@ void DescriptionFileReader::readBlocks()
     qDebug() << "Blocks stored:" << allBlocks.count();
 
     qDebug() << "===================================END BLOCKS===================================";
-    // loop through each line in the blocks element
-        // **be careful not to overuse "currentToken = this->readNext();"
-
-    // for each block - NEED TO CHECK STIMULATOR AS WELL
-
-        // create a block object pointer
-
-        // get id and source attributes and save to block object
-
-        // loop through each line in block
-
-        // get dimensions - handle situation when width and height are empty
-
-        // get location, save as QPointF object, set block location
-
-        // *check stimulator for block status*
-            // otherwise get status_info default_status attribute
-
-        // loop through each line in status_info
-
-            // get data element with correct for_status attribute
-
-            // for each of name, description, hovertext
-
-                // save column attribute to array if present
-
-                // check for hard-coded text
-                    // if present, save text to block object
-                    // otherwise, go to stimulator
-
-            // end loop when currentToken is EndElement and element name is "status_info"
-
-        // end loop when currentToken is EndElement and element name is "block"
-
-        // append block object pointer to a QList
-
-    // end loop when currentToken is EndElement and element name is "blocks"
 
 }
 
@@ -675,6 +638,7 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
                     }
                     else {
                         // contact stimulator
+                        data.title = this->readElementText();
                     }
                 }
                 // get the description
