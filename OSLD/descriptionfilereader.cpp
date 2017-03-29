@@ -335,6 +335,7 @@ void DescriptionFileReader::readBlocks()
                 defaultStatus = this->attributes().value("default_status").toString();
             }
             block->setStatusInfoDataList(this->getStatusInfo());
+            block->setStatus(defaultStatus, statuses);
             // this->getStatusInfo(block);
         }
         // at end of block element
@@ -458,6 +459,7 @@ void DescriptionFileReader::readGates()
                 defaultStatus = this->attributes().value("default_status").toString();
             }
             gate->setStatusInfoDataList(this->getStatusInfo());
+            gate->setStatus(defaultStatus, statuses);
         }
         // at end of gate element
         else if(currentTag == "gate" && currentToken == QXmlStreamReader::EndElement) {

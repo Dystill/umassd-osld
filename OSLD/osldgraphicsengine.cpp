@@ -13,10 +13,10 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     // get all information from description file reader
     this->diagramName = descriptionFile.getDiagramName();
     this->diagramDescription = descriptionFile.getDescription();
-    //this->allBlocks = descriptionFile.getAllBlocks();
-    //this->allGates = descriptionFile.getAllGates();
-    //this->allItems = descriptionFile.getAllItems();
-    //this->allSubdiagrams = descriptionFile.getAllSubdiagrams();
+    this->allBlocks = descriptionFile.getAllBlocks();
+    this->allGates = descriptionFile.getAllGates();
+    this->allItems = descriptionFile.getAllItems();
+    this->allSubdiagrams = descriptionFile.getAllSubdiagrams();
 
     this->sources = descriptionFile.getSources();
     this->statuses = descriptionFile.getStatuses();
@@ -26,6 +26,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     qDebug() << "OSLD items" << this->allItems.count();
     qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
 
+    /*
     // create some random subdiagrams with three blocks and a single gate
     for(int i = 0; i < 20; i++) {
         QPointF rootPoint(0, 0);
@@ -83,6 +84,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
         allSubdiagrams.append(sub);
     }
+    */
 
     rootPathList.append(allSubdiagrams.at(0)->getRoot());
     this->drawSubdiagramItems(allSubdiagrams.at(0));
