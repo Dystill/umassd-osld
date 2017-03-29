@@ -56,19 +56,19 @@
 				status_info holds text information for each status in this diagram
 				default_status is used if no status is found from the Stimulator
 			-->
-			<status_info default_status="Unknown">
+			<status_info default_status="Invalid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Block 3 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Block 3 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Block 3 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -116,19 +116,19 @@
 				<X>480</X>
 				<Y>200</Y>
 			</location>
-			<status_info default_status="Unknown">
+			<status_info default_status="Valid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Block 1 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Block 1 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Block 1 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -145,17 +145,17 @@
 			</location>
 			<status_info default_status="Unknown">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Block 2.1 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Block 2.1 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Block 2.1 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -172,17 +172,17 @@
 			</location>
 			<status_info default_status="Invalid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Block 2.2 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Block 2.2 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Block 2.2 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -205,19 +205,19 @@
 				<X>440</X>
 				<Y>256</Y>
 			</location>
-			<status_info default_status="Unknown">
+			<status_info default_status="Valid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Gate 1 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Gate 1 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Gate 1 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -233,19 +233,19 @@
 				<X>60</X>
 				<Y>230</Y>
 			</location>
-			<status_info default_status="Unknown">
+			<status_info default_status="Invalid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Gate 2.1 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Gate 2.1 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Gate 2.1 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
