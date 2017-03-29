@@ -1,4 +1,5 @@
 #include "osldgraphicsengine.h"
+#include "osldisplay.h"
 
 OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
@@ -231,12 +232,14 @@ void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());   // get the item that was released
-    Block *pressedBlock;    // to store a pointer to the clicked block
+
 
     // if the click was from the left button
     if(event->button() == Qt::LeftButton) {
         // if the item was released at the same position, i.e. mouse wasn't moved away during click
         if(releaseItem == pressedItem && pressPosition == event->scenePos()) {
+
+            Block *pressedBlock;    // to store a pointer to the clicked block
 
             if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
@@ -262,9 +265,12 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
     }
     else if(event->button() == Qt::RightButton) {
-        if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
-            QMessageBox::information(event->widget(),pressedBlock->getTitle(),pressedBlock->getDescription());
+        DiagramItem *pressedItem;    // to store a pointer to the clicked block
+
+        if((pressedItem = dynamic_cast<DiagramItem *>(releaseItem))) {   // store pointer to the item that was clicked
+
+            QMessageBox::information(event->widget(),pressedItem->getTitle(),pressedItem->getDescription());
 
         }
     }
