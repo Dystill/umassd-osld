@@ -370,10 +370,10 @@ void DiagramItem::setStatus(const QString &value, QMap<QString, StatusTypes> col
     currentStatusInfo.bold = colorMap[currentStatus].bold;
     currentStatusInfo.underline = colorMap[currentStatus].underline;
 
+    this->updateStatusInfo();
 }
 
 void DiagramItem::updateStatusInfo() {
-    this->setTextColor(currentStatusInfo.textColor);
     this->setTitle(currentStatusInfo.title);
     this->setDescription(currentStatusInfo.description);
     this->setToolTip(currentStatusInfo.hovertext);
@@ -396,19 +396,16 @@ void DiagramItem::setColor(const QColor &value)
 void DiagramItem::setItalics(bool b)
 {
     font.setItalic(b);
-    this->setItemSizing(currentStatusInfo.title);
 }
 
 void DiagramItem::setBold(bool b)
 {
     font.setBold(b);
-    this->setItemSizing(currentStatusInfo.title);
 }
 
 void DiagramItem::setUnderline(bool b)
 {
     font.setUnderline(b);
-    this->setItemSizing(currentStatusInfo.title);
 }
 
 Subdiagram *DiagramItem::getParentSubdiagram() const
