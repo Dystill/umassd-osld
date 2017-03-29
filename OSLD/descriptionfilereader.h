@@ -27,7 +27,7 @@ private:
 
     QMap<QString, int> getDimensions();
     QPointF getLocationPoint(QString tagName);
-    void getStatusInfo();
+    QMap<QString, DiagramItemData> getStatusInfo();
     void getStatusInfo(Block *b);
     QMap<QString, QString> makeConnectMap();
 

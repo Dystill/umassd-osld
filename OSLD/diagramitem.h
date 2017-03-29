@@ -26,9 +26,9 @@ struct StatusTypes {
 struct DiagramItemData {
     QColor color = QColor("#888888");
     QColor textColor = QColor(Qt::black);
-    QString title;
-    QString description;
-    QString hovertext;
+    QString title = "Default item title";
+    QString description = "Default item description";
+    QString hovertext = "Default item hovertext";
     QString defaultStatus;
     QString forStatus;
     bool italics = false;
