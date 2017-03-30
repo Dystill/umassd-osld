@@ -47,7 +47,9 @@ private:
 
 
 public:
-    OSLDGraphicsEngine(QWidget *parent);
+    OSLDGraphicsEngine(OSLDisplay *parent);
+
+    OSLDisplay *osld;
 
     QMap<QString, CommonSource> getSources() const { return sources; }
     void setSources(const QMap<QString, CommonSource> &value) { sources = value; }

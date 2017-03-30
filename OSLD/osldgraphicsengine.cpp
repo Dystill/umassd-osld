@@ -1,12 +1,13 @@
 #include "osldgraphicsengine.h"
 #include "osldisplay.h"
 
-OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
+OSLDGraphicsEngine::OSLDGraphicsEngine(OSLDisplay *parent)
 {
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
 
-    this->setParent(parent);
+    this->setParent(parent->parent());
+    osld = parent;
 
     // process description file
     DescriptionFileReader descriptionFile(parent);
@@ -254,6 +255,7 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                         if(pressedBlock->getParentSubdiagram() != 0) {
                             // go to previous subdiagram
                             this->goToSubdiagram(pressedBlock->getParentSubdiagram()->getRoot());
+
                         }
                     }
                     // else when a regular subdiagram block was pressed
