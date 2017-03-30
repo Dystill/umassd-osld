@@ -5,9 +5,6 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "subdiagram.h"
-#include "diagramItem.h"
-
-
 
 class DescriptionFileReader: public QXmlStreamReader
 {
