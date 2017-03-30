@@ -56,4 +56,5 @@ HEADERS  += mainwindow.h \
     ../OSLD/rootitempathscene.h \
     ../OSLD/subdiagram.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    ../OSLD/osldisplay.ui
