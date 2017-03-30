@@ -6,7 +6,7 @@
 
 DescriptionFileReader::DescriptionFileReader(QWidget *parent)
 {
-    //qDebug() << "Asking user for description file location";
+    qDebug() << "Asking user for description file location";
     // Opens explorer to browse for location of XML file
     QString filePath = QFileDialog::getOpenFileName(parent,
                                                     QObject::tr("Open File"),
@@ -41,22 +41,22 @@ void DescriptionFileReader::readFile(QString filepath)
     //this->setContentHandler(&handler);
     //this->setErrorHandler(&handler);
 
-    //qDebug() << ">> QXmlStreamReader";
-    //qDebug()<< "Reading file:" << filepath;
+    qDebug() << ">> QXmlStreamReader";
+    qDebug()<< "Reading file:" << filepath;
     QFile xmlFile(filepath);
 
     if(xmlFile.open(QIODevice::ReadOnly)) {
-        //qDebug()<< "File Opened";
+        qDebug()<< "File Opened";
 
         // QXmlInputSource source (&xmlFile);
         // QXmlStreamReader xmlReader(xmlFile);
 
         // std::string inBuff;
 
-        //qDebug()<< "Setting device to XML file";
+        qDebug()<< "Setting device to XML file";
         this->setDevice(&xmlFile);
 
-        //qDebug()<< "Begin reading";
+        qDebug()<< "Begin reading";
         while(!this->atEnd()) {
 
             // get the type of xml element currently being read
@@ -68,12 +68,12 @@ void DescriptionFileReader::readFile(QString filepath)
 
             QString tString = (this->tokenString().replace("Characters", "String") +
                                (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
-            //qDebug() << ">> Found Token (not in function):" << tString;
+            qDebug() << ">> Found Token (not in function):" << tString;
 
 
             // start of document
             if(currentToken == QXmlStreamReader::StartDocument){
-                //qDebug()<< "Start of document";
+                qDebug()<< "Start of document";
                 continue;
             }
 
@@ -82,32 +82,34 @@ void DescriptionFileReader::readFile(QString filepath)
 
                 // get the name of the current tag
                 QString currentTag = this->name().toString();
-                //qDebug()<< "Reading in element:" << currentTag;
+                qDebug()<< "Reading in element:" << currentTag;
 
                 // diagram tag
                 if(currentTag == "diagram") {           // diagram tag
-                    // get the diagram name
-                    diagramName = this->attributes().value("name").toString();
+                    qDebug()<< "Setting diagram name";
+                    diagramName = this->attributes().value("name").toString();  // get the value of the name attribute
+
+                    qDebug()<< "Diagram Name:" << diagramName;
                 }
                 else if(currentTag == "meta") {         // meta tag
-                    // read information in the meta tag
+                    qDebug()<< "calling readMetaData function"<<endl;
                     this->readMetaData();
                 }
                 else if(currentTag == "blocks") {       // blocks tag
-                    // read information in the blocks tag
+                    qDebug()<< "do blocks stuff";
                     this->readBlocks();
                 }
                 else if(currentTag == "gates") {        // gates tag
-                    // read information in the gates tag
+                    qDebug()<< "do gates stuff";
                     this->readGates();
                 }
-                else if(currentTag == "subdiagrams") { // subdiagrams tag
-                    // read information in the subdiagrams tag
+                else if(currentTag == "subdiagrams") { // status types tag
+                    qDebug()<< "do subdiagram stuff";
                     this->readSubdiagrams();
                 }
             }
         }
-        // qDebug()<< "End reading";
+        qDebug()<< "End reading";
     }
 }
 
@@ -154,16 +156,14 @@ void DescriptionFileReader::readMetaData()
     currentToken = this->readNext();
     QString currentTag = this->name().toString();
     QXmlStreamAttributes attributes;
-    // QString tString;
+    QString tString;
 
-    //qDebug() << "==================================START META==================================";
+    qDebug() << "==================================START META==================================";
     while(currentTag != "meta" || currentToken != QXmlStreamReader::EndElement) {
 
-        /*
         tString = (this->tokenString().replace("Characters", "String") +
                            (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
         //qDebug() << ">> Found Token in meta:" << tString;
-        */
 
         // description
         if(currentTag == "description" && currentToken == QXmlStreamReader::StartElement) {
@@ -271,10 +271,10 @@ void DescriptionFileReader::readMetaData()
         currentTag = this->name().toString();
     }
 
-    //qDebug() << "Sources:" << sources.count() << sources.keys();
-    //qDebug() << "Statuses:" << statuses.count() << statuses.keys();
+    qDebug() << "Sources:" << sources.count() << sources.keys();
+    qDebug() << "Statuses:" << statuses.count() << statuses.keys();
 
-    //qDebug() << "===================================END META===================================";
+    qDebug() << "===================================END META===================================";
 
 }
 
@@ -285,7 +285,7 @@ void DescriptionFileReader::readBlocks()
     QString currentTag = this->name().toString();
     QXmlStreamAttributes attributes;
 
-    //qDebug() << "==================================START BLOCKS==================================";
+    qDebug() << "==================================START BLOCKS==================================";
     while(currentTag != "blocks" || currentToken != QXmlStreamReader::EndElement) {
 
         Block *block; // block pointer
@@ -319,13 +319,13 @@ void DescriptionFileReader::readBlocks()
             block->setItemSizing(dimension["width"],dimension["height"]);
 
             // print to make sure they were save properly
-            //qDebug() << "Dimensions Set!" << block->width() << block->height();
+            qDebug() << "Dimensions Set!" << block->width() << block->height();
         }
         // get location data
         else if(currentTag == "location" && currentToken == QXmlStreamReader::StartElement) {
             QPointF location = this->getLocationPoint("location");    // call get location point function
             block->setLocation(location);                    // set the block's location
-            //qDebug() << "Location Set!" << block->pos();     // print
+            qDebug() << "Location Set!" << block->pos();     // print
         }
         // get status info
         else if(currentTag == "status_info" && currentToken == QXmlStreamReader::StartElement) {
@@ -351,9 +351,9 @@ void DescriptionFileReader::readBlocks()
     }
 
     // print amount of items in allBlocks list
-    //qDebug() << "Blocks stored:" << allBlocks.count();
+    qDebug() << "Blocks stored:" << allBlocks.count();
 
-    //qDebug() << "===================================END BLOCKS===================================";
+    qDebug() << "===================================END BLOCKS===================================";
 
 }
 
@@ -413,7 +413,7 @@ void DescriptionFileReader::readGates()
         else if(currentTag == "location" && currentToken == QXmlStreamReader::StartElement) {
             QPointF location = this->getLocationPoint("location");    // call get location point function
             gate->setLocation(location);                    // set the gate's location
-            //qDebug() << "Location Set!" << gate->pos();     // print
+            qDebug() << "Location Set!" << gate->pos();     // print
         }
         // get status info
         else if(currentTag == "status_info" && currentToken == QXmlStreamReader::StartElement) {
@@ -437,9 +437,9 @@ void DescriptionFileReader::readGates()
     }
 
     // print amount of items in allGates list
-    //qDebug() << "Gates stored:" << allGates.count();
+    qDebug() << "Gates stored:" << allGates.count();
 
-    //qDebug() << "===================================END GATES===================================";
+    qDebug() << "===================================END GATES===================================";
 
 }
 
@@ -454,7 +454,7 @@ void DescriptionFileReader::readSubdiagrams()
     QString currentTag = this->name().toString();
     QString tString;
 
-    //qDebug() << "==================================START SUBDIAGRAMS==================================";
+    qDebug() << "==================================START SUBDIAGRAMS==================================";
 
     // go through all elements in subdiagrams tag
     while(currentTag != "subdiagrams" || currentToken != QXmlStreamReader::EndElement) {
@@ -513,7 +513,7 @@ void DescriptionFileReader::readSubdiagrams()
                 else if(currentTag == "root_item_location" && currentToken == QXmlStreamReader::StartElement) {
                     QPointF location = this->getLocationPoint("root_item_location");    // call get location point function
                     root->setRootLocation(location);                    // set the root's location
-                    //qDebug() << "Root item Location Set!" << subdiagram->getRoot()->getRootLocation();     // print
+                    qDebug() << "Root item Location Set!" << subdiagram->getRoot()->getRootLocation();     // print
                 }
 
                 // update token and tag to read next element
@@ -565,9 +565,9 @@ void DescriptionFileReader::readSubdiagrams()
         currentTag = this->name().toString();
     }
     // print amount of items in allSubdiagrams list
-    //qDebug() << "Subdiagrams stored:" << allSubdiagrams.count();
+    qDebug() << "Subdiagrams stored:" << allSubdiagrams.count();
 
-    //qDebug() << "===================================END SUBDIAGRAMS===================================";
+    qDebug() << "===================================END SUBDIAGRAMS===================================";
 }
 
 
@@ -605,7 +605,7 @@ QMap<QString, QString> DescriptionFileReader::makeConnectMap()
 // read status_info of a block or gate
 QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
 {
-    //qDebug() << "--\nStart reading status_info tag";
+    qDebug() << "--\nStart reading status_info tag";
 
     // go to next element
     currentToken = this->readNext();
@@ -618,14 +618,14 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
     while(!(currentTag == "status_info" && currentToken == QXmlStreamReader::EndElement)) {
         // for each data tag
         if(currentTag == "data" && currentToken == QXmlStreamReader::StartElement) {
-            //qDebug() << "Found data tag";
+            qDebug() << "Found data tag";
 
             QString currentForStatusID; // holds the key for the QMap
             DiagramItemData data;       // holds the value for the QMap
 
             // get the for_status attribute
             if(this->attributes().hasAttribute("for_status")) {
-                //qDebug() << "getting for_status" << this->attributes().value("for_status").toString();
+                qDebug() << "getting for_status" << this->attributes().value("for_status").toString();
                 currentForStatusID = this->attributes().value("for_status").toString();
             }
 
@@ -666,7 +666,7 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
                 currentTag = this->name().toString();
             }
 
-            //qDebug() << "Data for" << currentForStatusID << data.title << data.description << data.hovertext;
+            qDebug() << "Data for" << currentForStatusID << data.title << data.description << data.hovertext;
 
             // add the data to the item map
             itemDataMap[currentForStatusID] = data;
@@ -677,14 +677,14 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
         currentTag = this->name().toString();
     }
 
-    //qDebug() << "Number of data items:" << itemDataMap.count() << itemDataMap.keys();
+    qDebug() << "Number of data items:" << itemDataMap.count() << itemDataMap.keys();
 
-    //qDebug() << "End reading status_info tag\n--";
+    qDebug() << "End reading status_info tag\n--";
 
     return itemDataMap;
 }
 
-/*
+
 void DescriptionFileReader::getStatusInfo(Block *b)
 {
     DiagramItemData blockData;
@@ -736,7 +736,6 @@ void DescriptionFileReader::getStatusInfo(Block *b)
     //blockStatuses[b] = this->readElementText().toInt();
 
 }
-*/
 
 // function to read a location tag with a X and Y subtag
 QPointF DescriptionFileReader::getLocationPoint(QString tagName) {
@@ -857,3 +856,39 @@ QList<DiagramItem *> DescriptionFileReader::getAllItems() const
 {
     return allItems;
 }
+
+
+// for each gate - NEED TO CHECK STIMULATOR AS WELL
+
+    // create a gate object pointer
+
+    // get id and source attributes and save to gate object
+
+    // loop through each line in gate
+
+    // get dimensions - handle situation when width and height are empty
+
+    // get location, save as QPointF object, set gate location
+
+    // *check stimulator for gate status*
+        // otherwise get status_info default_status attribute
+
+    // loop through each line in status_info
+
+        // get data element with correct for_status attribute
+
+        // for each of name, description, hovertext
+
+            // save column attribute to array if present
+
+            // check for hard-coded text
+                // if present, save text to gate object
+                // otherwise, go to stimulator
+
+        // end loop when currentToken is EndElement and element name is "status_info"
+
+    // end loop when currentToken is EndElement and element name is "gate"
+
+    // append gate object pointer to a QList
+
+// end loop when currentToken is EndElement and element name is "gates"

@@ -18,9 +18,6 @@ public:
     explicit OSLDisplay(QWidget *parent = 0);
     ~OSLDisplay();
 
-    Ui::OSLDisplay *getUi() const;
-    void fitDiagramToWindow();
-
 protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -59,6 +56,7 @@ private:
     void enterFullScreen();
     void exitFullScreen();
     void zoom(int px);
+    void fitDiagramToWindow();
     void addMenuBarActionsToDisplay();
 };
 
