@@ -1,8 +1,8 @@
 #ifndef STIMULATOR_H
 #define STIMULATOR_H
 
-#include "stimulatorinterface.h"
 #include <QtSql>
+#include "stimulatorinterface.h"
 
 namespace stimulator {
 
@@ -30,7 +30,7 @@ class Stimulator : StimulatorInterface {
   int pollingRate;
   bool hideBlockText;
   bool hideDiagramText;
-  QMap<QString, QVariant> recordToQMap(QSqlRecord record);
+  void recordToQMap(QSqlRecord record, QMap<QString, QVariant> &qMap);
 };
 
 }  // namespace stimulator

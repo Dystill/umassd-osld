@@ -57,3 +57,6 @@ HEADERS  += mainwindow.h \
     ../OSLD/subdiagram.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    stimulator.sqlite3
