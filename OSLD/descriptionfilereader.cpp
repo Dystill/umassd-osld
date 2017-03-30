@@ -63,12 +63,13 @@ void DescriptionFileReader::readFile(QString filepath)
             currentToken = this->readNext();
 
 
+            /*
             // qDebug string to print current token type
             // prints every line read in the xml file
-
             QString tString = (this->tokenString().replace("Characters", "String") +
                                (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
-            // qDebug() << ">> Found Token (not in function):" << tString;
+            qDebug() << ">> Found Token (not in function):" << tString;
+            */
 
 
             // start of document
@@ -677,58 +678,6 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
     return itemDataMap;
 }
 
-
-void DescriptionFileReader::getStatusInfo(Block *b)
-{
-    DiagramItemData blockData;
-    QXmlStreamAttributes attributes;
-    QString currentTag;
-
-    attributes = this->attributes();
-    while(currentTag != "status_info" || currentToken != QXmlStreamReader::EndElement) {
-        // for a given source
-        attributes = this->attributes();
-        if(attributes.hasAttribute("default_status"))
-        {
-            blockData.setDefaultStatus(attributes.value("default_status").toString());
-            // qDebug() << "Block Default Status: "<< blockData.defaultStatus<<endl;
-        }
-
-        if(attributes.hasAttribute("for_status"))
-        {
-           blockData.setForStatus(attributes.value("for_status").toString());
-           // qDebug() << "Block For Status: "<< blockData.forStatus<<endl;
-        }
-
-        if (currentTag == "name" && attributes.value("column").toString() == "name" && currentToken == QXmlStreamReader::StartElement)
-        {
-            blockData.setTitle((cleanString(this->readElementText())));
-            // qDebug() << "Block Title: "<< blockData.title<<endl;
-
-        }
-
-        if (currentTag == "description" && attributes.value("column").toString() == "desc" && currentToken == QXmlStreamReader::StartElement)
-        {
-            blockData.setDescription((cleanString(this->readElementText())));
-            // qDebug() << "Block Description: "<< blockData.description<<endl;
-
-        }
-
-        if (currentTag == "hovertext" && attributes.value("column").toString() == "hover" && currentToken == QXmlStreamReader::StartElement)
-        {
-            blockData.setHovertext((cleanString(this->readElementText())));
-            // qDebug() << "Block Hovertext: "<< blockData.hovertext<<endl;
-
-        }
-
-        currentToken = this->readNext();
-        currentTag = this->name().toString();
-    }
-
-    //blockStatuses.insert(b,blockData);
-    //blockStatuses[b] = this->readElementText().toInt();
-
-}
 
 // function to read a location tag with a X and Y subtag
 QPointF DescriptionFileReader::getLocationPoint(QString tagName) {
