@@ -284,11 +284,10 @@ void DescriptionFileReader::readBlocks()
     currentToken = this->readNext();
     QString currentTag = this->name().toString();
     QXmlStreamAttributes attributes;
+    Block *block = 0; // block pointer
 
     qDebug() << "==================================START BLOCKS==================================";
     while(currentTag != "blocks" || currentToken != QXmlStreamReader::EndElement) {
-
-        Block *block; // block pointer
 
         // get block attributes
         if(currentTag == "block" && currentToken == QXmlStreamReader::StartElement) {
@@ -365,11 +364,10 @@ void DescriptionFileReader::readGates()
     currentToken = this->readNext();
     QString currentTag = this->name().toString();
     QXmlStreamAttributes attributes;
+    Gate *gate = 0; // gate pointer
 
     qDebug() << "==================================START GATES==================================";
     while(currentTag != "gates" || currentToken != QXmlStreamReader::EndElement) {
-
-        Gate *gate; // gate pointer
 
         // get gate attributes
         if(currentTag == "gate" && currentToken == QXmlStreamReader::StartElement) {
@@ -452,22 +450,17 @@ void DescriptionFileReader::readSubdiagrams()
     // update token and tag
     currentToken = this->readNext();
     QString currentTag = this->name().toString();
-    QString tString;
+    Subdiagram *subdiagram = 0;
+    Block *root = 0;
 
     qDebug() << "==================================START SUBDIAGRAMS==================================";
 
     // go through all elements in subdiagrams tag
     while(currentTag != "subdiagrams" || currentToken != QXmlStreamReader::EndElement) {
 
-        tString = (this->tokenString().replace("Characters", "String") +
-                           (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
-        // qDebug() << ">> Found Token:" << tString;
-
         // Subdiagram(Block *root, QString name, QString description);
 
         // create a subdiagram object pointer
-        Subdiagram *subdiagram;
-        Block *root;
         bool isMainDiagram = false;
 
         // get subdiagram attributes
