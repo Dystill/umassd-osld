@@ -41,8 +41,8 @@
 		<block id="block_3" source="source1">
 			<!-- dimensions holds the width and height for this diagram item -->
 			<dimensions>
-				<width>128</width>
-				<height>32</height>
+				<width>200</width>
+				<height>40</height>
 			</dimensions>
 			<!--
 				location holds the absolute position for this item in the window
@@ -56,19 +56,19 @@
 				status_info holds text information for each status in this diagram
 				default_status is used if no status is found from the Stimulator
 			-->
-			<status_info default_status="Unknown">
+			<status_info default_status="Invalid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Block 3 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Block 3 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Block 3 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -80,7 +80,7 @@
 				<height>68</height>
 			</dimensions>
 			<location>
-				<X>200</X>
+				<X>100</X>
 				<Y>384</Y>
 			</location>
 			<!-- an example of data being hardcoded into a block - the text is provided by the diagram maker -->
@@ -110,25 +110,25 @@
 		<block id="block_1" ref_id="block_3" source="source1">
 			<dimensions>
 				<width>128</width>
-				<height>32</height>
+				<height>64</height>
 			</dimensions>
 			<location>
-				<X>480</X>
+				<X>0</X>
 				<Y>200</Y>
 			</location>
-			<status_info default_status="Unknown">
+			<status_info default_status="Valid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Block 1 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Block 1 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Block 1 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -140,22 +140,22 @@
 				<height>32</height>
 			</dimensions>
 			<location>
-				<X>512</X>
+				<X>380</X>
 				<Y>256</Y>
 			</location>
 			<status_info default_status="Unknown">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Block 2.1 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Block 2.1 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Block 2.1 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -163,26 +163,26 @@
 		</block>
 		<block id="block_2_2" source="source1">
 			<dimensions>
-				<width>328</width>
+				<width>256</width>
 				<height>82</height>
 			</dimensions>
 			<location>
-				<X>10</X>
-				<Y>345</Y>
+				<X>0</X>
+				<Y>200</Y>
 			</location>
 			<status_info default_status="Invalid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Block 2.2 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Block 2.2 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Block 2.2 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -205,19 +205,19 @@
 				<X>440</X>
 				<Y>256</Y>
 			</location>
-			<status_info default_status="Unknown">
+			<status_info default_status="Valid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Gate 1 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Gate 1 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Gate 1 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -226,26 +226,26 @@
 		<!-- gates can also have reference ids -->
 		<gate id="gate_2_1" ref_id="block_3" source="source1" type="OR">
 			<dimensions>
-				<width>32</width>
-				<height>32</height>
+				<width>64</width>
+				<height>64</height>
 			</dimensions>
 			<location>
-				<X>60</X>
-				<Y>230</Y>
+				<X>350</X>
+				<Y>150</Y>
 			</location>
-			<status_info default_status="Unknown">
+			<status_info default_status="Invalid">
 				<data for_status="Valid">
-					<name column="name"></name>
+					<name column="name">Gate 2.1 - Valid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name column="name"></name>
+					<name column="name">Gate 2.1 - Invalid</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name column="name"></name>
+					<name column="name">Gate 2.1 - Unknown</name>
 					<description column="desc"></description>
 					<hovertext column="hover"></hovertext>
 				</data>
@@ -268,8 +268,8 @@
 				<description column="desc"></description>
 				<!-- the location to use for the root item for this diagram -->
 				<root_item_location>
-					<X>456</X>
-					<Y>139</Y>
+					<X>556</X>
+					<Y>256</Y>
 				</root_item_location>
 			</subdiagram_data>
 			<!-- the connections tag holds information for how the items are connected -->
@@ -298,7 +298,7 @@
 				<name>block_2 subdiagram</name>
 				<description>the diagram shown after clicking block_2</description>
 				<root_item_location>
-					<X>345</X>
+					<X>550</X>
 					<Y>234</Y>
 				</root_item_location>
 			</subdiagram_data>

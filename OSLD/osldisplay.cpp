@@ -18,6 +18,9 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     // create an instance of the OSLD graphics engine
     scene = new OSLDGraphicsEngine(ui->graphicsView);
 
+    // set the diagram title and description
+    ui->titleLabel->setText(scene->getDiagramName());
+
     // display the scene from the graphics engine in the graphicsView
     ui->graphicsView->setScene(scene);
 
@@ -240,13 +243,11 @@ void OSLDisplay::on_actionHideButtons_triggered()
     if(ui->menuBar->isVisible()) {
         ui->closeButton->setVisible(false);
         ui->titleLabel->setVisible(false);
-        ui->subtitleLabel->setVisible(false);
         ui->menuBar->setVisible(false);
     }
     else {
         ui->closeButton->setVisible(true);
         ui->titleLabel->setVisible(true);
-        ui->subtitleLabel->setVisible(true);
         ui->menuBar->setVisible(true);
     }
     this->fitDiagramToWindow();

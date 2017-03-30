@@ -17,6 +17,7 @@ class Gate : public DiagramItem
 {
 private:
     GateType gateType;  // holds this gate's type (AND, OR, NOT)
+    int defaultSize = 64;
 
     QPainterPath *drawANDGatePath(int width, int height);    // returns a path to draw the shape of an AND gate
     QPainterPath *drawORGatePath(int width, int height);     //                  "   "                 OR gate
@@ -25,7 +26,7 @@ private:
 
 public:
     // constructor
-    Gate(QString id, QPointF loc, GateType type = AndGate);
+    Gate(QString id, GateType type = AndGate, QPointF loc = QPointF(0,0));
 
     // QGraphicsItem stuff
     QRectF boundingRect() const;
@@ -34,9 +35,12 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
-protected:
-    // function to set the size for the gate
+    void setGateType(QString type);
+
+    // functions to set the size for the gate
     void setGateSizing(int size = 64);
+    void setGateSizing(int w, int h);
+protected:
 
 signals:
 

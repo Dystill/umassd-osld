@@ -87,8 +87,10 @@ void Subdiagram::setInputItems(const QList<DiagramItem *> &value)
 
 // add an item to the subdiagram
 void Subdiagram::addInputItem(DiagramItem *value) {
-    inputItems.append(value);
-    value->setParentSubdiagram(this);
+    if(!(inputItems.contains(value) || (value == this->getRoot()))) {
+        inputItems.append(value);
+        value->setParentSubdiagram(this);
+    }
 }
 
 // get the list of all connectors in this subdiagram

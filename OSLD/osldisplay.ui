@@ -36,13 +36,6 @@
         </property>
        </widget>
       </item>
-      <item alignment="Qt::AlignRight">
-       <widget class="QLabel" name="subtitleLabel">
-        <property name="text">
-         <string>Subdiagram Title</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </item>
     <item>

@@ -19,8 +19,7 @@ DiagramItem::DiagramItem()
 DiagramItem::DiagramItem(QString id, QPointF loc)
 {
     this->itemId = id;      // save the item's id
-    this->setPos(loc);      // position the item
-    this->location = loc;
+    this->setLocation(loc);
     this->setFlags(QGraphicsItem::ItemIsSelectable |
                    QGraphicsItem::ItemIsMovable);
 }
@@ -68,6 +67,21 @@ void DiagramItem::setItemSizing(QString title)
 
     this->update();
     this->updateConnectors();
+}
+
+void DiagramItem::setItemSizing(int w, int h)
+{
+    // set width to defaultSize if 0 is passed for width
+    if(w == 0)
+        this->setWidth(defaultWidth);
+    else
+        this->setWidth(w);
+
+    // set height to default size of 0 is passed for height
+    if(h == 0)
+        this->setHeight(defaultHeight);
+    else
+        this->setHeight(h);
 }
 
 int DiagramItem::getMaxWidth() const
@@ -343,19 +357,23 @@ QString DiagramItem::getStatus() const
     return currentStatus;
 }
 
-void DiagramItem::setStatus(const QString &value, QMap<QString, QString> colorMap)
+void DiagramItem::setStatus(const QString &value, QMap<QString, StatusTypes> colorMap)
 {
     //qDebug() << value;
     currentStatus = value;
     currentStatusInfo = statusInfoDataList[currentStatus];
 
     //qDebug() << colorMap[status];
-    currentStatusInfo.color = QColor(colorMap[currentStatus]);
+    currentStatusInfo.color = QColor(colorMap[currentStatus].color);
+    currentStatusInfo.textColor = QColor(colorMap[currentStatus].textColor);
+    currentStatusInfo.italics = colorMap[currentStatus].italics;
+    currentStatusInfo.bold = colorMap[currentStatus].bold;
+    currentStatusInfo.underline = colorMap[currentStatus].underline;
 
+    this->updateStatusInfo();
 }
 
 void DiagramItem::updateStatusInfo() {
-    this->setTextColor(currentStatusInfo.textColor);
     this->setTitle(currentStatusInfo.title);
     this->setDescription(currentStatusInfo.description);
     this->setToolTip(currentStatusInfo.hovertext);
@@ -378,19 +396,16 @@ void DiagramItem::setColor(const QColor &value)
 void DiagramItem::setItalics(bool b)
 {
     font.setItalic(b);
-    this->setItemSizing(currentStatusInfo.title);
 }
 
 void DiagramItem::setBold(bool b)
 {
     font.setBold(b);
-    this->setItemSizing(currentStatusInfo.title);
 }
 
 void DiagramItem::setUnderline(bool b)
 {
     font.setUnderline(b);
-    this->setItemSizing(currentStatusInfo.title);
 }
 
 Subdiagram *DiagramItem::getParentSubdiagram() const
@@ -428,6 +443,41 @@ void DiagramItem::setInputPointOffset(const QPointF &value)
     inputPointOffset = value;
 }
 
+QString DiagramItem::getSourceId() const
+{
+    return sourceId;
+}
+
+void DiagramItem::setSourceId(const QString &value)
+{
+    sourceId = value;
+}
+
+void DiagramItem::setLocation(const QPointF &value)
+{
+    location = value;
+    this->setPos(value);      // position the item
+}
+
+int DiagramItem::getDefaultWidth() const
+{
+    return defaultWidth;
+}
+
+void DiagramItem::setDefaultWidth(int value)
+{
+    defaultWidth = value;
+}
+
+int DiagramItem::getDefaultHeight() const
+{
+    return defaultHeight;
+}
+
+void DiagramItem::setDefaultHeight(int value)
+{
+    defaultHeight = value;
+}
 
 
 
@@ -436,3 +486,29 @@ void DiagramItem::setInputPointOffset(const QPointF &value)
 
 
 
+
+
+void DiagramItemData::setForStatus(const QString &value)
+{
+    forStatus = value;
+}
+
+void DiagramItemData::setTitle(const QString &value)
+{
+    title = value;
+}
+
+void DiagramItemData::setDescription(const QString &value)
+{
+    description = value;
+}
+
+void DiagramItemData::setHovertext(const QString &value)
+{
+    hovertext = value;
+}
+
+void DiagramItemData::setDefaultStatus(const QString &value)
+{
+    defaultStatus = value;
+}
