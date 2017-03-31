@@ -27,6 +27,8 @@ private:
     QMap<QString, DiagramItemData> getStatusInfo();
     QMap<QString, QString> makeConnectMap();
 
+    Error currentError = NoError;
+
 public:
     DescriptionFileReader(QWidget *parent = 0);
     ~DescriptionFileReader();
