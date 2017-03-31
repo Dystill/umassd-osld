@@ -4,24 +4,18 @@
  * CONSTRUCTORS
  */
 
-DescriptionFileReader::DescriptionFileReader(QWidget *parent)
+DescriptionFileReader::DescriptionFileReader(QString filePath, QWidget *parent)
 {
-    // qDebug() << "Asking user for description file location";
-    // Opens explorer to browse for location of XML file
-    QString filePath = QFileDialog::getOpenFileName(parent,
+    // If no path was given, opens explorer to browse for location of XML file
+    if(filePath.isEmpty()) {
+        filePath = QFileDialog::getOpenFileName(parent,
                                                     QObject::tr("Open File"),
                                                     QCoreApplication::applicationDirPath(),
                                                     QObject::tr("XML File(*.xml)"));
+    }
 
-    //QFile file(filePath); // represents file that was opened
-    // file.open(QIODevice::ReadOnly);
-    //Double Checks FilePath
-    //qDebug()<<"File path of the file is:" << path;
-    //qDebug()<<"File name of the file is:" << pathAndName;
-
+    // read the file with the path
     this->readFile(filePath);
-
-
 }
 
 DescriptionFileReader::~DescriptionFileReader()

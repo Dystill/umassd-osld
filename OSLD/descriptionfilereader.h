@@ -27,10 +27,11 @@ private:
     QMap<QString, DiagramItemData> getStatusInfo();
     QMap<QString, QString> makeConnectMap();
 
+    // holds error status for specific subelement functions
     Error currentError = NoError;
 
 public:
-    DescriptionFileReader(QWidget *parent = 0);
+    DescriptionFileReader(QString filePath = "", QWidget *parent = 0);
     ~DescriptionFileReader();
 
     //Methods

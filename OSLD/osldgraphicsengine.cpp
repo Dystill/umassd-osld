@@ -7,18 +7,18 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     this->setParent(parent);
 
     // process description file
-    DescriptionFileReader descriptionFile(parent);
+    OSLDDataObject data = this->readDescriptionFile();
 
     // get all information from description file reader
-    this->diagramName = descriptionFile.getDiagramName();   // name of full diagram
-    this->diagramDescription = descriptionFile.getDescription();    // description for full diagram
-    this->allBlocks = descriptionFile.getAllBlocks();   // QList of all the blocks in the diagram
-    this->allGates = descriptionFile.getAllGates(); // QList of all the gates in the diagram
-    this->allItems = descriptionFile.getAllItems(); // QList containing both blocks and gates (may not be necessary?)
-    this->allSubdiagrams = descriptionFile.getAllSubdiagrams(); // QList of all Subdiagrams
+    this->diagramName = data.name;   // name of full diagram
+    this->diagramDescription = data.description;    // description for full diagram
+    this->allBlocks = data.blocks;   // QList of all the blocks in the diagram
+    this->allGates = data.gates; // QList of all the gates in the diagram
+    this->allItems = data.blocksAndGates; // QList containing both blocks and gates (may not be necessary?)
+    this->allSubdiagrams = data.subdiagrams; // QList of all Subdiagrams
 
-    this->sources = descriptionFile.getSources();   // QMap of source:CommonSource pairs
-    this->statuses = descriptionFile.getStatuses(); // QMap of status:StatusInfo pairs
+    this->sources = data.sourceMap;   // QMap of source:CommonSource pairs
+    this->statuses = data.statusMap; // QMap of status:StatusTypes pairs
 
     // print counts for each Qlist
     qDebug() << "OSLD blocks" << this->allBlocks.count();
@@ -34,6 +34,23 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 
     // create a path scene
     rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
+}
+
+OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
+    DescriptionFileReader descriptionFile(filePath);        // run the description file reader
+
+    OSLDDataObject data;
+    data.name = descriptionFile.getDiagramName();           // obtain name of full diagram
+    data.description = descriptionFile.getDescription();    // obtain description for full diagram
+    data.blocks = descriptionFile.getAllBlocks();           // obtain QList of all the blocks in the diagram
+    data.gates = descriptionFile.getAllGates();             // obtain QList of all the gates in the diagram
+    data.blocksAndGates = descriptionFile.getAllItems();    // obtain QList containing both blocks and gates (may not be necessary?)
+    data.subdiagrams = descriptionFile.getAllSubdiagrams(); // obtain QList of all Subdiagrams
+
+    data.sourceMap = descriptionFile.getSources();   // QMap of source:CommonSource pairs
+    data.statusMap = descriptionFile.getStatuses(); // QMap of status:StatusTypes pairs
+
+    return data;
 }
 
 // create a gate with random information

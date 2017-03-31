@@ -10,6 +10,17 @@
 
 class OSLDisplay;
 
+struct OSLDDataObject {
+    QString name = "Default Diagram Name";
+    QString description = "Default Diagram Description";
+    QList<Subdiagram *> subdiagrams;  // a list of all of the subdiagrams
+    QList<Block *> blocks;       // a list of all of the blocks in the diagram
+    QList<Gate *> gates;         // a list of all of the gates in the diagram
+    QList<DiagramItem *> blocksAndGates;  // a list of both blocks and gates
+    QMap<QString, CommonSource> sourceMap;    // maps source ids to their name and type
+    QMap<QString, StatusTypes> statusMap;    // maps status names to different colors
+};
+
 class OSLDGraphicsEngine : public QGraphicsScene
 {
 private:
@@ -18,12 +29,12 @@ private:
 
     Subdiagram *currentSubdiagram = 0;
 
-    QString diagramName = "Diagram Name";
-    QString diagramDescription = "Diagram Description";
-    QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
-    QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
-    QList<Gate *> allGates;         // a list of all of the gates in the diagram
-    QList<DiagramItem *> allItems;  // a list of both blocks and gates
+    QString diagramName;
+    QString diagramDescription;
+    QList<Subdiagram *> allSubdiagrams;     // a list of all of the subdiagrams
+    QList<Block *> allBlocks;               // a list of all of the blocks in the diagram
+    QList<Gate *> allGates;                 // a list of all of the gates in the diagram
+    QList<DiagramItem *> allItems;          // a list of both blocks and gates
 
     RootItemPathScene *rootScene;
     QList<Block *> rootPathList;    // holds the chain of root items to the current subdiagram
@@ -88,6 +99,7 @@ public:
     QString getDiagramDescription() const;
     void setDiagramDescription(const QString &value);
 
+    OSLDDataObject readDescriptionFile(QString filePath = "");
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
