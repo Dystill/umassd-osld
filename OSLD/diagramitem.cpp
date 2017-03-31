@@ -20,8 +20,7 @@ DiagramItem::DiagramItem(QString id, QPointF loc)
 {
     this->itemId = id;      // save the item's id
     this->setLocation(loc);
-    this->setFlags(QGraphicsItem::ItemIsSelectable |
-                   QGraphicsItem::ItemIsMovable);
+    this->setFlags(QGraphicsItem::ItemIsSelectable);
 }
 
 

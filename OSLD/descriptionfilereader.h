@@ -32,7 +32,7 @@ public:
     ~DescriptionFileReader();
 
     //Methods
-    void readFile(QString filepath);
+    Error readFile(QString filepath);
 
     QString getDiagramName() const;
 
@@ -44,10 +44,10 @@ public:
 
     DiagramItem *findDiagramItemById(QString itemid);
 
-    void readMetaData();
-    void readBlocks();
-    void readGates();
-    void readSubdiagrams();
+    Error readMetaData();
+    Error readBlocks();
+    Error readGates();
+    Error readSubdiagrams();
 
     QList<Subdiagram *> getAllSubdiagrams() const;
 
