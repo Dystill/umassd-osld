@@ -39,10 +39,10 @@ private:
     QPointF pressPosition;
 
     // functions for creating gates
-    Gate *getGateInfoFromDescriptionFile(QPointF pos);
+    Gate *createRandomGate(QPointF pos);
 
     // functions for creating blocks
-    Block *getBlockInfoFromDescriptionFile(QPointF pos);    // get information from the description file reader
+    Block *createRandomBlock(QPointF pos);    // get information from the description file reader
     Block *buildBlock(QString id, QPointF position, QMap<QString, DiagramItemData> data);    // passes data into a block
 
 
@@ -59,11 +59,13 @@ public:
 
     void showGrid(bool show, QRectF area);
 
+    void randomlyGenerateSubdiagrams(int numSubs);
+
     void drawSubdiagramItems(Subdiagram *sub);
 
     bool blockExists(QString id);
     Block *retrieveBlock(QString id);
-    Subdiagram *getSubdiagramInfoFromDescriptionFile(Block *root, int index);
+    Subdiagram *createRandomSubdiagram(Block *root, int index);
     void hideSubdiagramItems(Subdiagram *sub);
 
     QList<Block *> getRootPathList() const;

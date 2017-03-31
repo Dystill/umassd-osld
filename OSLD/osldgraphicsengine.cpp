@@ -3,8 +3,6 @@
 
 OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
 {
-    QTime time = QTime::currentTime();
-    qsrand((uint)time.msec());
 
     this->setParent(parent);
 
@@ -12,102 +10,30 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     DescriptionFileReader descriptionFile(NULL, parent);
 
     // get all information from description file reader
-    this->diagramName = descriptionFile.getDiagramName();
-    this->diagramDescription = descriptionFile.getDescription();
-    this->allBlocks = descriptionFile.getAllBlocks();
-    this->allGates = descriptionFile.getAllGates();
-    this->allItems = descriptionFile.getAllItems();
-    this->allSubdiagrams = descriptionFile.getAllSubdiagrams();
+    this->diagramName = descriptionFile.getDiagramName();   // name of full diagram
+    this->diagramDescription = descriptionFile.getDescription();    // description for full diagram
+    this->allBlocks = descriptionFile.getAllBlocks();   // QList of all the blocks in the diagram
+    this->allGates = descriptionFile.getAllGates(); // QList of all the gates in the diagram
+    this->allItems = descriptionFile.getAllItems(); // QList containing both blocks and gates (may not be necessary?)
+    this->allSubdiagrams = descriptionFile.getAllSubdiagrams(); // QList of all Subdiagrams
 
-    this->sources = descriptionFile.getSources();
-    this->statuses = descriptionFile.getStatuses();
+    this->sources = descriptionFile.getSources();   // QMap of source:CommonSource pairs
+    this->statuses = descriptionFile.getStatuses(); // QMap of status:StatusInfo pairs
 
+    // print counts for each Qlist
     qDebug() << "OSLD blocks" << this->allBlocks.count();
     qDebug() << "OSLD gates" << this->allGates.count();
     qDebug() << "OSLD items" << this->allItems.count();
     qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
 
-    /*
-    // create some random subdiagrams with three blocks and a single gate
-    for(int i = 0; i < 20; i++) {
-        QPointF rootPoint(0, 0);
-
-        // set the root for the subdiagram
-        Block *block;
-        if(i == 0) {    // for the main subdiagram
-            block = getBlockInfoFromDescriptionFile(rootPoint); // create a root block
-        }
-        else {
-            DiagramItem *item;  // create a diagramitem
-            do {
-                int random = qrand() % allSubdiagrams.at(i - 1)->getInputItems().count();
-                item = allSubdiagrams.at(i - 1)->getInputItems().at(random);    // get a random input item from the previous subdiagram
-            } while (item->isGate());                                           // keep trying until a block is obtained
-            block = qgraphicsitem_cast<Block *>(item);  // set the root block to the random item
-        }
-        block->setRootLocation(rootPoint);  // set the root block's root location
-        allBlocks.append(block);
-        allItems.append(block);
-
-        // add items
-        QPointF itemPoints;
-        itemPoints.setX(rootPoint.x() - 200);
-        itemPoints.setY(rootPoint.y());
-
-        Gate *gate = getGateInfoFromDescriptionFile(itemPoints);
-        allGates.append(gate);
-        allItems.append(gate);
-
-        itemPoints.setX(itemPoints.x() - 400);
-        itemPoints.setY(itemPoints.y() - 100);
-        Block *block1 = getBlockInfoFromDescriptionFile(itemPoints);
-        allBlocks.append(block1);
-        allItems.append(block1);
-
-        itemPoints.setY(itemPoints.y() + 200);
-        Block *block2 = getBlockInfoFromDescriptionFile(itemPoints);
-        allBlocks.append(block2);
-        allItems.append(block2);
-
-        // set subdiagram nam and description
-        QString name = QString("Subdiagram %1").arg(i);
-        QString desc = QString("Subdiagram Description for %1").arg(i);
-
-        Subdiagram *sub = new Subdiagram(block, name, desc);
-        sub->addInputItem(gate);
-        sub->connectItems(gate, block);
-
-        sub->addInputItem(block1);
-        sub->connectItems(block1, gate);
-
-        sub->addInputItem(block2);
-        sub->connectItems(block2, gate);
-
-        allSubdiagrams.append(sub);
+    // draw main diagram if a subdiagram exists
+    if(!allSubdiagrams.isEmpty()) {
+        rootPathList.append(allSubdiagrams.at(0)->getRoot());
+        this->drawSubdiagramItems(allSubdiagrams.at(0));
     }
-    */
 
-    rootPathList.append(allSubdiagrams.at(0)->getRoot());
-    this->drawSubdiagramItems(allSubdiagrams.at(0));
-
+    // create a path scene
     rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
-}
-
-Subdiagram *OSLDGraphicsEngine::getSubdiagramInfoFromDescriptionFile(Block *root, int index) {
-    Subdiagram *sub = new Subdiagram();
-
-    // get name and description
-    sub->setName(QString("Subdiagram %1").arg(index));
-    sub->setDescription(QString("Subdiagram Description for %1").arg(index));
-
-    // set the root block
-    sub->setRoot(root);
-
-    // get item ids, find the items, then add to the subdiagram
-
-    // set all of the connectors
-
-    return sub;
 }
 
 // create a gate with random information
@@ -149,32 +75,6 @@ QString OSLDGraphicsEngine::getDiagramDescription() const
 void OSLDGraphicsEngine::setDiagramDescription(const QString &value)
 {
     diagramDescription = value;
-}
-
-Gate *OSLDGraphicsEngine::getGateInfoFromDescriptionFile(QPointF pos) {
-
-    int random = qrand() % 123456;  // make a random number
-
-    QString id = "Gate ";
-    id.append(QString::number(random));
-
-    GateType type;
-
-    if(random % 3 == 0) {
-        type = AndGate;
-    }
-    else if((random % 3) - 1 == 0) {
-        type = OrGate;
-    }
-    else {
-        type = NotGate;
-    }
-
-    Gate *gate = new Gate(id, type, pos);
-
-    gate->setStatus("Valid", statuses);
-
-    return gate;
 }
 
 
@@ -362,12 +262,93 @@ void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {
 
 
 /*
- *  BLOCK FUNCTIONS
+ *  RANDOM GENERATION FUNCTIONS
  */
+
+void OSLDGraphicsEngine::randomlyGenerateSubdiagrams(int numSubs)
+{
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
+
+    // create some random subdiagrams with three blocks and a single gate
+    for(int i = 0; i < numSubs; i++) {
+        QPointF rootPoint(0, 0);
+
+        // set the root for the subdiagram
+        Block *block;
+        if(i == 0) {    // for the main subdiagram
+            block = createRandomBlock(rootPoint); // create a root block
+        }
+        else {
+            DiagramItem *item;  // create a diagramitem
+            do {
+                int random = qrand() % allSubdiagrams.at(i - 1)->getInputItems().count();
+                item = allSubdiagrams.at(i - 1)->getInputItems().at(random);    // get a random input item from the previous subdiagram
+            } while (item->isGate());                                           // keep trying until a block is obtained
+            block = qgraphicsitem_cast<Block *>(item);  // set the root block to the random item
+        }
+        block->setRootLocation(rootPoint);  // set the root block's root location
+        allBlocks.append(block);
+        allItems.append(block);
+
+        // add items
+        QPointF itemPoints;
+        itemPoints.setX(rootPoint.x() - 200);
+        itemPoints.setY(rootPoint.y());
+
+        Gate *gate = createRandomGate(itemPoints);
+        allGates.append(gate);
+        allItems.append(gate);
+
+        itemPoints.setX(itemPoints.x() - 400);
+        itemPoints.setY(itemPoints.y() - 100);
+        Block *block1 = createRandomBlock(itemPoints);
+        allBlocks.append(block1);
+        allItems.append(block1);
+
+        itemPoints.setY(itemPoints.y() + 200);
+        Block *block2 = createRandomBlock(itemPoints);
+        allBlocks.append(block2);
+        allItems.append(block2);
+
+        // set subdiagram nam and description
+        QString name = QString("Subdiagram %1").arg(i);
+        QString desc = QString("Subdiagram Description for %1").arg(i);
+
+        Subdiagram *sub = new Subdiagram(block, name, desc);
+        sub->addInputItem(gate);
+        sub->connectItems(gate, block);
+
+        sub->addInputItem(block1);
+        sub->connectItems(block1, gate);
+
+        sub->addInputItem(block2);
+        sub->connectItems(block2, gate);
+
+        allSubdiagrams.append(sub);
+    }
+}
+
+Subdiagram *OSLDGraphicsEngine::createRandomSubdiagram(Block *root, int index) {
+    Subdiagram *sub = new Subdiagram();
+
+    // get name and description
+    sub->setName(QString("Subdiagram %1").arg(index));
+    sub->setDescription(QString("Subdiagram Description for %1").arg(index));
+
+    // set the root block
+    sub->setRoot(root);
+
+    // get item ids, find the items, then add to the subdiagram
+
+    // set all of the connectors
+
+    return sub;
+}
 
 // gets block information from a description file
 // ******currently only generates random data
-Block *OSLDGraphicsEngine::getBlockInfoFromDescriptionFile(QPointF pos)
+Block *OSLDGraphicsEngine::createRandomBlock(QPointF pos)
 {
     // create DescriptionFileReader object
 
@@ -432,6 +413,32 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, QMap<QString
     // qDebug() << data[status].textColor;
 
     return block;
+}
+
+Gate *OSLDGraphicsEngine::createRandomGate(QPointF pos) {
+
+    int random = qrand() % 123456;  // make a random number
+
+    QString id = "Gate ";
+    id.append(QString::number(random));
+
+    GateType type;
+
+    if(random % 3 == 0) {
+        type = AndGate;
+    }
+    else if((random % 3) - 1 == 0) {
+        type = OrGate;
+    }
+    else {
+        type = NotGate;
+    }
+
+    Gate *gate = new Gate(id, type, pos);
+
+    gate->setStatus("Valid", statuses);
+
+    return gate;
 }
 
 bool OSLDGraphicsEngine::blockExists(QString id) {
