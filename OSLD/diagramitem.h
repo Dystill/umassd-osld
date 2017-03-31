@@ -9,12 +9,13 @@
 
 class Subdiagram;
 
-// holds data source information
+// holds information about the external system being used for a diagram item
 struct CommonSource {
     QString name;
     QString type;
 };
 
+// holds information about a specific status being used by this block
 struct StatusTypes {
     QString color;
     QString textColor;
@@ -23,24 +24,16 @@ struct StatusTypes {
     bool    underline = false;
 };
 
+// holds information about what this diagram item will be displaying
 struct DiagramItemData {
     QColor color = QColor("#888888");
     QColor textColor = QColor(Qt::black);
     QString title = "Default item title";
     QString description = "Default item description";
     QString hovertext = "Default item hovertext";
-    QString defaultStatus;
-    QString forStatus;
     bool italics = false;
     bool bold = false;
     bool underline = false;
-
-public:
-    void setDefaultStatus(const QString &value);
-    void setForStatus(const QString &value);
-    void setTitle(const QString &value);
-    void setDescription(const QString &value);
-    void setHovertext(const QString &value);
 };
 
 class DiagramItem : public QGraphicsWidget
@@ -57,9 +50,9 @@ private:
     QList<Connector *> outputConn;  // the set of connectors that exit from this item
 
     // data for this item
-    QMap<QString, DiagramItemData> statusInfoDataList;
-    DiagramItemData currentStatusInfo;
-    QString currentStatus = "No Status Available";  // holds the text of the block's status, which is used to access a QMap of status/color combos
+    QMap<QString, DiagramItemData> statusInfoDataList;  // a map of data to use for each status
+    DiagramItemData currentStatusInfo;  // the current info to use for this diagram item
+    QString currentStatus = "No Status Available";  // holds the text of the block's status, which is used to access the datat from the above map
 
     QPointF location = QPointF(0,0);
 
