@@ -27,14 +27,12 @@ private:
     QMap<QString, DiagramItemData> getStatusInfo();
     QMap<QString, QString> makeConnectMap();
 
-    Error currentError = QXmlStreamReader::NoError;
-
 public:
-    DescriptionFileReader(QString filePath = "", QWidget *parent = 0);
+    DescriptionFileReader(QWidget *parent = 0);
     ~DescriptionFileReader();
 
     //Methods
-    Error readFile(QString filepath);
+    void readFile(QString filepath);
 
     QString getDiagramName() const;
 
@@ -46,10 +44,10 @@ public:
 
     DiagramItem *findDiagramItemById(QString itemid);
 
-    Error readMetaData();
-    Error readBlocks();
-    Error readGates();
-    Error readSubdiagrams();
+    void readMetaData();
+    void readBlocks();
+    void readGates();
+    void readSubdiagrams();
 
     QList<Subdiagram *> getAllSubdiagrams() const;
 
