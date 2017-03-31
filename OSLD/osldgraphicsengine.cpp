@@ -9,7 +9,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
     this->setParent(parent);
 
     // process description file
-    DescriptionFileReader descriptionFile(parent);
+    DescriptionFileReader descriptionFile(NULL, parent);
 
     // get all information from description file reader
     this->diagramName = descriptionFile.getDiagramName();
