@@ -5,7 +5,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent)
     this->setParent(parent);
 
     // process description file and display the graphics
-    this->runGraphics(this->readDescriptionFile());
+    this->runGraphics(this->readDescriptionFile(filePath));
 
     // print counts for each Qlist
     qDebug() << "OSLD blocks" << this->allBlocks.count();
