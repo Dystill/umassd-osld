@@ -8,8 +8,6 @@
 #include "rootitempathscene.h"
 #include "descriptionfilereader.h"
 
-class OSLDisplay;
-
 struct OSLDDataObject {
     QString name = "Default Diagram Name";
     QString description = "Default Diagram Description";
@@ -58,7 +56,7 @@ private:
 
 
 public:
-    OSLDGraphicsEngine(QWidget *parent);
+    OSLDGraphicsEngine(QString filePath = "", QWidget *parent = 0);
 
     QMap<QString, CommonSource> getSources() const { return sources; }
     void setSources(const QMap<QString, CommonSource> &value) { sources = value; }
@@ -87,9 +85,6 @@ public:
 
     RootItemPathScene *getRootScene() const;
 
-    OSLDisplay *getParentWindow() const;
-    void setParentWindow(OSLDisplay *value);
-
     Subdiagram *getCurrentSubdiagram() const;
 
     void goToSubdiagram(Block *rootBlock);
@@ -100,6 +95,8 @@ public:
     void setDiagramDescription(const QString &value);
 
     OSLDDataObject readDescriptionFile(QString filePath = "");
+    void runGraphics(OSLDDataObject data);
+
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

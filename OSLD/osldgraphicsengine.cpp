@@ -1,41 +1,20 @@
 #include "osldgraphicsengine.h"
-#include "osldisplay.h"
 
-OSLDGraphicsEngine::OSLDGraphicsEngine(QWidget *parent)
+OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent)
 {
-
     this->setParent(parent);
 
-    // process description file
-    OSLDDataObject data = this->readDescriptionFile();
-
-    // get all information from description file reader
-    this->diagramName = data.name;   // name of full diagram
-    this->diagramDescription = data.description;    // description for full diagram
-    this->allBlocks = data.blocks;   // QList of all the blocks in the diagram
-    this->allGates = data.gates; // QList of all the gates in the diagram
-    this->allItems = data.blocksAndGates; // QList containing both blocks and gates (may not be necessary?)
-    this->allSubdiagrams = data.subdiagrams; // QList of all Subdiagrams
-
-    this->sources = data.sourceMap;   // QMap of source:CommonSource pairs
-    this->statuses = data.statusMap; // QMap of status:StatusTypes pairs
+    // process description file and display the graphics
+    this->runGraphics(this->readDescriptionFile());
 
     // print counts for each Qlist
     qDebug() << "OSLD blocks" << this->allBlocks.count();
     qDebug() << "OSLD gates" << this->allGates.count();
     qDebug() << "OSLD items" << this->allItems.count();
     qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
-
-    // draw main diagram if a subdiagram exists
-    if(!allSubdiagrams.isEmpty()) {
-        rootPathList.append(allSubdiagrams.at(0)->getRoot());
-        this->drawSubdiagramItems(allSubdiagrams.at(0));
-    }
-
-    // create a path scene
-    rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
 }
 
+// read a description file and return the data object
 OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
     DescriptionFileReader descriptionFile(filePath);        // run the description file reader
 
@@ -53,53 +32,37 @@ OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
     return data;
 }
 
-// create a gate with random information
-QList<Block *> OSLDGraphicsEngine::getRootPathList() const
-{
-    return rootPathList;
-}
+// use a data object to display the graphics
+void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
+    // get all information from description file reader
+    this->diagramName = data.name;   // name of full diagram
+    this->diagramDescription = data.description;    // description for full diagram
+    this->allBlocks = data.blocks;   // QList of all the blocks in the diagram
+    this->allGates = data.gates; // QList of all the gates in the diagram
+    this->allItems = data.blocksAndGates; // QList containing both blocks and gates (may not be necessary?)
+    this->allSubdiagrams = data.subdiagrams; // QList of all Subdiagrams
 
-QList<DiagramItem *> OSLDGraphicsEngine::getAllItems() const
-{
-    return allItems;
-}
+    this->sources = data.sourceMap;   // QMap of source:CommonSource pairs
+    this->statuses = data.statusMap; // QMap of status:StatusTypes pairs
 
-RootItemPathScene *OSLDGraphicsEngine::getRootScene() const
-{
-    return rootScene;
-}
+    // draw main diagram if a subdiagram exists
+    if(!allSubdiagrams.isEmpty()) {
+        rootPathList.append(allSubdiagrams.at(0)->getRoot());
+        this->drawSubdiagramItems(allSubdiagrams.at(0));
+    }
 
-Subdiagram *OSLDGraphicsEngine::getCurrentSubdiagram() const
-{
-    return currentSubdiagram;
-}
-
-QString OSLDGraphicsEngine::getDiagramName() const
-{
-    return diagramName;
-}
-
-void OSLDGraphicsEngine::setDiagramName(const QString &value)
-{
-    diagramName = value;
-}
-
-QString OSLDGraphicsEngine::getDiagramDescription() const
-{
-    return diagramDescription;
-}
-
-void OSLDGraphicsEngine::setDiagramDescription(const QString &value)
-{
-    diagramDescription = value;
+    // create a path scene
+    rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
 }
 
 
 // overrides to draw a grid for the background
 void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
 {
+    // fill background
     painter->fillRect(rect, QBrush(backgroundColor));
 
+    // draw grid
     if(showGridBackground) {
         QPen pen;
         pen.setCosmetic(true);
@@ -114,7 +77,7 @@ void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
         qreal startingX = int(leftX) - (int(leftX) % gridUnitSize);
         qreal startingY = int(topY) - (int(topY) % gridUnitSize);
 
-        /*
+        /* draw lines instead of dots for grid - graphic intensive
         for(qreal x = startingX; x < rightX; x += gridUnitSize) {
             backgroundGrid.append(QLineF(x, topY, x, bottomY));
         }
@@ -124,6 +87,7 @@ void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)
         painter->drawLines(backgroundGrid.data(), backgroundGrid.size());
         */
 
+        // draw points
         for(qreal x = startingX; x < rightX; x += gridUnitSize) {
             for(qreal y = startingY; y < bottomY; y += gridUnitSize) {
                 backgroundDots.append(QPointF(x, y));
@@ -146,14 +110,16 @@ void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mouseMoveEvent(event);
 }
 
+// handles click events within the diagram scene graphics
+// determines what happens when a diagram item is pressed
 void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem *releaseItem = itemAt(event->scenePos(), QTransform());   // get the item that was released
 
-
-    // if the click was from the left button
+    // if the left mouse button was used to press a diagram item
     if(event->button() == Qt::LeftButton) {
-        // if the item was released at the same position, i.e. mouse wasn't moved away during click
+
+        // if the item was released at the same position that it was pressed, i.e. mouse wasn't moved during click
         if(releaseItem == pressedItem && pressPosition == event->scenePos()) {
 
             Block *pressedBlock;    // to store a pointer to the clicked block
@@ -163,9 +129,9 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 // check if the block has a subdiagram
                 if(pressedBlock->hasChildSubdiagram()) {
 
-                    Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get the block's subdiagram
+                    Subdiagram *sub = pressedBlock->getChildSubdiagram();    // get pointer to the block's subdiagram
 
-                    // if the current subdiagram's root block was pressed and it's not the top level subdiagram
+                    // if the current subdiagram's root block was pressed and it's not the main top level subdiagram
                     // then go back to previous subdiagram
                     if(sub == currentSubdiagram) {
                         if(pressedBlock->getParentSubdiagram() != 0) {
@@ -181,6 +147,7 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
         }
     }
+    // if the right mouse button was used to press a diagram item
     else if(event->button() == Qt::RightButton) {
 
         DiagramItem *pressedItem;    // to store a pointer to the clicked block
@@ -272,14 +239,87 @@ void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
     currentSubdiagram = 0;
 }
 
+// create a gate with random information
+QList<Block *> OSLDGraphicsEngine::getRootPathList() const
+{
+    return rootPathList;
+}
+
+QList<DiagramItem *> OSLDGraphicsEngine::getAllItems() const
+{
+    return allItems;
+}
+
+RootItemPathScene *OSLDGraphicsEngine::getRootScene() const
+{
+    return rootScene;
+}
+
+Subdiagram *OSLDGraphicsEngine::getCurrentSubdiagram() const
+{
+    return currentSubdiagram;
+}
+
+QString OSLDGraphicsEngine::getDiagramName() const
+{
+    return diagramName;
+}
+
+void OSLDGraphicsEngine::setDiagramName(const QString &value)
+{
+    diagramName = value;
+}
+
+QString OSLDGraphicsEngine::getDiagramDescription() const
+{
+    return diagramDescription;
+}
+
+void OSLDGraphicsEngine::setDiagramDescription(const QString &value)
+{
+    diagramDescription = value;
+}
+
+QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
+{
+    return allSubdiagrams;
+}
+
 void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {
     showGridBackground = show;
     this->invalidate(area, BackgroundLayer);
 }
 
+bool OSLDGraphicsEngine::blockExists(QString id) {
+    for(int i = 0; i < allBlocks.count(); i++) {
+        if(id.compare(allBlocks.at(i)->id())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
+    for(int i = 0; i < allBlocks.count(); i++) {
+        if(id.compare(allBlocks.at(i)->id())) {
+            return allBlocks.at(i);
+        }
+    }
+    return 0;
+}
+
+void OSLDGraphicsEngine::hideAllItemTitleText(bool b) {
+    DiagramItem::setTransparent(b);
+    for(int i = 0; i < allItems.count(); i++) {
+        allItems.at(i)->update();
+    }
+    this->update();
+}
+
 
 /*
- *  RANDOM GENERATION FUNCTIONS
+ *  RANDOM GENERATION FUNCTIONS BELOW
+ *  FOR TESTING PURPOSES - NOT USED
  */
 
 void OSLDGraphicsEngine::randomlyGenerateSubdiagrams(int numSubs)
@@ -456,36 +496,5 @@ Gate *OSLDGraphicsEngine::createRandomGate(QPointF pos) {
     gate->setStatus("Valid", statuses);
 
     return gate;
-}
-
-bool OSLDGraphicsEngine::blockExists(QString id) {
-    for(int i = 0; i < allBlocks.count(); i++) {
-        if(id.compare(allBlocks.at(i)->id())) {
-            return true;
-        }
-    }
-    return false;
-}
-
-Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
-    for(int i = 0; i < allBlocks.count(); i++) {
-        if(id.compare(allBlocks.at(i)->id())) {
-            return allBlocks.at(i);
-        }
-    }
-    return 0;
-}
-
-QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
-{
-    return allSubdiagrams;
-}
-
-void OSLDGraphicsEngine::hideAllItemTitleText(bool b) {
-    DiagramItem::setTransparent(b);
-    for(int i = 0; i < allItems.count(); i++) {
-        allItems.at(i)->update();
-    }
-    this->update();
 }
 
