@@ -91,6 +91,13 @@
     <addaction name="actionFitDiagramToWindow"/>
     <addaction name="actionHideBlockTitles"/>
    </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpenDescriptionFile"/>
+   </widget>
+   <addaction name="menuFile"/>
    <addaction name="menuDiagram"/>
    <addaction name="menuRoot_View"/>
    <addaction name="menuWindow"/>
@@ -171,6 +178,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionOpenDescriptionFile">
+   <property name="text">
+    <string>Open Description File...</string>
    </property>
   </action>
  </widget>
