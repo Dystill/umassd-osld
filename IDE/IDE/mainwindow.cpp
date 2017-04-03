@@ -7,9 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QFont font = QFont();
-    font.setFamily("Courier");
-    font.setStyleHint(QFont::TypeWriter);
+    QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     font.setFixedPitch(true);
     font.setPointSize(12);
 
