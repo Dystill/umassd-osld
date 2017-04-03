@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QPlainTextEdit>
+#include <osldgraphicsengine.h>
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,8 @@ class MainWindow : public QMainWindow {
 
  private:
   Ui::MainWindow *ui;
+
+  OSLDGraphicsEngine *osld;
 };
 
 #endif  // MAINWINDOW_H
