@@ -18,7 +18,10 @@ class MainWindow : public QMainWindow {
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
- private:
+private slots:
+    void on_actionOpen_Diagram_triggered();
+
+private:
   Ui::MainWindow *ui;
 
   OSLDGraphicsEngine *osld;

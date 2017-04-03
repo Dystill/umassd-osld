@@ -4,14 +4,21 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent)
 {
     this->setParent(parent);
 
-    // process description file and display the graphics
-    this->runGraphics(this->readDescriptionFile(filePath));
+    this->readFileAndRunOSLD(filePath);
 
     // print counts for each Qlist
     qDebug() << "OSLD blocks" << this->allBlocks.count();
     qDebug() << "OSLD gates" << this->allGates.count();
     qDebug() << "OSLD items" << this->allItems.count();
     qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
+
+}
+
+void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
+
+    // process description file and display the graphics
+    this->runGraphics(this->readDescriptionFile(filePath));
+
 }
 
 // read a description file and return the data object

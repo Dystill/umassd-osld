@@ -6,15 +6,20 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
-    QString filePath = QFileDialog::getOpenFileName(parent,
-                                                QObject::tr("Open File"),
-                                                QCoreApplication::applicationDirPath(),
-                                                QObject::tr("XML File(*.xml)"));
-
-    osld = new OSLDGraphicsEngine(filePath);
-
-    ui->graphicsView->setScene(osld);
+    osld = new OSLDGraphicsEngine();
 
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::on_actionOpen_Diagram_triggered()
+{
+    QString filePath = QFileDialog::getOpenFileName(this,
+                                                QObject::tr("Open File"),
+                                                QCoreApplication::applicationDirPath(),
+                                                QObject::tr("XML File(*.xml)"));
+
+    osld->readFileAndRunOSLD(filePath);
+
+    ui->graphicsView->setScene(osld);
+}

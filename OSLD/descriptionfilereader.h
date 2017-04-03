@@ -31,7 +31,7 @@ private:
     Error currentError = NoError;
 
 public:
-    DescriptionFileReader(QString filePath = "", QWidget *parent = 0);
+    DescriptionFileReader(QString filePath = "");
     ~DescriptionFileReader();
 
     //Methods

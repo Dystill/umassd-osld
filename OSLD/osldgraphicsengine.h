@@ -97,6 +97,7 @@ public:
     OSLDDataObject readDescriptionFile(QString filePath = "");
     void runGraphics(OSLDDataObject data);
 
+    void readFileAndRunOSLD(QString filePath);
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
