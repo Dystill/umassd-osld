@@ -41,6 +41,10 @@ OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
 
 // use a data object to display the graphics
 void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
+    // remove all currently displayed items
+    this->hideSubdiagramItems(currentSubdiagram);
+    this->rootPathList.clear();
+
     // get all information from description file reader
     this->diagramName = data.name;   // name of full diagram
     this->diagramDescription = data.description;    // description for full diagram
@@ -232,18 +236,20 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
 
 void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
 {
-    for(int i = 0; i < sub->getConnectors().count(); i++) {
-        //qDebug() << "Drawing Connector" << i;
-        this->removeItem(sub->getConnectors().at(i));
+    if(sub != 0) {
+        for(int i = 0; i < sub->getConnectors().count(); i++) {
+            //qDebug() << "Drawing Connector" << i;
+            this->removeItem(sub->getConnectors().at(i));
+        }
+        for(int i = 0; i < sub->getInputItems().count(); i++) {
+            //qDebug() << "Drawing Block" << i;
+            this->removeItem(sub->getInputItems().at(i));
+        }
+        Block *root = sub->getRoot();
+        root->setCurrentlyRoot(false);
+        this->removeItem(root);
+        currentSubdiagram = 0;
     }
-    for(int i = 0; i < sub->getInputItems().count(); i++) {
-        //qDebug() << "Drawing Block" << i;
-        this->removeItem(sub->getInputItems().at(i));
-    }
-    Block *root = sub->getRoot();
-    root->setCurrentlyRoot(false);
-    this->removeItem(root);
-    currentSubdiagram = 0;
 }
 
 // create a gate with random information
