@@ -39,7 +39,6 @@ SOURCES += main.cpp\
     ../OSLD/diagramitem.cpp \
     ../OSLD/gate.cpp \
     ../OSLD/osldgraphicsengine.cpp \
-    ../OSLD/osldisplay.cpp \
     ../OSLD/rootitempathscene.cpp \
     ../OSLD/subdiagram.cpp
 
@@ -52,7 +51,6 @@ HEADERS  += mainwindow.h \
     ../OSLD/diagramitem.h \
     ../OSLD/gate.h \
     ../OSLD/osldgraphicsengine.h \
-    ../OSLD/osldisplay.h \
     ../OSLD/rootitempathscene.h \
     ../OSLD/subdiagram.h
 

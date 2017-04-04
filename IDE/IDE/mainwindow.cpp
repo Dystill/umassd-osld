@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    osld = new OSLDGraphicsEngine();
+
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     font.setFixedPitch(true);
     font.setPointSize(12);
@@ -17,4 +19,16 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_actionLoad_Description_File_triggered()
+{
+    QString filePath = QFileDialog::getOpenFileName(this,
+                                                QObject::tr("Open File"),
+                                                QCoreApplication::applicationDirPath(),
+                                                QObject::tr("XML File(*.xml)"));
+
+    osld->readFileAndRunOSLD(filePath);
+
+    ui->graphicsView->setScene(osld);
 }
