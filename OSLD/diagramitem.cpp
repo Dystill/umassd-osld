@@ -28,11 +28,6 @@ QFont DiagramItem::getFont() const
     return font;
 }
 
-void DiagramItem::setFont(const QFont &value)
-{
-    font = value;
-}
-
 void DiagramItem::setTitleSize(int size)
 {
     font.setPixelSize(size);

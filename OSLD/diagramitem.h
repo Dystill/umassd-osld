@@ -33,9 +33,13 @@ struct DiagramItemData {
     QString description = "Default item description";
     QString hovertext = "Default item hovertext";
 
+    // query attributes for name, description, and hovertext
+    // these strings are sent alongside the item's IDs to the external source
+    // the external source can then execute whatever is in these strings to find the data
     QString titleQuery;
     QString descriptionQuery;
     QString hovertextQuery;
+    //
 
     bool italics = false;
     bool bold = false;
@@ -66,9 +70,10 @@ private:
 
     Subdiagram *parentSubdiagram = 0;
 
-    QFont font;         // font for the title text
+    QFont font; // font for the title text
+                // change font size by using setTitleSize()
 
-    int maxWidth;                               // the maximum width of the block before word wraping the title
+    int maxWidth;       // the maximum width of the block before word wraping the title
 
     int itemWidth = 0;  // the width of this item
     int itemHeight = 0; // the height of this item
@@ -126,10 +131,8 @@ public:
 
     // getter and setter functions
     QString getTitle() const;
-    void setTitle(QString value);
 
     QString getDescription() const;
-    void setDescription(QString value);
 
     QString getStatus() const;
     QColor getColor() const;
@@ -141,11 +144,8 @@ public:
     void setTextColor(QColor value);
 
     int getMaxWidth() const;
-    void setMaxWidth(int value);
 
     QFont getFont() const;
-    void setFont(const QFont &value);
-    void setTitleSize(int size);
 
     Subdiagram *getParentSubdiagram() const;
     void setParentSubdiagram(Subdiagram *value);
@@ -194,6 +194,12 @@ protected:
 
     int getDefaultHeight() const;
     void setDefaultHeight(int value);
+
+    void setTitle(QString value);
+    void setDescription(QString value);
+    void setMaxWidth(int value);
+
+    void setTitleSize(int size);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
