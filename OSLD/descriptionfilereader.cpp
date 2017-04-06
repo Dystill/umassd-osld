@@ -6,13 +6,11 @@
 
 DescriptionFileReader::DescriptionFileReader(QString filePath)
 {
-
     // If a path was provided
     if(!filePath.isEmpty()) {
         // read the file with the path
         this->readFile(filePath);
     }
-
 }
 
 DescriptionFileReader::~DescriptionFileReader()
@@ -60,7 +58,7 @@ QXmlStreamReader::Error DescriptionFileReader::readFile(QString filepath)
             QString tString = (this->tokenString().replace("Characters", "String") +
                                (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
             qDebug() << ">> Found Token (not in function):" << tString;
-            /**/
+            */
 
             // start of element
             if(this->isStartElement()) {
@@ -644,31 +642,42 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
             while(!this->atEnd() && !(currentTag == "data" && this->isEndElement())) {
                 // get the name/title
                 if(currentTag == "name" && this->isStartElement()) {
-                    if(this->attributes().isEmpty()) {
-                        data.title = this->readElementText();
+
+                    // if the query attribute exists
+                    if(this->attributes().hasAttribute("query")) {
+                        // qDebug() << "setting query value name";
+                        // save the query
+                        data.titleQuery = this->attributes().value("query").toString();
                     }
-                    else {
-                        // contact stimulator
-                        data.title = this->readElementText();
-                    }
+
+                    data.title = this->readElementText();   // set the title
+
                 }
                 // get the description
                 if(currentTag == "description" && this->isStartElement()) {
-                    if(this->attributes().isEmpty()) {
-                        data.description = this->readElementText();
+
+                    // if the query attribute exists
+                    if(this->attributes().hasAttribute("query")) {
+                        // qDebug() << "setting query value desc";
+                        // save the query
+                        data.descriptionQuery = this->attributes().value("query").toString();
                     }
-                    else {
-                        // contact stimulator
-                    }
+
+                    data.description = this->readElementText();   // set the title
+
                 }
                 // get the hovertext
                 if(currentTag == "hovertext" && this->isStartElement()) {
-                    if(this->attributes().isEmpty()) {
-                        data.hovertext = this->readElementText();
+
+                    // if the query attribute exists
+                    if(this->attributes().hasAttribute("query")) {
+                        // qDebug() << "setting query value hover";
+                        // save the query
+                        data.hovertextQuery = this->attributes().value("query").toString();
                     }
-                    else {
-                        // contact stimulator
-                    }
+
+                    data.hovertext = this->readElementText();   // set the title
+
                 }
 
                 // update token and tag
@@ -676,7 +685,13 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
                 currentTag = this->name().toString();
             }
 
-            // qDebug() << "Data for" << currentForStatusID << data.title << data.description << data.hovertext;
+            /* print data in current diagramitem data object
+            qDebug() << "Data for" << currentForStatusID
+                     << data.title << data.description
+                     << data.hovertext
+                     << data.titleQuery << data.descriptionQuery
+                     << data.hovertextQuery;
+            */
 
             // add the data to the item map
             itemDataMap[currentForStatusID] = data;
@@ -687,7 +702,7 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
         currentTag = this->name().toString();
     }
     if(this->hasError()) {
-        currentError = this->error();
+        currentError = this->error();   // save the error if there was one
     }
 
     // qDebug() << "Number of data items:" << itemDataMap.count() << itemDataMap.keys();

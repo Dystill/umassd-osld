@@ -28,9 +28,19 @@ struct StatusTypes {
 struct DiagramItemData {
     QColor color = QColor("#888888");
     QColor textColor = QColor(Qt::black);
+
     QString title = "Default item title";
     QString description = "Default item description";
     QString hovertext = "Default item hovertext";
+
+    // query attributes for name, description, and hovertext
+    // these strings are sent alongside the item's IDs to the external source
+    // the external source can then execute whatever is in these strings to find the data
+    QString titleQuery;
+    QString descriptionQuery;
+    QString hovertextQuery;
+    //
+
     bool italics = false;
     bool bold = false;
     bool underline = false;
@@ -42,6 +52,7 @@ private:
     static bool transparentTitle;
 
     QString itemId;     // the unique identifier for this item. cannot be changed once item is constructed
+    QString referenceId;     // the id used in place of id to get info from stimulator
     QString sourceId;     // the source for this item's information
 
     QList<DiagramItem *> outputItem;    // the item this item outputs to if applicable
@@ -52,15 +63,17 @@ private:
     // data for this item
     QMap<QString, DiagramItemData> statusInfoDataList;  // a map of data to use for each status
     DiagramItemData currentStatusInfo;  // the current info to use for this diagram item
-    QString currentStatus = "No Status Available";  // holds the text of the block's status, which is used to access the datat from the above map
+    QString currentStatus = "";  // holds the text of the block's status, which is used to access the data from the above map
+                                 // initialized with "default_status" in the description file if available
 
     QPointF location = QPointF(0,0);
 
     Subdiagram *parentSubdiagram = 0;
 
-    QFont font;         // font for the title text
+    QFont font; // font for the title text
+                // change font size by using setTitleSize()
 
-    int maxWidth;                               // the maximum width of the block before word wraping the title
+    int maxWidth;       // the maximum width of the block before word wraping the title
 
     int itemWidth = 0;  // the width of this item
     int itemHeight = 0; // the height of this item
@@ -86,10 +99,6 @@ public:
     QRectF boundingRect() const;    // returns the rectagular container for this item
     void setGeometry(const QRectF &rect);   // used by QGraphicsItem to resize and update graphics elements
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;    // gives default sizes for items to use
-
-
-    //static QPointF convertPointToRelative(QPointF loc, DiagramItem *anchor);
-    //static QPointF convertPointToAbsolute(QPointF loc, DiagramItem *anchor);
 
     QPointF inputPoint() const;     // returns the point that input connectors should lead into (the middle of the left edge)
     QPointF outputPoint() const;    // returns the point that output connectors should come out of (the middle of the right edge)
@@ -122,10 +131,8 @@ public:
 
     // getter and setter functions
     QString getTitle() const;
-    void setTitle(QString value);
 
     QString getDescription() const;
-    void setDescription(QString value);
 
     QString getStatus() const;
     QColor getColor() const;
@@ -137,11 +144,8 @@ public:
     void setTextColor(QColor value);
 
     int getMaxWidth() const;
-    void setMaxWidth(int value);
 
     QFont getFont() const;
-    void setFont(const QFont &value);
-    void setTitleSize(int size);
 
     Subdiagram *getParentSubdiagram() const;
     void setParentSubdiagram(Subdiagram *value);
@@ -172,6 +176,8 @@ public:
 
     void setItemSizing(int w, int h);
 
+    void printQueries() const;
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
 
@@ -188,6 +194,12 @@ protected:
 
     int getDefaultHeight() const;
     void setDefaultHeight(int value);
+
+    void setTitle(QString value);
+    void setDescription(QString value);
+    void setMaxWidth(int value);
+
+    void setTitleSize(int size);
 
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
