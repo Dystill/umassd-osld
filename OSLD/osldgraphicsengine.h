@@ -21,6 +21,8 @@ struct OSLDDataObject {
 
 class OSLDGraphicsEngine : public QGraphicsScene
 {
+    Q_OBJECT
+
 private:
     QMap<QString, CommonSource> sources;    // maps source ids to their name and type
     QMap<QString, StatusTypes> statuses;    // maps status names to different colors
@@ -98,11 +100,17 @@ public:
     void runGraphics(OSLDDataObject data);
 
     void readFileAndRunOSLD(QString filePath);
+
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
+public slots:
+
+signals:
+
 };
 
 #endif // OSLDGRAPHICSENGINE_H

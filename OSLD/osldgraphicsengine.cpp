@@ -1,11 +1,9 @@
 #include "osldgraphicsengine.h"
 
-OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent)
+OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent) :
+    QGraphicsScene(parent)
 {
-    this->setParent(parent);
-
     this->readFileAndRunOSLD(filePath);
-
 }
 
 void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
