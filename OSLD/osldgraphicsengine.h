@@ -101,15 +101,18 @@ public:
 
     void readFileAndRunOSLD(QString filePath);
 
+
+public slots:
+    void updateStatus(OSLDDataObject object);
+
+signals:
+    void retrieveStatusData(OSLDDataObject object);
+
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-
-public slots:
-
-signals:
 
 };
 
