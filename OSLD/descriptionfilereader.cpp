@@ -134,20 +134,6 @@ bool DescriptionFileReader::stringToBool(QString boolString)
         return false;
 }
 
-// find an item in allItems list by id
-DiagramItem *DescriptionFileReader::findDiagramItemById(QString itemid) {
-    // go through all items in allItems
-    for(int i = 0; i < allItems.count(); i++) {
-        if(allItems.at(i)->id().compare(itemid) == 0) { // if item was found
-            // qDebug() << allItems.at(i)->id() << "equals" << itemid;
-            return allItems.at(i);
-        }
-    }
-
-    return 0;
-}
-
-
 /*
  * MAIN SECTION FUNCTIONS
  */
@@ -346,7 +332,7 @@ QXmlStreamReader::Error DescriptionFileReader::readBlocks()
         // at end of block element
         else if(currentTag == "block" && this->isEndElement()) {
             allBlocks.append(block);  // add block pointer to allGates list in header file
-            allItems.append(block);
+            allItems[block->id()] = block;
             // qDebug() << "------ Stored Block! ------";
         }
 
@@ -433,7 +419,7 @@ QXmlStreamReader::Error DescriptionFileReader::readGates()
         // at end of gate element
         else if(currentTag == "gate" && this->isEndElement()) {
             allGates.append(gate);  // add gate pointer to allGates list in header file
-            allItems.append(gate);
+            allItems[gate->id()] = gate;
             // qDebug() << "------ Stored gate! ------";
         }
 
@@ -534,8 +520,8 @@ QXmlStreamReader::Error DescriptionFileReader::readSubdiagrams()
                     QMap<QString, QString> inputOutput = this->makeConnectMap();
 
                     // get the diagramitems from the diagram item list
-                    DiagramItem *input = findDiagramItemById(inputOutput["input"]);
-                    DiagramItem *output = findDiagramItemById(inputOutput["output"]);
+                    DiagramItem *input = allItems[inputOutput["input"]];
+                    DiagramItem *output = allItems[inputOutput["output"]];
 
                     // add output and input as input items for the subdiagram
                     subdiagram->addInputItem(input);
@@ -834,7 +820,7 @@ QList<Gate *> DescriptionFileReader::getAllGates() const
     return allGates;
 }
 
-QList<DiagramItem *> DescriptionFileReader::getAllItems() const
+QMap<QString, DiagramItem *> DescriptionFileReader::getAllItems() const
 {
     return allItems;
 }

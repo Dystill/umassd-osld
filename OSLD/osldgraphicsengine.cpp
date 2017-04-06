@@ -13,9 +13,13 @@ void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
 
 }
 
-void OSLDGraphicsEngine::updateStatus(OSLDDataObject object)
+void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 {
+    if (statusData.ref_id == NULL) {
 
+    } else {
+
+    }
 }
 
 // read a description file and return the data object
@@ -68,8 +72,8 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
     qDebug() << "OSLD items" << this->allItems.count();
     qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
 
-    for(int i = 0; i < allItems.count(); i++) {
-        allItems.at(i)->printQueries();
+    for (QString e : allItems.keys()) {
+        allItems[e]->update();
     }
 }
 
@@ -265,7 +269,7 @@ QList<Block *> OSLDGraphicsEngine::getRootPathList() const
     return rootPathList;
 }
 
-QList<DiagramItem *> OSLDGraphicsEngine::getAllItems() const
+QMap<QString, DiagramItem *> OSLDGraphicsEngine::getAllItems() const
 {
     return allItems;
 }
@@ -330,8 +334,8 @@ Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
 
 void OSLDGraphicsEngine::hideAllItemTitleText(bool b) {
     DiagramItem::setTransparent(b);
-    for(int i = 0; i < allItems.count(); i++) {
-        allItems.at(i)->update();
+    for (QString e : allItems.keys()) {
+        allItems[e]->update();
     }
     this->update();
 }
@@ -366,7 +370,7 @@ void OSLDGraphicsEngine::randomlyGenerateSubdiagrams(int numSubs)
         }
         block->setRootLocation(rootPoint);  // set the root block's root location
         allBlocks.append(block);
-        allItems.append(block);
+        allItems[block->id()] = block;
 
         // add items
         QPointF itemPoints;
@@ -375,18 +379,18 @@ void OSLDGraphicsEngine::randomlyGenerateSubdiagrams(int numSubs)
 
         Gate *gate = createRandomGate(itemPoints);
         allGates.append(gate);
-        allItems.append(gate);
+        allItems[gate->id()] = gate;
 
         itemPoints.setX(itemPoints.x() - 400);
         itemPoints.setY(itemPoints.y() - 100);
         Block *block1 = createRandomBlock(itemPoints);
         allBlocks.append(block1);
-        allItems.append(block1);
+        allItems[block1->id()] = block1;
 
         itemPoints.setY(itemPoints.y() + 200);
         Block *block2 = createRandomBlock(itemPoints);
         allBlocks.append(block2);
-        allItems.append(block2);
+        allItems[block2->id()] = block2;
 
         // set subdiagram nam and description
         QString name = QString("Subdiagram %1").arg(i);
