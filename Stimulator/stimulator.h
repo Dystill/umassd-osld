@@ -2,9 +2,32 @@
 #define STIMULATOR_H
 
 #include <QtSql>
+#include <QObject>
 #include "stimulatorinterface.h"
 
 namespace stimulator {
+
+/*!
+ * \struct StatusData
+ * \brief Provides the members needed to send and recieve status data between an
+ * external system and the stimulator.
+ * \note The stimulator must send the id and the ref_id of the block it wishes
+ * to retrieve the updated status for.
+ * The external system must then send back the entire struct filled out with the
+ * up to date status data.
+ * \ingroup stimulator
+ */
+struct StatusData {
+  QString id;
+  QString ref_id;
+  QString status;
+  QString name;
+  QString description;
+  QString hovertext;
+  QString nameQuery;
+  QString descriptionQuery;
+  QString hovertextQuery;
+};
 
 /*!
  * \class Stimulator
@@ -12,25 +35,9 @@ namespace stimulator {
  * and provides the functionality to retrieve and add data to a database source.
  * \ingroup stimulator
  */
-class Stimulator : StimulatorInterface {
+class Stimulator : QObject {
  public:
   Stimulator();
-  bool searchFor(QString key);
-  QMap<QString, QVariant> getItemData(QString id);
-  QMap<QString, QVariant> getDiagramData();
-  int getPollingRate();
-  bool getBlockVisibility();
-  bool getDiagramTextVisibility();
-  void addBlockData(QMap<QString, QVariant> data);
-  void removeBlockData(QString id);
-  void addDiagramData(QMap<QString, QVariant> data);
-  void removeDiagramData(QString id);
-
- private:
-  int pollingRate;
-  bool hideBlockText;
-  bool hideDiagramText;
-  void recordToQMap(QSqlRecord record, QMap<QString, QVariant> &qMap);
 };
 
 }  // namespace stimulator

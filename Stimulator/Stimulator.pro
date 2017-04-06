@@ -31,7 +31,6 @@ INCLUDEPATH += ../OSLD/
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    stimulatorinterface.cpp \
     stimulator.cpp \
     ../OSLD/block.cpp \
     ../OSLD/connector.cpp \
@@ -44,7 +43,6 @@ SOURCES += main.cpp\
     ../OSLD/subdiagram.cpp
 
 HEADERS  += mainwindow.h \
-    stimulatorinterface.h \
     stimulator.h \
     ../OSLD/block.h \
     ../OSLD/connector.h \
