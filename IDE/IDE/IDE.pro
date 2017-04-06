@@ -1,19 +1,15 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-12-28T15:43:58
+# Project created by QtCreator 2017-04-02T22:56:31
 #
 #-------------------------------------------------
 
-QT       += core gui xml sql
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Stimulator
+TARGET = IDE
 TEMPLATE = app
-
-unix:!mac {
-    LIBS += -Wl, -rpath=\\\$$ORIGIN/libs
-}
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -26,33 +22,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += ../OSLD/
-
+INCLUDEPATH += ../../OSLD/
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    stimulator.cpp \
-    ../OSLD/block.cpp \
-    ../OSLD/connector.cpp \
-    ../OSLD/descriptionfilereader.cpp \
-    ../OSLD/diagramitem.cpp \
-    ../OSLD/gate.cpp \
-    ../OSLD/osldgraphicsengine.cpp \
-    ../OSLD/rootitempathscene.cpp \
-    ../OSLD/subdiagram.cpp
+    ../../OSLD/block.cpp \
+    ../../OSLD/connector.cpp \
+    ../../OSLD/descriptionfilereader.cpp \
+    ../../OSLD/diagramitem.cpp \
+    ../../OSLD/gate.cpp \
+    ../../OSLD/osldgraphicsengine.cpp \
+    ../../OSLD/rootitempathscene.cpp \
+    ../../OSLD/subdiagram.cpp
 
 HEADERS  += mainwindow.h \
-    stimulator.h \
-    ../OSLD/block.h \
-    ../OSLD/connector.h \
-    ../OSLD/descriptionfilereader.h \
-    ../OSLD/diagramitem.h \
-    ../OSLD/gate.h \
-    ../OSLD/osldgraphicsengine.h \
-    ../OSLD/rootitempathscene.h \
-    ../OSLD/subdiagram.h
+    ../../OSLD/block.h \
+    ../../OSLD/connector.h \
+    ../../OSLD/descriptionfilereader.h \
+    ../../OSLD/diagramitem.h \
+    ../../OSLD/gate.h \
+    ../../OSLD/osldgraphicsengine.h \
+    ../../OSLD/rootitempathscene.h \
+    ../../OSLD/subdiagram.h
 
 FORMS    += mainwindow.ui
-
-DISTFILES += \
-    stimulator.sqlite3

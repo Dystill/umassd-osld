@@ -17,7 +17,6 @@ class OSLDisplay : public QMainWindow
 public:
     explicit OSLDisplay(QWidget *parent = 0);
     ~OSLDisplay();
-
 protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -41,6 +40,8 @@ private slots:
 
     void on_actionSwitchOrientation_triggered();
 
+    void on_actionOpenDescriptionFile_triggered();
+
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
@@ -58,6 +59,7 @@ private:
     void zoom(int px);
     void fitDiagramToWindow();
     void addMenuBarActionsToDisplay();
+    void displayDiagram();
 };
 
 #endif // OSLDISPLAY_H

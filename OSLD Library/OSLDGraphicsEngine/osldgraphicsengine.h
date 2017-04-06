@@ -1,6 +1,8 @@
 #ifndef OSLDGRAPHICSENGINE_H
 #define OSLDGRAPHICSENGINE_H
 
+#include "osldgraphicsengine_global.h"
+
 #include <QtCore>
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
@@ -19,10 +21,8 @@ struct OSLDDataObject {
     QMap<QString, StatusTypes> statusMap;    // maps status names to different colors
 };
 
-class OSLDGraphicsEngine : public QGraphicsScene
+class OSLDGRAPHICSENGINESHARED_EXPORT OSLDGraphicsEngine : public QGraphicsScene
 {
-    Q_OBJECT
-
 private:
     QMap<QString, CommonSource> sources;    // maps source ids to their name and type
     QMap<QString, StatusTypes> statuses;    // maps status names to different colors
@@ -99,18 +99,11 @@ public:
     OSLDDataObject readDescriptionFile(QString filePath = "");
     void runGraphics(OSLDDataObject data);
 
-    void readFileAndRunOSLD(QString filePath);
-
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-
-public slots:
-
-signals:
-
 };
 
 #endif // OSLDGRAPHICSENGINE_H

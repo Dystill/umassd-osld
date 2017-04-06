@@ -6,9 +6,14 @@ bool DiagramItem::transparentTitle = false;
  *  CONSTRUCTOR
  */
 
+void DiagramItem::setStatusInfoDataList(const QMap<QString, DiagramItemData> &value)
+{
+    statusInfoDataList = value;
+}
+
 DiagramItem::DiagramItem()
 {
-    
+
 }
 
 DiagramItem::DiagramItem(QString id, QPointF loc)
@@ -26,6 +31,11 @@ DiagramItem::DiagramItem(QString id, QPointF loc)
 QFont DiagramItem::getFont() const
 {
     return font;
+}
+
+void DiagramItem::setFont(const QFont &value)
+{
+    font = value;
 }
 
 void DiagramItem::setTitleSize(int size)
@@ -309,18 +319,6 @@ void DiagramItem::setLineLength(int value)
 
 
 // setters and getters for statusInfoData
-
-void DiagramItem::setStatusInfoDataList(const QMap<QString, DiagramItemData> &value)
-{
-    statusInfoDataList = value;
-}
-
-void DiagramItem::printQueries() const
-{
-    qDebug() << this->currentStatusInfo.titleQuery
-             << this->currentStatusInfo.descriptionQuery
-             << this->currentStatusInfo.hovertextQuery;
-}
 
 // text color
 QColor DiagramItem::getTextColor() const

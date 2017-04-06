@@ -15,9 +15,6 @@ Gate::Gate(QString id, GateType type, QPointF loc)
     this->setDefaultWidth(defaultSize);
     this->setDefaultHeight(defaultSize);
 
-    // set the title fontsize
-    this->setTitleSize(16);
-
     // determine type of block and resize based on that
     if(type == AndGate) {
         hovertext.append(" - AND gate");
@@ -141,7 +138,9 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
         // set the color and font for the text
         pen.setColor(this->getTextColor());
-        painter->setFont(this->getFont());
+        QFont font;
+        font.setPointSize(12);
+        painter->setFont(font);
         painter->setPen(pen);
 
         // draw the text

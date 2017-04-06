@@ -16,8 +16,16 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     this->prepareGraphicsView();
 
     // create an instance of the OSLD graphics engine
-    scene = new OSLDGraphicsEngine(ui->graphicsView);
+    scene = new OSLDGraphicsEngine("", ui->graphicsView);
 
+    this->displayDiagram();
+
+    // starts the application in full screen mode
+    //enterFullScreen();
+    QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
+}
+
+void OSLDisplay::displayDiagram() {
     // set the diagram title and description
     ui->titleLabel->setText(scene->getDiagramName());
 
@@ -29,10 +37,6 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
 
     // resize the scene to fit in the window
     this->fitDiagramToWindow();
-
-    // starts the application in full screen mode
-    //enterFullScreen();
-    QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
 }
 
 OSLDisplay::~OSLDisplay()
@@ -296,4 +300,16 @@ void OSLDisplay::on_actionSwitchOrientation_triggered()
     }
 
     this->fitDiagramToWindow();
+}
+
+void OSLDisplay::on_actionOpenDescriptionFile_triggered()
+{
+    QString filePath = QFileDialog::getOpenFileName(this,
+                                                QObject::tr("Open File"),
+                                                QCoreApplication::applicationDirPath(),
+                                                QObject::tr("XML File(*.xml)"));
+
+    scene->readFileAndRunOSLD(filePath);
+
+    this->displayDiagram();
 }

@@ -1,16 +1,17 @@
 #include "osldgraphicsengine.h"
 
-OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent) :
-    QGraphicsScene(parent)
+OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent)
 {
-    this->readFileAndRunOSLD(filePath);
-}
-
-void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
+    this->setParent(parent);
 
     // process description file and display the graphics
     this->runGraphics(this->readDescriptionFile(filePath));
 
+    // print counts for each Qlist
+    qDebug() << "OSLD blocks" << this->allBlocks.count();
+    qDebug() << "OSLD gates" << this->allGates.count();
+    qDebug() << "OSLD items" << this->allItems.count();
+    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
 }
 
 // read a description file and return the data object
@@ -33,10 +34,6 @@ OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
 
 // use a data object to display the graphics
 void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
-    // remove all currently displayed items
-    this->hideSubdiagramItems(currentSubdiagram);
-    this->rootPathList.clear();
-
     // get all information from description file reader
     this->diagramName = data.name;   // name of full diagram
     this->diagramDescription = data.description;    // description for full diagram
@@ -56,16 +53,6 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
 
     // create a path scene
     rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
-
-    // print counts for each Qlist
-    qDebug() << "OSLD blocks" << this->allBlocks.count();
-    qDebug() << "OSLD gates" << this->allGates.count();
-    qDebug() << "OSLD items" << this->allItems.count();
-    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
-
-    for(int i = 0; i < allItems.count(); i++) {
-        allItems.at(i)->printQueries();
-    }
 }
 
 
@@ -238,20 +225,18 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
 
 void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
 {
-    if(sub != 0) {
-        for(int i = 0; i < sub->getConnectors().count(); i++) {
-            //qDebug() << "Drawing Connector" << i;
-            this->removeItem(sub->getConnectors().at(i));
-        }
-        for(int i = 0; i < sub->getInputItems().count(); i++) {
-            //qDebug() << "Drawing Block" << i;
-            this->removeItem(sub->getInputItems().at(i));
-        }
-        Block *root = sub->getRoot();
-        root->setCurrentlyRoot(false);
-        this->removeItem(root);
-        currentSubdiagram = 0;
+    for(int i = 0; i < sub->getConnectors().count(); i++) {
+        //qDebug() << "Drawing Connector" << i;
+        this->removeItem(sub->getConnectors().at(i));
     }
+    for(int i = 0; i < sub->getInputItems().count(); i++) {
+        //qDebug() << "Drawing Block" << i;
+        this->removeItem(sub->getInputItems().at(i));
+    }
+    Block *root = sub->getRoot();
+    root->setCurrentlyRoot(false);
+    this->removeItem(root);
+    currentSubdiagram = 0;
 }
 
 // create a gate with random information

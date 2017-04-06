@@ -1,19 +1,16 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2016-12-28T15:33:23
+# Project created by QtCreator 2017-03-31T20:08:14
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+TARGET = OSLDGraphicsEngine
+TEMPLATE = lib
+CONFIG += plugin
 
-TARGET = OSLD
-TEMPLATE = app
-
-unix:!mac {
-    LIBS += -Wl,-rpath=\\\$$ORIGIN/libs
-}
+DEFINES += OSLDGRAPHICSENGINE_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -26,26 +23,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-
-SOURCES += main.cpp\
-        osldisplay.cpp \
+SOURCES += osldgraphicsengine.cpp \
     block.cpp \
-    gate.cpp \
-    osldgraphicsengine.cpp \
+    connector.cpp \
     descriptionfilereader.cpp \
     diagramitem.cpp \
-    connector.cpp \
-    subdiagram.cpp \
-    rootitempathscene.cpp
+    gate.cpp \
+    rootitempathscene.cpp \
+    subdiagram.cpp
 
-HEADERS  += osldisplay.h \
+HEADERS += osldgraphicsengine.h\
+        osldgraphicsengine_global.h \
     block.h \
-    gate.h \
-    osldgraphicsengine.h \
+    connector.h \
     descriptionfilereader.h \
     diagramitem.h \
-    connector.h \
-    subdiagram.h \
-    rootitempathscene.h
+    gate.h \
+    rootitempathscene.h \
+    subdiagram.h
 
-FORMS    += osldisplay.ui
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
+
+DISTFILES += \
+    OSLDGraphicsEngine.pro.user
