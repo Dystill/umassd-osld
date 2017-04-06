@@ -6,12 +6,6 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent)
 
     this->readFileAndRunOSLD(filePath);
 
-    // print counts for each Qlist
-    qDebug() << "OSLD blocks" << this->allBlocks.count();
-    qDebug() << "OSLD gates" << this->allGates.count();
-    qDebug() << "OSLD items" << this->allItems.count();
-    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
-
 }
 
 void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
@@ -64,6 +58,16 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
 
     // create a path scene
     rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
+
+    // print counts for each Qlist
+    qDebug() << "OSLD blocks" << this->allBlocks.count();
+    qDebug() << "OSLD gates" << this->allGates.count();
+    qDebug() << "OSLD items" << this->allItems.count();
+    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
+
+    for(int i = 0; i < allItems.count(); i++) {
+        allItems.at(i)->printQueries();
+    }
 }
 
 

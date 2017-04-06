@@ -26,12 +26,17 @@ struct StatusTypes {
 
 // holds information about what this diagram item will be displaying
 struct DiagramItemData {
-    QString defaultStatus = "";
     QColor color = QColor("#888888");
     QColor textColor = QColor(Qt::black);
+
     QString title = "Default item title";
     QString description = "Default item description";
     QString hovertext = "Default item hovertext";
+
+    QString titleQuery;
+    QString descriptionQuery;
+    QString hovertextQuery;
+
     bool italics = false;
     bool bold = false;
     bool underline = false;
@@ -54,7 +59,8 @@ private:
     // data for this item
     QMap<QString, DiagramItemData> statusInfoDataList;  // a map of data to use for each status
     DiagramItemData currentStatusInfo;  // the current info to use for this diagram item
-    QString currentStatus = "No Status Available";  // holds the text of the block's status, which is used to access the datat from the above map
+    QString currentStatus = "";  // holds the text of the block's status, which is used to access the data from the above map
+                                 // initialized with "default_status" in the description file if available
 
     QPointF location = QPointF(0,0);
 
@@ -169,6 +175,8 @@ public:
     void setLocation(const QPointF &value);
 
     void setItemSizing(int w, int h);
+
+    void printQueries() const;
 
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
