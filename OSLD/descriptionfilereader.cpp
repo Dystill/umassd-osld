@@ -6,13 +6,11 @@
 
 DescriptionFileReader::DescriptionFileReader(QString filePath)
 {
-
     // If a path was provided
     if(!filePath.isEmpty()) {
         // read the file with the path
         this->readFile(filePath);
     }
-
 }
 
 DescriptionFileReader::~DescriptionFileReader()

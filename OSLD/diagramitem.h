@@ -26,6 +26,7 @@ struct StatusTypes {
 
 // holds information about what this diagram item will be displaying
 struct DiagramItemData {
+    QString defaultStatus = "";
     QColor color = QColor("#888888");
     QColor textColor = QColor(Qt::black);
     QString title = "Default item title";
@@ -42,6 +43,7 @@ private:
     static bool transparentTitle;
 
     QString itemId;     // the unique identifier for this item. cannot be changed once item is constructed
+    QString referenceId;     // the id used in place of id to get info from stimulator
     QString sourceId;     // the source for this item's information
 
     QList<DiagramItem *> outputItem;    // the item this item outputs to if applicable
@@ -86,10 +88,6 @@ public:
     QRectF boundingRect() const;    // returns the rectagular container for this item
     void setGeometry(const QRectF &rect);   // used by QGraphicsItem to resize and update graphics elements
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;    // gives default sizes for items to use
-
-
-    //static QPointF convertPointToRelative(QPointF loc, DiagramItem *anchor);
-    //static QPointF convertPointToAbsolute(QPointF loc, DiagramItem *anchor);
 
     QPointF inputPoint() const;     // returns the point that input connectors should lead into (the middle of the left edge)
     QPointF outputPoint() const;    // returns the point that output connectors should come out of (the middle of the right edge)
