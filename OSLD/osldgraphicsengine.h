@@ -57,6 +57,8 @@ private:
     QList<Gate *> allGates;                 // a list of all of the gates in the diagram
     QMap<QString, DiagramItem *> allItems;  // maps item ids to their respective objects
 
+    void retrieveStatusData();
+
     RootItemPathScene *rootScene;
     QList<Block *> rootPathList;    // holds the chain of root items to the current subdiagram
 
@@ -127,7 +129,7 @@ public slots:
     void updateStatus(StatusData statusData);
 
 signals:
-    void retrieveStatusData(StatusData statusData);
+    void statusDataQuery(StatusData statusData);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

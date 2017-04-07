@@ -13,9 +13,32 @@ void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
 
 }
 
+// Emits a signal asking for status data for the given item id/reference id.
+void OSLDGraphicsEngine::retrieveStatusData()
+{
+    QMap<QString, bool> queried;
+
+    for (DiagramItem *diagramItem : allItems.values()) {
+        if (!diagramItem->getSourceId().isEmpty()) {
+            QString queriedId;
+            StatusData statusData;
+
+            statusData.id = diagramItem->id();
+            statusData.ref_id = diagramItem->ref_id();
+
+            queriedId = (statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id;
+
+            if (!queried.contains(queriedId)) {
+                emit statusDataQuery(statusData);
+                queried[queriedId] = true;
+            }
+        }
+    }
+}
+
 void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 {
-    if (statusData.ref_id == NULL) {
+    if (statusData.ref_id.isEmpty()) {
 
     } else {
 
@@ -72,8 +95,8 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
     qDebug() << "OSLD items" << this->allItems.count();
     qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
 
-    for (QString e : allItems.keys()) {
-        allItems[e]->update();
+    for (QString key : allItems.keys()) {
+        allItems[key]->update();
     }
 }
 
@@ -334,8 +357,8 @@ Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
 
 void OSLDGraphicsEngine::hideAllItemTitleText(bool b) {
     DiagramItem::setTransparent(b);
-    for (QString e : allItems.keys()) {
-        allItems[e]->update();
+    for (QString key : allItems.keys()) {
+        allItems[key]->update();
     }
     this->update();
 }

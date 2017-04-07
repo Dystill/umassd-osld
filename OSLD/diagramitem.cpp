@@ -235,6 +235,18 @@ void DiagramItem::setItemId(const QString &value)
     itemId = value;
 }
 
+// reference id
+
+QString DiagramItem::ref_id() const
+{
+    return referenceId;
+}
+
+void DiagramItem::setReferenceId(const QString &value)
+{
+    referenceId = value;
+}
+
 // width
 
 int DiagramItem::width() const

@@ -120,6 +120,7 @@ public:
 
     // getters and setters
     QString id() const;
+    QString ref_id() const;
     int width() const;
     void setWidth(int value);
     int height() const;
@@ -182,6 +183,7 @@ protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
 
     void setItemId(const QString &value);
+    void setReferenceId(const QString &value);
 
     void isBlock(bool value);   // set if this item is a block
     void isGate(bool value);    // set if this item is a gate
