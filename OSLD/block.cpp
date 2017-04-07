@@ -8,7 +8,7 @@ Block::Block(QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(id, loc)
 {
     this->setMaxWidth(256);
-    this->setTitleSize(16);
+    this->setTitleSize(20);
 
     this->setTitle(t);
     this->setDescription(desc);

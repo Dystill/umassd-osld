@@ -12,31 +12,19 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     // resize the window to be a certain amount smaller than the screen
     this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
 
-    // set flags and event filters for the graphicsView
-    this->prepareGraphicsView();
-
     // create an instance of the OSLD graphics engine
     scene = new OSLDGraphicsEngine("", ui->graphicsView);
+
+    // set flags and event filters for the graphicsView
+    this->prepareGraphicsView();
 
     this->displayDiagram();
 
     // starts the application in full screen mode
     //enterFullScreen();
     QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
-}
 
-void OSLDisplay::displayDiagram() {
-    // set the diagram title and description
-    ui->titleLabel->setText(scene->getDiagramName());
-
-    // display the scene from the graphics engine in the graphicsView
-    ui->graphicsView->setScene(scene);
-
-    // prepare the root list view
-    this->prepareRootView();
-
-    // resize the scene to fit in the window
-    this->fitDiagramToWindow();
+    connect(scene, SIGNAL(subdiagramChanged()), this, SLOT(fitDiagramToWindow()));
 }
 
 OSLDisplay::~OSLDisplay()
@@ -95,6 +83,20 @@ void OSLDisplay::prepareRootView() {
     ui->rootHGraphicsView->setMaximumHeight(QDesktopWidget().logicalDpiY() * 0.75);
 }
 
+void OSLDisplay::displayDiagram() {
+    // set the diagram title and description
+    ui->titleLabel->setText(scene->getDiagramName());
+
+    // display the scene from the graphics engine in the graphicsView
+    ui->graphicsView->setScene(scene);
+
+    // prepare the root list view
+    this->prepareRootView();
+
+    // resize the scene to fit in the window
+    this->fitDiagramAndRootToWindow();
+}
+
 void OSLDisplay::enterFullScreen()
 {
     QMainWindow::showFullScreen();
@@ -118,13 +120,22 @@ void OSLDisplay::zoom(int px) {
     //qDebug() << "z" << ui->graphicsView->matrix();
 }
 
-void OSLDisplay::fitDiagramToWindow() {
+void OSLDisplay::fitDiagramAndRootToWindow() {
     // update scene rect to fit the items
     scene->setSceneRect(scene->itemsBoundingRect().adjusted(-36, -36, 36, 36));
 
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
     rootScene->fitToView();
+}
+
+void OSLDisplay::fitDiagramToWindow()
+{
+    // update scene rect to fit the items
+    scene->setSceneRect(scene->itemsBoundingRect().adjusted(-36, -36, 36, 36));
+
+    // resize the view contents to match the window size
+    ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 /*
@@ -135,14 +146,14 @@ void OSLDisplay::fitDiagramToWindow() {
 void OSLDisplay::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);    // call parent resize event
-    this->fitDiagramToWindow();
+    this->fitDiagramAndRootToWindow();
 }
 
 void OSLDisplay::showEvent(QShowEvent *event)
 {
     QMainWindow::showEvent(event);
 
-    this->fitDiagramToWindow();
+    this->fitDiagramAndRootToWindow();
 
     rootScene->setSceneRect(rootScene->itemsBoundingRect().adjusted(-8, -8, 8, 8));
     ui->rootVGraphicsView->fitInView(rootScene->sceneRect(), Qt::KeepAspectRatio);
@@ -173,25 +184,29 @@ void OSLDisplay::wheelEvent(QWheelEvent *event)
 {
     // get the angle and distance the wheel was moved
     QPoint pixels = event->angleDelta();
-    int delta = pixels.y(); // get the vertical distance the wheel was moved
+    int yMovement = pixels.y(); // get the vertical distance the wheel was moved
+    int xMovement = pixels.x(); // get the horizontal distance the wheel was moved
 
     // if ctrl was held while moving the mouse wheel
     if(event->modifiers() == Qt::ControlModifier) {
         // zoom in or out depending on the direction the mouse was moved
-        this->zoom(delta);
+        this->zoom(yMovement);
     }
     // else if nothing was held
     else if(event->modifiers() == Qt::NoModifier){
         // scroll the view vertically
         QScrollBar *vBar = ui->graphicsView->verticalScrollBar();
-        vBar->setValue(vBar->value() - (delta / 2));
+        QScrollBar *hBar = ui->graphicsView->horizontalScrollBar();
+
+        vBar->setValue(vBar->value() - (yMovement / 2));
+        hBar->setValue(hBar->value() - (xMovement / 2));
     }
     // else if shift or alt was held
     else if(event->modifiers() == Qt::ShiftModifier ||
             event->modifiers() == Qt::AltModifier) {
         // scroll the view horizontally
         QScrollBar *hBar = ui->graphicsView->horizontalScrollBar();
-        hBar->setValue(hBar->value() - (delta / 2));
+        hBar->setValue(hBar->value() - (xMovement / 2));
     }
 }
 
@@ -254,12 +269,12 @@ void OSLDisplay::on_actionHideButtons_triggered()
         ui->titleLabel->setVisible(true);
         ui->menuBar->setVisible(true);
     }
-    this->fitDiagramToWindow();
+    this->fitDiagramAndRootToWindow();
 }
 
 void OSLDisplay::on_actionFitDiagramToWindow_triggered()
 {
-    this->fitDiagramToWindow();
+    this->fitDiagramAndRootToWindow();
 }
 
 void OSLDisplay::on_actionHideBlockTitles_triggered(bool checked)
@@ -299,7 +314,7 @@ void OSLDisplay::on_actionSwitchOrientation_triggered()
         ui->rootVGraphicsView->show();
     }
 
-    this->fitDiagramToWindow();
+    this->fitDiagramAndRootToWindow();
 }
 
 void OSLDisplay::on_actionOpenDescriptionFile_triggered()

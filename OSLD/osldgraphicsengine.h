@@ -110,6 +110,7 @@ protected:
 public slots:
 
 signals:
+    void subdiagramChanged();
 
 };
 

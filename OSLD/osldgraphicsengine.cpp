@@ -33,6 +33,7 @@ OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
 
 // use a data object to display the graphics
 void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
+
     // remove all currently displayed items
     this->hideSubdiagramItems(currentSubdiagram);
     this->rootPathList.clear();
@@ -62,10 +63,6 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
     qDebug() << "OSLD gates" << this->allGates.count();
     qDebug() << "OSLD items" << this->allItems.count();
     qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
-
-    for(int i = 0; i < allItems.count(); i++) {
-        allItems.at(i)->printQueries();
-    }
 }
 
 
@@ -167,7 +164,8 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         if((pressedItem = dynamic_cast<DiagramItem *>(releaseItem))) {   // store pointer to the item that was clicked
 
-            QMessageBox::information(event->widget(),pressedItem->getTitle(),pressedItem->getDescription());
+            if(!(pressedItem->getDescription().isEmpty()))
+                QMessageBox::information(event->widget(),pressedItem->getTitle(),pressedItem->getDescription());
 
         }
     }
@@ -234,6 +232,9 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
 
     this->addItem(root);
     currentSubdiagram = sub;
+
+    this->update();
+    emit subdiagramChanged();
 }
 
 void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
