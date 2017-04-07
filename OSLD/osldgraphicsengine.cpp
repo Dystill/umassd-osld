@@ -13,6 +13,11 @@ void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
 
 }
 
+void OSLDGraphicsEngine::updateStatus(OSLDDataObject object)
+{
+
+}
+
 // read a description file and return the data object
 OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
     DescriptionFileReader descriptionFile(filePath);        // run the description file reader

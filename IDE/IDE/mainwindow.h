@@ -15,7 +15,9 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+    void printFileToScreen(QString filepath);
     ~MainWindow();
+
 
 private slots:
     void on_actionLoad_Description_File_triggered();
