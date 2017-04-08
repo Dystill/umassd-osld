@@ -33,12 +33,13 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionLoad_Description_File_triggered()
 {
     // open window for user to choose file
-    QString filePath = QFileDialog::getOpenFileName(this,
+    currentFile = QFileDialog::getOpenFileName(this,
                                                 QObject::tr("Open File"),
                                                 QCoreApplication::applicationDirPath(),
                                                 QObject::tr("XML File(*.xml)"));
     // create the file object
     QFile file(filePath);
+
     // open the file
     if(file.open(QIODevice::ReadOnly)) {
         // read the file
@@ -48,7 +49,7 @@ void MainWindow::on_actionLoad_Description_File_triggered()
         ui->textEdit->setText(in.readAll());
 
         // run the graphics
-        this->runOSLD(filePath);
+        this->runOSLD(currentFile);
     }
 }
 
@@ -67,6 +68,8 @@ void MainWindow::on_actionNew_Description_File_triggered()
         osld->readFileAndRunOSLD(":/templates/new.xml");
         ui->graphicsView->setScene(osld);
     }
+
+    currentFile = "";
 }
 
 void MainWindow::runOSLD(QString filePath)
@@ -103,4 +106,14 @@ void MainWindow::on_actionShow_Gate_XML_triggered()
 void MainWindow::on_actionShow_Subdiagram_XML_triggered()
 {
     this->displayCopyTextWindow(":/templates/subdiagram.xml");
+}
+
+void MainWindow::on_saveButton_clicked()
+{
+    if(currentFile.isEmpty()) {
+        // if the file does not exists
+    }
+    else {
+        // if a file needs to be overwritten
+    }
 }

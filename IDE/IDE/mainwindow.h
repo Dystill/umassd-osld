@@ -31,6 +31,8 @@ private slots:
 
     void on_actionShow_Subdiagram_XML_triggered();
 
+    void on_saveButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -38,6 +40,8 @@ private:
 
     int fontSize = 10;
     int tabSize = 3;
+
+    QFile currentFile;
 
     void runOSLD(QString filePath);
 
