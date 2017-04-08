@@ -66,7 +66,7 @@
 			</dimensions>
 			<location>
 				<X>40</X>
-				<Y>354</Y>
+				<Y>88</Y>
 			</location>
 			<status_info default_status="Valid">
 				<data for_status="Valid">
@@ -147,7 +147,7 @@
 			</dimensions>
 			<location>
 				<X>40</X>
-				<Y>88</Y>
+				<Y>354</Y>
 			</location>
 			<status_info default_status="Valid">
 				<data for_status="Valid">
@@ -279,26 +279,26 @@
 	<gates>
 		<gate id="gate_1" ref_id="missileaway" source="source1" type="AND">
 			<dimensions>
-				<width>160</width>
-				<height>160</height>
+				<width>100</width>
+				<height>100</height>
 			</dimensions>
 			<location>
-				<X>408</X>
-				<Y>121</Y>
+				<X>438</X>
+				<Y>205</Y>
 			</location>
-			<status_info default_status="Valid">
+			<status_info default_status="Invalid">
 				<data for_status="Valid">
-					<name query="name">Away Gate - Valid</name>
+					<name query="name"></name>
 					<description query="desc"></description>
 					<hovertext query="hover"></hovertext>
 				</data>
 				<data for_status="Invalid">
-					<name query="name">Away Gate - Invalid</name>
+					<name query="name"></name>
 					<description query="desc"></description>
 					<hovertext query="hover"></hovertext>
 				</data>
 				<data for_status="Unknown">
-					<name query="name">Away Gate - Unknown</name>
+					<name query="name"></name>
 					<description query="desc"></description>
 					<hovertext query="hover"></hovertext>
 				</data>
@@ -306,12 +306,12 @@
 		</gate>
 		<gate id="gate_2" ref_id="interlocksclosed" source="source1" type="OR">
 			<dimensions>
-				<width>160</width>
-				<height>160</height>
+				<width>100</width>
+				<height>100</height>
 			</dimensions>
 			<location>
-				<X>721</X>
-				<Y>42</Y>
+				<X>751</X>
+				<Y>82</Y>
 			</location>
 			<status_info default_status="Invalid">
 				<data for_status="Valid">
@@ -366,7 +366,7 @@
 				<description query="desc"></description>
 				<root_item_location>
 					<X>660</X>
-					<Y>170</Y>
+					<Y>224</Y>
 				</root_item_location>
 			</subdiagram_data>
 			<connections>

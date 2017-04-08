@@ -117,7 +117,6 @@ void OSLDGraphicsEngine::mousePressEvent(QGraphicsSceneMouseEvent *event)
     pressedItem = itemAt(event->scenePos(), QTransform());  // store the item that was clicked down on
     pressPosition = event->scenePos();                      // store the position of the click
     QGraphicsScene::mousePressEvent(event);
-    update();
 }
 
 void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -176,7 +175,6 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     QGraphicsScene::mouseReleaseEvent(event);
-    update();
 }
 
 void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
@@ -191,11 +189,11 @@ void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
             rootBlockListIndex = i;
         }
     }
-
     // if not found
     if(rootBlockListIndex == -1) {
         rootPathList.append(rootBlock); // add new block to the end
     }
+
     // else if found
     else {
         // start from end of rootPathList and remove blocks up to the saved index
@@ -206,7 +204,6 @@ void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
 
     // draw rootBlock's subdiagram
     this->drawSubdiagramItems(rootBlock->getChildSubdiagram());
-
     rootScene->setList(rootPathList);
 }
 
@@ -220,9 +217,10 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
     }
 
     // draw all of the items except for the rootBlock
+    DiagramItem *item;
     for(int i = 0; i < sub->getInputItems().count(); i++) {
         //qDebug() << "Drawing Block" << i;
-        DiagramItem *item = sub->getInputItems().at(i);
+        item = sub->getInputItems().at(i);
         item->setPos(item->getLocation());
         this->addItem(item);
     }

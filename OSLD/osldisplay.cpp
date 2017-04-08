@@ -73,14 +73,6 @@ void OSLDisplay::prepareRootView() {
 
     // send the vertical root view to the root scene
     this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
-
-    // set the width for the vertical graphics view
-    ui->rootVGraphicsView->setMinimumWidth(QDesktopWidget().logicalDpiX() * rootViewWidth);
-    ui->rootVGraphicsView->setMaximumWidth(QDesktopWidget().logicalDpiX() * rootViewWidth);
-
-    // set the height for the horizontal graphics view
-    ui->rootHGraphicsView->setMinimumHeight(QDesktopWidget().logicalDpiY() * 0.75);
-    ui->rootHGraphicsView->setMaximumHeight(QDesktopWidget().logicalDpiY() * 0.75);
 }
 
 void OSLDisplay::displayDiagram() {
@@ -136,6 +128,8 @@ void OSLDisplay::fitDiagramToWindow()
 
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+
+    qDebug() << "testing fit";
 }
 
 /*
@@ -146,7 +140,18 @@ void OSLDisplay::fitDiagramToWindow()
 void OSLDisplay::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);    // call parent resize event
-    this->fitDiagramAndRootToWindow();
+
+    // set the width for the vertical graphics view
+    ui->rootVGraphicsView->setMinimumWidth(this->size().width() * 0.20);
+    ui->rootVGraphicsView->setMaximumWidth(this->size().width() * 0.20);
+
+    // set the height for the horizontal graphics view
+    ui->rootHGraphicsView->setMinimumHeight(this->size().height() * 0.15);
+    ui->rootHGraphicsView->setMaximumHeight(this->size().height() * 0.15);
+
+    rootScene->fitToView();
+
+    // this->fitDiagramAndRootToWindow();
 }
 
 void OSLDisplay::showEvent(QShowEvent *event)

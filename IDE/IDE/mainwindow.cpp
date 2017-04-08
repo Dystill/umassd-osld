@@ -14,9 +14,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     font.setFixedPitch(true);
-    font.setPointSize(12);
+    font.setPointSize(8);
 
     ui->textEdit->setFont(font);
+    ui->textEdit->setUndoRedoEnabled(true);
+    ui->textEdit->setWordWrapMode(QTextOption::NoWrap);
+
+    ui->textEdit->setTabStopWidth(3 * ui->textEdit->fontMetrics().width(' '));
+
 }
 
 MainWindow::~MainWindow()
@@ -38,11 +43,8 @@ void MainWindow::on_actionLoad_Description_File_triggered()
     QTextStream in(&file);
     ui->textEdit->setText(in.readAll());
     ui->textEdit->selectAll();
-    ui->textEdit->setFontPointSize(12);
     //ui->textEdit->setTextCursor();
 
     osld->readFileAndRunOSLD(filePath);
     ui->graphicsView->setScene(osld);
-
-
 }
