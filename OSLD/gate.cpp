@@ -111,7 +111,7 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     //// Drawing the Gate
     // create the gate shape
-    QPainterPath *gatePath = 0;
+    QPainterPath gatePath;
     if(this->gateType == AndGate) {
         gatePath = this->drawANDGatePath(rect.width() - 2*this->getLineLength(), rect.height());
     }
@@ -123,10 +123,10 @@ void Gate::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     }
 
     // move the gate shape to the center
-    gatePath->translate(this->getCircleRadius() + this->getLineLength(), 0);
+    gatePath.translate(this->getCircleRadius() + this->getLineLength(), 0);
 
     // draw the gate shape
-    painter->drawPath(*gatePath);
+    painter->drawPath(gatePath);
 
     // draw circles for the connector entry points
     painter->drawEllipse(QPointF(rect.left(), rect.center().y()), this->getCircleRadius(), this->getCircleRadius());
@@ -166,7 +166,7 @@ void Gate::setGateType(QString type)
     }
 }
 
-QPainterPath *Gate::drawANDGatePath(int width, int height)
+QPainterPath Gate::drawANDGatePath(int width, int height)
 {
     QPointF topLeft(0, 0);
     QPointF bottomLeft(0, height);
@@ -174,29 +174,30 @@ QPainterPath *Gate::drawANDGatePath(int width, int height)
     QPointF middleTop(width/2, 0);
     QPointF middleBottom(width/2, height);
 
-    QPainterPath *path = new QPainterPath(topLeft);
+    QPainterPath path;
+    path.moveTo(topLeft);
 
     // top edge
-    path->lineTo(middleTop);
+    path.lineTo(middleTop);
 
     // top-right curve
-    path->cubicTo(QPointF(width*0.75, 0),
+    path.cubicTo(QPointF(width*0.75, 0),
                   QPointF(width, height*0.25), right);
 
     // bottom-right curve
-    path->cubicTo(QPointF(width, height*0.75),
+    path.cubicTo(QPointF(width, height*0.75),
                   QPointF(width*0.75, height), middleBottom);
 
     // bottom edge
-    path->lineTo(bottomLeft);
+    path.lineTo(bottomLeft);
 
     // left edge
-    path->lineTo(topLeft);
+    path.lineTo(topLeft);
 
     return path;
 }
 
-QPainterPath *Gate::drawORGatePath(int width, int height)
+QPainterPath Gate::drawORGatePath(int width, int height)
 {
     QPointF topLeft(0, 0);
     QPointF bottomLeft(0, height);
@@ -206,28 +207,29 @@ QPainterPath *Gate::drawORGatePath(int width, int height)
     this->setInputPointOffset(QPointF((this->width() / 4) + 16, 0));
     this->updateConnectors();
 
-    QPainterPath *path = new QPainterPath(topLeft);
+    QPainterPath path;
+    path.moveTo(topLeft);
 
     // top curve
-    path->cubicTo(QPointF(width*0.25, 0),
+    path.cubicTo(QPointF(width*0.25, 0),
                   QPointF(width*0.75, 0), right);
 
     // bottom curve
-    path->cubicTo(QPointF(width*0.75, height),
+    path.cubicTo(QPointF(width*0.75, height),
                   QPointF(width*0.25, height), bottomLeft);
 
     // inner-bottom quarter curve
-    path->cubicTo(QPointF(width*0.125, height*0.90),
+    path.cubicTo(QPointF(width*0.125, height*0.90),
                   QPointF(width*0.25, height*0.725), innerCurveMiddle);
 
     // inner-top quarter curve
-    path->cubicTo(QPointF(width*0.25, height*0.275),
+    path.cubicTo(QPointF(width*0.25, height*0.275),
                   QPointF(width*0.125, height*0.10), topLeft);
 
     return path;
 }
 
-QPainterPath *Gate::drawNOTGatePath(int width, int height)
+QPainterPath Gate::drawNOTGatePath(int width, int height)
 {
     int gateHeight = height;      // the height of the gate
     int dotRadius = width / 6;         // the radius for the circle
@@ -239,15 +241,16 @@ QPainterPath *Gate::drawNOTGatePath(int width, int height)
     QPointF right(triangleWidth, (height / 2));
 
     // create a painter path object to store the shape
-    QPainterPath *path = new QPainterPath(topLeft);
+    QPainterPath path;
+    path.moveTo(topLeft);
 
     // create lines for the triangle
-    path->lineTo(right);
-    path->lineTo(bottomLeft);
-    path->lineTo(topLeft);
+    path.lineTo(right);
+    path.lineTo(bottomLeft);
+    path.lineTo(topLeft);
 
     // create the circle dot at the tip
-    path->addEllipse(QPointF(right.x() + dotRadius, height / 2),
+    path.addEllipse(QPointF(right.x() + dotRadius, height / 2),
                      dotRadius, dotRadius);
 
     return path;
