@@ -46,3 +46,6 @@ HEADERS  += mainwindow.h \
     ../../OSLD/subdiagram.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    xmlresources.qrc

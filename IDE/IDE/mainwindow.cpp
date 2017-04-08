@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->textEdit->setTabStopWidth(3 * ui->textEdit->fontMetrics().width(' '));
 
+    this->setWindowTitle("IDE Description File Maker");
 }
 
 MainWindow::~MainWindow()
@@ -36,15 +37,35 @@ void MainWindow::on_actionLoad_Description_File_triggered()
                                                 QCoreApplication::applicationDirPath(),
                                                 QObject::tr("XML File(*.xml)"));
     QFile file(filePath);
-    if(!file.open(QIODevice::ReadOnly))
-       {
+    if(!file.open(QIODevice::ReadOnly)) {
         qDebug()<< "Error" <<endl;
-       }
+    }
     QTextStream in(&file);
     ui->textEdit->setText(in.readAll());
     ui->textEdit->selectAll();
-    //ui->textEdit->setTextCursor();
 
     osld->readFileAndRunOSLD(filePath);
+
+    if(osld->getXmlError() == QXmlStreamReader::NoError) {
+        ui->graphicsView->setScene(osld);
+    }
+    else {
+        qDebug() << "IDE" << osld->getXmlErrorString();
+    }
+}
+
+void MainWindow::on_actionNew_Description_File_triggered()
+{
+    QFile file(":/templates/new.xml");
+
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug()<< "Error" << endl;
+    }
+
+    QTextStream in(&file);
+
+    ui->textEdit->setText(in.readAll());
+
+    osld->readFileAndRunOSLD(":/templates/new.xml");
     ui->graphicsView->setScene(osld);
 }

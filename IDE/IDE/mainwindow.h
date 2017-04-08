@@ -22,6 +22,8 @@ public:
 private slots:
     void on_actionLoad_Description_File_triggered();
 
+    void on_actionNew_Description_File_triggered();
+
 private:
     Ui::MainWindow *ui;
 

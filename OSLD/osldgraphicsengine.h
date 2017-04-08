@@ -56,6 +56,10 @@ private:
     Block *createRandomBlock(QPointF pos);    // get information from the description file reader
     Block *buildBlock(QString id, QPointF position, QMap<QString, DiagramItemData> data);    // passes data into a block
 
+    // stores any caught errors after reading a description file
+    QXmlStreamReader::Error xmlError;
+    QString xmlErrorString;
+
 
 public:
     OSLDGraphicsEngine(QString filePath = "", QWidget *parent = 0);
@@ -101,6 +105,10 @@ public:
 
     void readFileAndRunOSLD(QString filePath);
 
+
+    QXmlStreamReader::Error getXmlError() const;
+
+    QString getXmlErrorString() const;
 
 public slots:
     void updateStatus(OSLDDataObject object);

@@ -22,16 +22,22 @@ void OSLDGraphicsEngine::updateStatus(OSLDDataObject object)
 OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
     DescriptionFileReader descriptionFile(filePath);        // run the description file reader
 
-    OSLDDataObject data;
-    data.name = descriptionFile.getDiagramName();           // obtain name of full diagram
-    data.description = descriptionFile.getDescription();    // obtain description for full diagram
-    data.blocks = descriptionFile.getAllBlocks();           // obtain QList of all the blocks in the diagram
-    data.gates = descriptionFile.getAllGates();             // obtain QList of all the gates in the diagram
-    data.blocksAndGates = descriptionFile.getAllItems();    // obtain QList containing both blocks and gates (may not be necessary?)
-    data.subdiagrams = descriptionFile.getAllSubdiagrams(); // obtain QList of all Subdiagrams
+    // save errors
+    this->xmlError = descriptionFile.error();
+    this->xmlErrorString = descriptionFile.errorString() + " Line number " + QString::number(descriptionFile.lineNumber());
 
-    data.sourceMap = descriptionFile.getSources();   // QMap of source:CommonSource pairs
-    data.statusMap = descriptionFile.getStatuses(); // QMap of status:StatusTypes pairs
+    OSLDDataObject data;
+    if(this->xmlError == QXmlStreamReader::NoError) {
+        data.name = descriptionFile.getDiagramName();           // obtain name of full diagram
+        data.description = descriptionFile.getDescription();    // obtain description for full diagram
+        data.blocks = descriptionFile.getAllBlocks();           // obtain QList of all the blocks in the diagram
+        data.gates = descriptionFile.getAllGates();             // obtain QList of all the gates in the diagram
+        data.blocksAndGates = descriptionFile.getAllItems();    // obtain QList containing both blocks and gates (may not be necessary?)
+        data.subdiagrams = descriptionFile.getAllSubdiagrams(); // obtain QList of all Subdiagrams
+
+        data.sourceMap = descriptionFile.getSources();   // QMap of source:CommonSource pairs
+        data.statusMap = descriptionFile.getStatuses(); // QMap of status:StatusTypes pairs
+    }
 
     return data;
 }
@@ -489,6 +495,16 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, QMap<QString
     // qDebug() << data[status].textColor;
 
     return block;
+}
+
+QString OSLDGraphicsEngine::getXmlErrorString() const
+{
+    return xmlErrorString;
+}
+
+QXmlStreamReader::Error OSLDGraphicsEngine::getXmlError() const
+{
+    return xmlError;
 }
 
 Gate *OSLDGraphicsEngine::createRandomGate(QPointF pos) {
