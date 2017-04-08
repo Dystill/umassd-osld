@@ -41,7 +41,7 @@ private:
     int fontSize = 10;
     int tabSize = 3;
 
-    QFile currentFile;
+    QString currentFile;
 
     void runOSLD(QString filePath);
 
