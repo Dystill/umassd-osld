@@ -14,13 +14,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     font.setFixedPitch(true);
-    font.setPointSize(8);
+    font.setPointSize(fontSize);
 
     ui->textEdit->setFont(font);
     ui->textEdit->setUndoRedoEnabled(true);
     ui->textEdit->setWordWrapMode(QTextOption::NoWrap);
 
-    ui->textEdit->setTabStopWidth(3 * ui->textEdit->fontMetrics().width(' '));
+    ui->textEdit->setTabStopWidth(tabSize * ui->textEdit->fontMetrics().width(' '));
 
     this->setWindowTitle("IDE Description File Maker");
 }
@@ -32,25 +32,23 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionLoad_Description_File_triggered()
 {
+    // open window for user to choose file
     QString filePath = QFileDialog::getOpenFileName(this,
                                                 QObject::tr("Open File"),
                                                 QCoreApplication::applicationDirPath(),
                                                 QObject::tr("XML File(*.xml)"));
+    // create the file object
     QFile file(filePath);
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug()<< "Error" <<endl;
-    }
-    QTextStream in(&file);
-    ui->textEdit->setText(in.readAll());
-    ui->textEdit->selectAll();
+    // open the file
+    if(file.open(QIODevice::ReadOnly)) {
+        // read the file
+        QTextStream in(&file);
 
-    osld->readFileAndRunOSLD(filePath);
+        // add text to textedit window
+        ui->textEdit->setText(in.readAll());
 
-    if(osld->getXmlError() == QXmlStreamReader::NoError) {
-        ui->graphicsView->setScene(osld);
-    }
-    else {
-        qDebug() << "IDE" << osld->getXmlErrorString();
+        // run the graphics
+        this->runOSLD(filePath);
     }
 }
 
@@ -58,14 +56,51 @@ void MainWindow::on_actionNew_Description_File_triggered()
 {
     QFile file(":/templates/new.xml");
 
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug()<< "Error" << endl;
+    if(file.open(QIODevice::ReadOnly)) {
+        // read the file
+        QTextStream in(&file);
+
+        // add text to textedit window
+        ui->textEdit->setText(in.readAll());
+
+        // run the graphics
+        osld->readFileAndRunOSLD(":/templates/new.xml");
+        ui->graphicsView->setScene(osld);
     }
+}
 
-    QTextStream in(&file);
+void MainWindow::runOSLD(QString filePath)
+{
+    // read and run the file in the specified path
+    osld->readFileAndRunOSLD(filePath);
 
-    ui->textEdit->setText(in.readAll());
+    // check for any errors
+    if(osld->getXmlError() == QXmlStreamReader::NoError) {
+        ui->graphicsView->setScene(osld);   // display graphics if no errors
+    }
+    else {
+        // notify about error if there is one
+        QMessageBox::warning(this,"Error",osld->getXmlErrorString());
+    }
+}
 
-    osld->readFileAndRunOSLD(":/templates/new.xml");
-    ui->graphicsView->setScene(osld);
+void MainWindow::displayCopyTextWindow(QString filePath)
+{
+    CopyDialog *dialog = new CopyDialog(filePath, this);
+    dialog->exec();
+}
+
+void MainWindow::on_actionShow_Block_XML_triggered()
+{
+    this->displayCopyTextWindow(":/templates/block.xml");
+}
+
+void MainWindow::on_actionShow_Gate_XML_triggered()
+{
+    this->displayCopyTextWindow(":/templates/gate.xml");
+}
+
+void MainWindow::on_actionShow_Subdiagram_XML_triggered()
+{
+    this->displayCopyTextWindow(":/templates/subdiagram.xml");
 }

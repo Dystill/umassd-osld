@@ -1,34 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<diagram name="Missile Away Qualifiers">
-	<meta>
-		<description>
-			<!-- the description text for the main diagram -->
-		</description>
-		<common_source>
-			<source id="--source id here--">
-				<name><!-- source name here --></name>
-				<type><!-- source type information here --></type>
-			</source>
-			<source>
-			</source>
-		</common_source>
-		<status_types>
-			<status id="--status id here--">
-				<color><!-- color to use for an item's background in hex notation --></color>
-				<textcolor><!-- color to use for an item's text in hex notation --></textcolor>
-				<bold>false</bold>
-				<italics>false</italics>
-				<underline>false</underline>
-			</status>
-		</status_types>
-	</meta>
-	<blocks>
-		<!-- place new blocks here -->
-	</blocks>
-	<gates>
-		<!-- place new gates here -->
-	</gates>
-	<subdiagrams>
-		<!-- place new subdiagrams here -->
-	</subdiagrams>
-</diagram>
+		<subdiagram root_item_id="" main_diagram="">
+			<subdiagram_data  source="">
+				<name query=""></name>
+				<description query=""></description>
+				<root_item_location>
+					<X></X>
+					<Y></Y>
+				</root_item_location>
+			</subdiagram_data>
+			<connections>
+				<connect>
+					<output></output>
+					<input></input>
+				</connect>
+			</connections>
+		</subdiagram>

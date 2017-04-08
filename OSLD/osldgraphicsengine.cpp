@@ -24,7 +24,7 @@ OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
 
     // save errors
     this->xmlError = descriptionFile.error();
-    this->xmlErrorString = descriptionFile.errorString() + " Line number " + QString::number(descriptionFile.lineNumber());
+    this->xmlErrorString = descriptionFile.errorString() + "\nLine number " + QString::number(descriptionFile.lineNumber()) + ".";
 
     OSLDDataObject data;
     if(this->xmlError == QXmlStreamReader::NoError) {

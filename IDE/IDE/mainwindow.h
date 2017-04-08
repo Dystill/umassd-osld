@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFontDatabase>
 #include <osldgraphicsengine.h>
+#include <copydialog.h>
 
 namespace Ui {
 class MainWindow;
@@ -24,10 +25,25 @@ private slots:
 
     void on_actionNew_Description_File_triggered();
 
+    void on_actionShow_Block_XML_triggered();
+
+    void on_actionShow_Gate_XML_triggered();
+
+    void on_actionShow_Subdiagram_XML_triggered();
+
 private:
     Ui::MainWindow *ui;
 
     OSLDGraphicsEngine *osld;
+
+    int fontSize = 10;
+    int tabSize = 3;
+
+    void runOSLD(QString filePath);
+
+    void displayCopyTextWindow(QString filePath);
+
+
 };
 
 #endif // MAINWINDOW_H
