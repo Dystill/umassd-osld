@@ -33,6 +33,9 @@ private slots:
 
     void on_saveButton_clicked();
 
+    void fitDiagramToWindow();
+
+    void resizeEvent(QResizeEvent *event);
 private:
     Ui::MainWindow *ui;
 
@@ -46,7 +49,6 @@ private:
     void runOSLD(QString filePath);
 
     void displayCopyTextWindow(QString filePath);
-
 
 };
 
