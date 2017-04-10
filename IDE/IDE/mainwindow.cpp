@@ -109,6 +109,7 @@ void MainWindow::displayCopyTextWindow(QString filePath)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
+    QMainWindow::resizeEvent(event);
     this->fitDiagramToWindow();
 }
 
