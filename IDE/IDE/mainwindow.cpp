@@ -38,7 +38,7 @@ void MainWindow::on_actionLoad_Description_File_triggered()
                                                 QCoreApplication::applicationDirPath(),
                                                 QObject::tr("XML File(*.xml)"));
     // create the file object
-    QFile file(filePath);
+    QFile file(currentFile);
 
     // open the file
     if(file.open(QIODevice::ReadOnly)) {
