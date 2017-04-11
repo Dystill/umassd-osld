@@ -25,6 +25,8 @@ private slots:
 
     void on_actionNew_Description_File_triggered();
 
+    void on_actionSave_Description_File_As_triggered();
+
     void on_actionShow_Block_XML_triggered();
 
     void on_actionShow_Gate_XML_triggered();
@@ -32,6 +34,12 @@ private slots:
     void on_actionShow_Subdiagram_XML_triggered();
 
     void on_saveButton_clicked();
+
+    void on_updateButton_clicked();
+
+    void on_actionShow_Template_triggered();
+
+    void on_actionShow_Example_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -42,6 +50,7 @@ private:
     int tabSize = 3;
 
     QString currentFile;
+    QString directory;
 
     void runOSLD(QString filePath);
 

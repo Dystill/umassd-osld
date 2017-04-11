@@ -36,9 +36,11 @@ void MainWindow::on_actionLoad_Description_File_triggered()
     currentFile = QFileDialog::getOpenFileName(this,
                                                 QObject::tr("Open File"),
                                                 QCoreApplication::applicationDirPath(),
-                                                QObject::tr("XML File(*.xml)"));
+
+                                               QObject::tr("XML File(*.xml)"));
+
     // create the file object
-    QFile file(filePath);
+    QFile file(currentFile);
 
     // open the file
     if(file.open(QIODevice::ReadOnly)) {
@@ -108,12 +110,57 @@ void MainWindow::on_actionShow_Subdiagram_XML_triggered()
     this->displayCopyTextWindow(":/templates/subdiagram.xml");
 }
 
+
+void MainWindow::on_actionShow_Example_triggered()
+{
+    this->displayCopyTextWindow(":/templates/example.xml");
+}
+
+void MainWindow::on_actionShow_Template_triggered()
+{
+    this->displayCopyTextWindow(":templates/new.xml");
+}
+
+void MainWindow::on_updateButton_clicked()
+{
+    QFile file(currentFile);
+
+    // open the file
+    if(file.open(QIODevice::ReadOnly)) {
+        // read the file
+        QTextStream in(&file);
+
+        // add text to textedit window
+        ui->textEdit->setText(in.readAll());
+
+        // run the graphics
+        this->runOSLD(currentFile);
+    }
+}
+
+void MainWindow::on_actionSave_Description_File_As_triggered()
+{
+   // QString fileName = QFileDialog::getSaveFileName(this,"IDE - Save as",)
+}
+
 void MainWindow::on_saveButton_clicked()
 {
-    if(currentFile.isEmpty()) {
+
+    QFile file(currentFile);
+    if(file.open(QFile::WriteOnly))
+    {
+        file.write(ui->textEdit->toPlainText().toUtf8());
+    }
+    else
+    {
+        //QMessageBox::warning(this,"mainwindow",tr("Cannot write file %1.\nError: %2"))
+         //       .arg(currentFile)
+         //       .arg(file.errorString());
+    }
+    /*if(currentFile.isEmpty()) {
         // if the file does not exists
     }
     else {
         // if a file needs to be overwritten
-    }
+    }*/
 }

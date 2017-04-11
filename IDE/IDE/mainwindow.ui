@@ -20,7 +20,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayoutText">
         <item>
          <widget class="QTextEdit" name="textEdit">
@@ -55,7 +55,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayoutGraphics">
         <item>
          <widget class="QGraphicsView" name="graphicsView"/>
@@ -96,7 +96,7 @@
      <x>0</x>
      <y>0</y>
      <width>895</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -180,6 +180,11 @@
   <action name="actionActionSave_Description_File">
    <property name="text">
     <string>actionSave_Description_File</string>
+   </property>
+  </action>
+  <action name="actionSave_Description_File_As">
+   <property name="text">
+    <string>Save Description File As...</string>
    </property>
   </action>
  </widget>
