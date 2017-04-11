@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->textEdit->setTabStopWidth(tabSize * ui->textEdit->fontMetrics().width(' '));
 
     this->setWindowTitle("IDE Description File Maker");
+
+    connect(osld, SIGNAL(subdiagramChanged()), this, SLOT(fitDiagramToWindow()));
 }
 
 MainWindow::~MainWindow()
@@ -82,6 +84,7 @@ void MainWindow::runOSLD(QString filePath)
     // check for any errors
     if(osld->getXmlError() == QXmlStreamReader::NoError) {
         ui->graphicsView->setScene(osld);   // display graphics if no errors
+        this->fitDiagramToWindow();
     }
     else {
         // notify about error if there is one
@@ -89,10 +92,27 @@ void MainWindow::runOSLD(QString filePath)
     }
 }
 
+void MainWindow::fitDiagramToWindow()
+{
+    // update scene rect to fit the items
+    osld->setSceneRect(osld->itemsBoundingRect().adjusted(-36, -36, 36, 36));
+
+    // resize the view contents to match the window size
+    ui->graphicsView->fitInView(osld->sceneRect(), Qt::KeepAspectRatio);
+
+    qDebug() << "testing fit";
+}
+
 void MainWindow::displayCopyTextWindow(QString filePath)
 {
     CopyDialog *dialog = new CopyDialog(filePath, this);
     dialog->exec();
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+    this->fitDiagramToWindow();
 }
 
 void MainWindow::on_actionShow_Block_XML_triggered()
