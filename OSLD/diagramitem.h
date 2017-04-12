@@ -166,9 +166,12 @@ public:
     QPointF getInputPointOffset() const;
     void setInputPointOffset(const QPointF &value);
 
+    DiagramItemData getStatusInfo();
+
     void setStatusInfoDataList(const QMap<QString, DiagramItemData> &value);
 
     void updateStatusInfo();
+    void updateStatusInfo(DiagramItemData statusInfo);
 
     QString getSourceId() const;
     void setSourceId(const QString &value);

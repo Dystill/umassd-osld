@@ -32,10 +32,10 @@ struct StatusData {
     QString id;
     QString ref_id;
     QString status;
-    QString name;
+    QString title;
     QString description;
     QString hovertext;
-    QString nameQuery;
+    QString titleQuery;
     QString descriptionQuery;
     QString hovertextQuery;
 };

@@ -386,6 +386,10 @@ void DiagramItem::setStatus(const QString &value, QMap<QString, StatusTypes> col
     this->updateStatusInfo();
 }
 
+DiagramItemData DiagramItem::getStatusInfo() {
+    return currentStatusInfo;
+}
+
 void DiagramItem::updateStatusInfo() {
     this->setTitle(currentStatusInfo.title);
     this->setDescription(currentStatusInfo.description);
@@ -394,6 +398,10 @@ void DiagramItem::updateStatusInfo() {
     this->setItalics(currentStatusInfo.italics);
     this->setUnderline(currentStatusInfo.underline);
     this->setBold(currentStatusInfo.bold);
+}
+
+void DiagramItem::updateStatusInfo(DiagramItemData statusInfo) {
+    currentStatusInfo = statusInfo;
 }
 
 QColor DiagramItem::getColor() const

@@ -38,11 +38,22 @@ void OSLDGraphicsEngine::retrieveStatusData()
 
 void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 {
-    if (statusData.ref_id.isEmpty()) {
+    DiagramItem *item =
+            allItems[(statusData.ref_id.isEmpty()) ? statusData.id
+                                                   : statusData.ref_id];
+    DiagramItemData statusInfo = item->getStatusInfo();
 
-    } else {
+    // Update status info from recieved data.
+    statusInfo.title = statusData.title;
+    statusInfo.titleQuery = statusData.titleQuery;
+    statusInfo.description = statusData.description;
+    statusInfo.descriptionQuery = statusData.descriptionQuery;
+    statusInfo.hovertext = statusData.hovertext;
+    statusInfo.hovertextQuery = statusData.hovertextQuery;
 
-    }
+    // Pass updated data to item.
+    item->setStatus(statusData.status, statuses);
+    item->updateStatusInfo(statusInfo);
 }
 
 // read a description file and return the data object
