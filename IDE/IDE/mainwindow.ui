@@ -39,17 +39,10 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>40</width>
-              <height>20</height>
+              <height>30</height>
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="saveButton">
-            <property name="text">
-             <string>Save</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>
@@ -105,6 +98,8 @@
     </property>
     <addaction name="actionNew_Description_File"/>
     <addaction name="actionLoad_Description_File"/>
+    <addaction name="actionSave_Description_File"/>
+    <addaction name="actionSave_Description_File_As"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -182,9 +177,20 @@
     <string>actionSave_Description_File</string>
    </property>
   </action>
+  <action name="actionSave_Description_File">
+   <property name="text">
+    <string>Save Description File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
   <action name="actionSave_Description_File_As">
    <property name="text">
     <string>Save Description File As...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save The Current Description File Under A Different Name</string>
    </property>
   </action>
  </widget>

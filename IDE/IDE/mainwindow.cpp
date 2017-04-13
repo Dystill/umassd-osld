@@ -59,7 +59,12 @@ void MainWindow::on_actionLoad_Description_File_triggered()
 
 void MainWindow::on_actionNew_Description_File_triggered()
 {
-    QFile file(":/templates/new.xml");
+    currentFile = QFileDialog::getSaveFileName(this,
+                                               tr("New File"),
+                                               "/templates/new.xml",
+                                               tr("XML File (*.xml)"));
+
+    QFile file(currentFile);
 
     if(file.open(QIODevice::ReadOnly)) {
         // read the file
@@ -73,7 +78,7 @@ void MainWindow::on_actionNew_Description_File_triggered()
         ui->graphicsView->setScene(osld);
     }
 
-    currentFile = "";
+
 }
 
 void MainWindow::runOSLD(QString filePath)
@@ -109,10 +114,23 @@ void MainWindow::displayCopyTextWindow(QString filePath)
     dialog->exec();
 }
 
+
+
+
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
     this->fitDiagramToWindow();
+}
+
+QString MainWindow::getCurrentFile() const
+{
+    return currentFile;
+}
+
+void MainWindow::setCurrentFile(const QString &value)
+{
+    currentFile = value;
 }
 
 void MainWindow::on_actionShow_Block_XML_triggered()
@@ -143,6 +161,38 @@ void MainWindow::on_actionShow_Template_triggered()
 
 void MainWindow::on_updateButton_clicked()
 {
+
+}
+
+void MainWindow::on_actionSave_Description_File_As_triggered()
+{
+    currentFile = QFileDialog::getSaveFileName(this,
+                                               tr("Save File As"),
+                                               "/templates/new.xml",
+                                               tr("XML File (*.xml)"));
+
+    QFile file(currentFile);
+    file.write(ui->textEdit->toPlainText().toUtf8());
+}
+
+void MainWindow::on_saveButton_clicked()
+{
+
+}
+
+void MainWindow::on_updateButton_pressed()
+{
+    QFile file(currentFile);
+
+    // open the file
+    if(file.open(QFile::WriteOnly))
+    {
+        file.write(ui->textEdit->toPlainText().toUtf8());
+    }
+}
+
+void MainWindow::on_updateButton_released()
+{
     QFile file(currentFile);
 
     // open the file
@@ -158,29 +208,13 @@ void MainWindow::on_updateButton_clicked()
     }
 }
 
-void MainWindow::on_actionSave_Description_File_As_triggered()
+void MainWindow::on_actionSave_Description_File_triggered()
 {
-   // QString fileName = QFileDialog::getSaveFileName(this,"IDE - Save as",)
-}
-
-void MainWindow::on_saveButton_clicked()
-{
-
     QFile file(currentFile);
+
+    // open the file
     if(file.open(QFile::WriteOnly))
     {
         file.write(ui->textEdit->toPlainText().toUtf8());
     }
-    else
-    {
-        //QMessageBox::warning(this,"mainwindow",tr("Cannot write file %1.\nError: %2"))
-         //       .arg(currentFile)
-         //       .arg(file.errorString());
-    }
-    /*if(currentFile.isEmpty()) {
-        // if the file does not exists
-    }
-    else {
-        // if a file needs to be overwritten
-    }*/
 }

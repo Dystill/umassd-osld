@@ -20,6 +20,9 @@ public:
     ~MainWindow();
 
 
+    QString getCurrentFile() const;
+    void setCurrentFile(const QString &value);
+
 private slots:
     void on_actionLoad_Description_File_triggered();
 
@@ -47,6 +50,12 @@ private slots:
 
     void resizeEvent(QResizeEvent *event);
 
+    void on_updateButton_pressed();
+
+    void on_updateButton_released();
+
+    void on_actionSave_Description_File_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -61,6 +70,7 @@ private:
     void runOSLD(QString filePath);
 
     void displayCopyTextWindow(QString filePath);
+    QString displayNewFileWindow();
 
 };
 
