@@ -43,13 +43,13 @@ void OSLDGraphicsEngine::updateStatus(StatusData statusData)
                                                    : statusData.ref_id];
     DiagramItemData statusInfo = item->getStatusInfo();
 
-    // Update status info from recieved data.
-    statusInfo.title = statusData.title;
-    statusInfo.titleQuery = statusData.titleQuery;
-    statusInfo.description = statusData.description;
-    statusInfo.descriptionQuery = statusData.descriptionQuery;
-    statusInfo.hovertext = statusData.hovertext;
-    statusInfo.hovertextQuery = statusData.hovertextQuery;
+    // Update status info from recieved data if not null.
+    statusInfo.title = (statusData.title.isNull()) ? statusInfo.title : statusData.title;
+    statusInfo.titleQuery = (statusData.titleQuery.isNull()) ? statusInfo.titleQuery : statusData.titleQuery;
+    statusInfo.description = (statusData.description.isNull()) ? statusInfo.description : statusData.description;
+    statusInfo.descriptionQuery = (statusData.descriptionQuery.isNull()) ? statusInfo.descriptionQuery : statusData.descriptionQuery;
+    statusInfo.hovertext = (statusData.hovertext.isNull()) ? statusInfo.hovertext : statusData.hovertext;
+    statusInfo.hovertextQuery = (statusData.hovertextQuery.isNull()) ? statusInfo.hovertextQuery : statusData.hovertextQuery;
 
     // Pass updated data to item.
     item->setStatus(statusData.status, statuses);
