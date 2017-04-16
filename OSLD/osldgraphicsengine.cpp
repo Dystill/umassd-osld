@@ -13,12 +13,15 @@ void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
 
 }
 
-// Emits a signal asking for status data for the given item id/reference id.
+// Emits a signal asking for the status data for all items.
 void OSLDGraphicsEngine::retrieveStatusData()
 {
+    // QMap of queried items.
     QMap<QString, bool> queried;
 
     for (DiagramItem *diagramItem : allItems.values()) {
+
+        // Check if item has a source.
         if (!diagramItem->getSourceId().isEmpty()) {
             QString queriedId;
             StatusData statusData;
@@ -26,8 +29,10 @@ void OSLDGraphicsEngine::retrieveStatusData()
             statusData.id = diagramItem->id();
             statusData.ref_id = diagramItem->ref_id();
 
+            // Determine which item id to fetch information for.
             queriedId = (statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id;
 
+            // Emit signal if not already queried.
             if (!queried.contains(queriedId)) {
                 emit statusDataQuery(statusData);
                 queried[queriedId] = true;
@@ -36,11 +41,10 @@ void OSLDGraphicsEngine::retrieveStatusData()
     }
 }
 
+// Updates a status with the recieved status data.
 void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 {
-    DiagramItem *item =
-            allItems[(statusData.ref_id.isEmpty()) ? statusData.id
-                                                   : statusData.ref_id];
+    DiagramItem *item = allItems[(statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id];
     DiagramItemData statusInfo = item->getStatusInfo();
 
     // Update status info from recieved data if not null.
