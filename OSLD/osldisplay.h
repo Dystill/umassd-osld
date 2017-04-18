@@ -57,9 +57,13 @@ private:
     void enterFullScreen();
     void exitFullScreen();
     void zoom(int px);
-    void fitDiagramToWindow();
+    void fitDiagramAndRootToWindow();
     void addMenuBarActionsToDisplay();
     void displayDiagram();
+
+public slots:
+    void fitDiagramToWindow();
+
 };
 
 #endif // OSLDISPLAY_H

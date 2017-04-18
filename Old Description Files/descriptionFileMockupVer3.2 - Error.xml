@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram name="Missile Away Qualifiers">
+	<meta>
+		<description>
+			About Missile Away Qualifiers
+		</description>
+		<common_source>
+			source id="source1">
+				<name>Combat System Database</name>
+				<type>SQLite Database</type>
+			</source>
+			<source id="source2">
+				<name>Some other Source</name>
+				<type>Some other data storing method</type>
+			</source>
+		</common_source>
+		<status_types>
+			<status id="Valid">
+				<color>#8BC34A</color>
+				<textcolor>#FFFFFF</textcolor>
+			</status>
+			<status id="Invalid">
+				<color>#EF5350</color>
+				<textcolor>#FFFFFF</textcolor>
+				<italics>true</italics>
+			</status>
+			<status id="Unknown">
+				<color>#888888</color>
+				<textcolor>#DDDDDD</textcolor>
+				<underline>true</underline>
+			</status>
+		</status_types>
+	</meta>
+	<blocks>
+		<block id="missileaway" source="source1">
+			<dimensions>
+				<width>220</width>
+				<height>60</height>
+			</dimensions>
+			<location>
+				<X>660</X>
+				<Y>170</Y>
+			</location>
+			<status_info default_status="Invalid">
+				<data for_status="Valid">
+					<name query="name">Missile Away</name>
+					<description query="desc">Step to launch the missile and hit the target hopefully.</description>
+					<hovertext query="hover">This is the step to send the missile away</hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Missile Away</name>
+					<description query="desc">Step to launch the missile and hit the target hopefully.</description>
+					<hovertext query="hover">This is the step to send the missile away</hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Missile Away</name>
+					<description query="desc">Step to launch the missile and hit the target hopefully.</description>
+					<hovertext query="hover">This is the step to send the missile away</hovertext>
+				</data>
+			</status_info>
+		</block>
+		<block id="missileenabled" source="source1">
+			<dimensions>
+				<width>220</width>
+				<height>64</height>
+			</dimensions>
+			<location>
+				<X>40</X>
+				<Y>88</Y>
+			</location>
+			<status_info default_status="Valid">
+				<data for_status="Valid">
+					<name>Missile Enabled</name>
+					<description>Step to arm the missile. Please proceed with caution.</description>
+					<hovertext>This is the step to activate the missile</hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name>Missile Enabled</name>
+					<description>Step to arm the missile. Please proceed with caution.</description>
+					<hovertext>This is the step to activate the missile</hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name>Missile Enabled</name>
+					<description>Step to arm the missile. Please proceed with caution.</description>
+					<hovertext>This is the step to activate the missile</hovertext>
+				</data>
+			</status_info>
+		</block>
+		<block id="contactcaptain" source="source1">
+			<dimensions>
+				<width>260</width>
+				<height>64</height>
+			</dimensions>
+			<location>
+				<X>-300</X>
+				<Y>176</Y>
+			</location>
+			<status_info default_status="Valid">
+				<data for_status="Valid">
+					<name query="name">Contact the Captain</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Contact the Captain</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Contact the Captain</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</block>
+		<block id="adjustaim" source="source1">
+			<dimensions>
+				<width>220</width>
+				<height>64</height>
+			</dimensions>
+			<location>
+				<X>40</X>
+				<Y>264</Y>
+			</location>
+			<status_info default_status="Unknown">
+				<data for_status="Valid">
+					<name query="name">Align the turret</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Align the turret</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Align the turret</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</block>
+		<block id="interlocksclosed" source="source1">
+			<dimensions>
+				<width>250</width>
+				<height>64</height>
+			</dimensions>
+			<location>
+				<X>40</X>
+				<Y>354</Y>
+			</location>
+			<status_info default_status="Valid">
+				<data for_status="Valid">
+					<name query="name">Unlock turret hatch</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Unlock turret hatch</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Unlock turret hatch</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</block>
+		<block id="standby" source="source1">
+			<dimensions>
+				<width>260</width>
+				<height>64</height>
+			</dimensions>
+			<location>
+				<X>30</X>
+				<Y>176</Y>
+			</location>
+			<status_info default_status="Invalid">
+				<data for_status="Valid">
+					<name query="name">Standby for ready signal</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Standby for ready signal</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Standby for ready signal</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</block>
+		<block id="launcherready" source="source1">
+			<dimensions>
+				<width>240</width>
+				<height>64</height>
+			</dimensions>
+			<location>
+				<X>356</X>
+				<Y>0</Y>
+			</location>
+			<status_info default_status="Valid">
+				<data for_status="Valid">
+					<name query="name">Turret ready</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Turret ready</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Turret ready</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</block>
+		<block id="launchtubeselected" source="source1">
+			<dimensions>
+				<width>240</width>
+				<height>50</height>
+			</dimensions>
+			<location>
+				<X>356</X>
+				<Y>170</Y>
+			</location>
+			<status_info default_status="Valid">
+				<data for_status="Valid">
+					<name query="name">Launching tube selected</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Launching tube selected</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Launching tube selected</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</block>
+		<block id="boosterprearmed" source="source1">
+			<dimensions>
+				<width>240</width>
+				<height>50</height>
+			</dimensions>
+			<location>
+				<X>0</X>
+				<Y>91</Y>
+			</location>
+			<status_info default_status="Invalid">
+				<data for_status="Valid">
+					<name query="name">Booster prearmed</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Booster prearmed</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Booster prearmed</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</block>
+	</blocks>
+	<gates>
+		<gate id="gate_1" ref_id="missileaway" source="source1" type="AND">
+			<dimensions>
+				<width>100</width>
+				<height>100</height>
+			</dimensions>
+			<location>
+				<X>438</X>
+				<Y>205</Y>
+			</location>
+			<status_info default_status="Invalid">
+				<data for_status="Valid">
+					<name query="name"></name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name"></name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name"></name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</gate>
+		<gate id="gate_2" ref_id="interlocksclosed" source="source1" type="OR">
+			<dimensions>
+				<width>100</width>
+				<height>100</height>
+			</dimensions>
+			<location>
+				<X>751</X>
+				<Y>82</Y>
+			</location>
+			<status_info default_status="Invalid">
+				<data for_status="Valid">
+					<name query="name"></name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name"></name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name"></name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</gate>
+		<gate id="gate_2_1" source="source1" type="NOT">
+			<dimensions>
+				<width>80</width>
+				<height>80</height>
+			</dimensions>
+			<location>
+				<X>0</X>
+				<Y>0</Y>
+			</location>
+			<status_info default_status="Valid">
+				<data for_status="Valid">
+					<name query="name">Gate 2.1 - Valid</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Gate 2.1 - Invalid</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Gate 2.1 - Unknown</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</gate>
+	</gates>
+	<subdiagrams>
+		<subdiagram root_item_id="missileaway" main_diagram="true">
+			<subdiagram_data  source="source1">
+				<name query="name"></name>
+				<description query="desc"></description>
+				<root_item_location>
+					<X>660</X>
+					<Y>224</Y>
+				</root_item_location>
+			</subdiagram_data>
+			<connections>
+				<connect>
+					<output>missileaway</output>
+					<input>gate_1</input>
+				</connect>
+				<connect>
+					<output>gate_1</output>
+					<input>missileenabled</input>
+				</connect>
+				<connect>
+					<output>standby</output>
+					<input>contactcaptain</input>
+				</connect>
+				<connect>
+					<output>gate_1</output>
+					<input>adjustaim</input>
+				</connect>
+				<connect>
+					<output>gate_1</output>
+					<input>standby</input>
+				</connect>
+				<connect>
+					<output>gate_1</output>
+					<input>interlocksclosed</input>
+				</connect>
+			</connections>
+		</subdiagram>
+		<subdiagram root_item_id="interlocksclosed" main_diagram="true">
+			<subdiagram_data  source="source1">
+				<name query="name"></name>
+				<description query="desc"></description>
+				<root_item_location>
+					<X>965</X>
+					<Y>100</Y>
+				</root_item_location>
+			</subdiagram_data>
+			<connections>
+				<connect>
+					<output>interlocksclosed</output>
+					<input>gate_2</input>
+				</connect>
+				<connect>
+					<output>gate_2</output>
+					<input>launchtubeselected</input>
+				</connect>
+				<connect>
+					<output>gate_2</output>
+					<input>launcherready</input>
+				</connect>
+				<connect>
+					<output>launchtubeselected</output>
+					<input>boosterprearmed</input>
+				</connect>
+				<connect>
+					<output>launcherready</output>
+					<input>boosterprearmed</input>
+				</connect>
+			</connections>
+		</subdiagram>
+	</subdiagrams>
+</diagram>

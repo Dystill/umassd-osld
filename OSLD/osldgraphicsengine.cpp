@@ -64,22 +64,29 @@ void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
     DescriptionFileReader descriptionFile(filePath);        // run the description file reader
 
-    OSLDDataObject data;
-    data.name = descriptionFile.getDiagramName();           // obtain name of full diagram
-    data.description = descriptionFile.getDescription();    // obtain description for full diagram
-    data.blocks = descriptionFile.getAllBlocks();           // obtain QList of all the blocks in the diagram
-    data.gates = descriptionFile.getAllGates();             // obtain QList of all the gates in the diagram
-    data.blocksAndGates = descriptionFile.getAllItems();    // obtain QList containing both blocks and gates (may not be necessary?)
-    data.subdiagrams = descriptionFile.getAllSubdiagrams(); // obtain QList of all Subdiagrams
+    // save errors
+    this->xmlError = descriptionFile.error();
+    this->xmlErrorString = descriptionFile.errorString() + "\nLine number " + QString::number(descriptionFile.lineNumber()) + ".";
 
-    data.sourceMap = descriptionFile.getSources();   // QMap of source:CommonSource pairs
-    data.statusMap = descriptionFile.getStatuses(); // QMap of status:StatusTypes pairs
+    OSLDDataObject data;
+    if(this->xmlError == QXmlStreamReader::NoError) {
+        data.name = descriptionFile.getDiagramName();           // obtain name of full diagram
+        data.description = descriptionFile.getDescription();    // obtain description for full diagram
+        data.blocks = descriptionFile.getAllBlocks();           // obtain QList of all the blocks in the diagram
+        data.gates = descriptionFile.getAllGates();             // obtain QList of all the gates in the diagram
+        data.blocksAndGates = descriptionFile.getAllItems();    // obtain QList containing both blocks and gates (may not be necessary?)
+        data.subdiagrams = descriptionFile.getAllSubdiagrams(); // obtain QList of all Subdiagrams
+
+        data.sourceMap = descriptionFile.getSources();   // QMap of source:CommonSource pairs
+        data.statusMap = descriptionFile.getStatuses(); // QMap of status:StatusTypes pairs
+    }
 
     return data;
 }
 
 // use a data object to display the graphics
 void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
+
     // remove all currently displayed items
     this->hideSubdiagramItems(currentSubdiagram);
     this->rootPathList.clear();
@@ -162,7 +169,6 @@ void OSLDGraphicsEngine::mousePressEvent(QGraphicsSceneMouseEvent *event)
     pressedItem = itemAt(event->scenePos(), QTransform());  // store the item that was clicked down on
     pressPosition = event->scenePos();                      // store the position of the click
     QGraphicsScene::mousePressEvent(event);
-    update();
 }
 
 void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -214,13 +220,13 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         if((pressedItem = dynamic_cast<DiagramItem *>(releaseItem))) {   // store pointer to the item that was clicked
 
-            QMessageBox::information(event->widget(),pressedItem->getTitle(),pressedItem->getDescription());
+            if(!(pressedItem->getDescription().isEmpty()))
+                QMessageBox::information(event->widget(),pressedItem->getTitle(),pressedItem->getDescription());
 
         }
     }
 
     QGraphicsScene::mouseReleaseEvent(event);
-    update();
 }
 
 void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
@@ -240,6 +246,7 @@ void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
     if(rootBlockListIndex == -1) {
         rootPathList.append(rootBlock); // add new block to the end
     }
+
     // else if found
     else {
         // start from end of rootPathList and remove blocks up to the saved index
@@ -250,7 +257,6 @@ void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
 
     // draw rootBlock's subdiagram
     this->drawSubdiagramItems(rootBlock->getChildSubdiagram());
-
     rootScene->setList(rootPathList);
 }
 
@@ -264,9 +270,10 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
     }
 
     // draw all of the items except for the rootBlock
+    DiagramItem *item;
     for(int i = 0; i < sub->getInputItems().count(); i++) {
         //qDebug() << "Drawing Block" << i;
-        DiagramItem *item = sub->getInputItems().at(i);
+        item = sub->getInputItems().at(i);
         item->setPos(item->getLocation());
         this->addItem(item);
     }
@@ -281,6 +288,9 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
 
     this->addItem(root);
     currentSubdiagram = sub;
+
+    this->update();
+    emit subdiagramChanged();
 }
 
 void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
@@ -532,6 +542,16 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, QMap<QString
     // qDebug() << data[status].textColor;
 
     return block;
+}
+
+QString OSLDGraphicsEngine::getXmlErrorString() const
+{
+    return xmlErrorString;
+}
+
+QXmlStreamReader::Error OSLDGraphicsEngine::getXmlError() const
+{
+    return xmlError;
 }
 
 Gate *OSLDGraphicsEngine::createRandomGate(QPointF pos) {

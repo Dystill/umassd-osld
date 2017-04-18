@@ -1,0 +1,105 @@
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////////////////////////////////////////
+V-BLOCK EXAMPLE-V
+/////////////////////////////////////////////////////////////////
+
+<block id="block_2" source="source1">
+			<dimensions>
+				<width>217</width>
+				<height>68</height>
+			</dimensions>
+			<location>
+				<X>100</X>
+				<Y>384</Y>
+			</location>
+			<!-- an example of data being hardcoded into a block - the text is provided by the diagram maker -->
+			<status_info default_status="Valid">
+				<data for_status="Valid">
+					<name>Block 2 Title - Valid</name>
+					<description>description for this block</description>
+					<hovertext>Functional Code #1qaz2wsx</hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name>Block 2 Title for Invalid</name>
+					<description>this block is invalid</description>
+					<hovertext>Some hovertext</hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name>Block 2 Title</name>
+					<description>This block performs some functions</description>
+					<hovertext>Element data</hovertext>
+				</data>
+			</status_info>
+		</block>
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////////////////////////////////////////
+V-GATE EXAMPLE-V
+/////////////////////////////////////////////////////////////////
+
+<gate id="gate_1" source="source1" type="AND">
+			<dimensions>
+				<width>64</width>
+				<height>64</height>
+			</dimensions>
+			<location>
+				<X>440</X>
+				<Y>256</Y>
+			</location>
+			<status_info default_status="Valid">
+				<data for_status="Valid">
+					<name query="name">Gate 1 - Valid</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Invalid">
+					<name query="name">Gate 1 - Invalid</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+				<data for_status="Unknown">
+					<name query="name">Gate 1 - Unknown</name>
+					<description query="desc"></description>
+					<hovertext query="hover"></hovertext>
+				</data>
+			</status_info>
+		</gate>
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/////////////////////////////////////////////////////////////////
+V-SUBDIAGRAM EXAMPLE-V
+/////////////////////////////////////////////////////////////////
+
+<subdiagram root_item_id="block_3" main_diagram="true">
+			<!-- holds the name and description of the subdiagram -->
+			<subdiagram_data  source="source1">
+				<name query="name"></name>
+				<description query="desc"></description>
+				<!-- the location to use for the root item for this diagram -->
+				<root_item_location>
+					<X>556</X>
+					<Y>256</Y>
+				</root_item_location>
+			</subdiagram_data>
+			<!-- the connections tag holds information for how the items are connected -->
+			<connections>
+				<!-- each connect tag represents a single connecting line in the diagram -->
+				<connect>
+					<!-- output = the id of the item this connector leads into -->
+					<output>block_3</output>
+					<!-- input = the id of the item this connector comes from -->
+					<input>gate_1</input>
+				</connect>
+				<!-- the next two connect tags represent two blocks connecting to the same gate -->
+				<connect>
+					<output>gate_1</output>
+					<input>block_2</input>
+				</connect>
+				<connect>
+					<output>gate_1</output>
+					<input>block_1</input>
+				</connect>
+			</connections>
+		</subdiagram>
+
+

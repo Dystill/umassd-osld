@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     ../../OSLD/gate.cpp \
     ../../OSLD/osldgraphicsengine.cpp \
     ../../OSLD/rootitempathscene.cpp \
-    ../../OSLD/subdiagram.cpp
+    ../../OSLD/subdiagram.cpp \
+    copydialog.cpp
 
 HEADERS  += mainwindow.h \
     ../../OSLD/block.h \
@@ -43,6 +44,11 @@ HEADERS  += mainwindow.h \
     ../../OSLD/gate.h \
     ../../OSLD/osldgraphicsengine.h \
     ../../OSLD/rootitempathscene.h \
-    ../../OSLD/subdiagram.h
+    ../../OSLD/subdiagram.h \
+    copydialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    copydialog.ui
+
+RESOURCES += \
+    xmlresources.qrc

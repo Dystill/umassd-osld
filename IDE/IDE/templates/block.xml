@@ -1,0 +1,17 @@
+		<block id="" ref_id="" source="">
+			<dimensions>
+				<width></width>
+				<height></height>
+			</dimensions>
+			<location>
+				<X></X>
+				<Y></Y>
+			</location>
+			<status_info default_status="">
+				<data for_status="">
+					<name query=""></name>
+					<description query=""></description>
+					<hovertext query=""></hovertext>
+				</data>
+			</status_info>
+		</block>

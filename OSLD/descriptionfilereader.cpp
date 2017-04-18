@@ -31,7 +31,7 @@ QXmlStreamReader::Error DescriptionFileReader::readFile(QString filepath)
     //this->setErrorHandler(&handler);
 
     // qDebug() << ">> QXmlStreamReader";
-    qDebug() << "Reading file:" << filepath;
+    // qDebug() << "Reading file:" << filepath;
     QFile xmlFile(filepath);
 
     if(xmlFile.open(QIODevice::ReadOnly)) {
@@ -42,10 +42,10 @@ QXmlStreamReader::Error DescriptionFileReader::readFile(QString filepath)
 
         // std::string inBuff;
 
-        qDebug() << "Setting device to XML file";
+        // qDebug() << "Setting device to XML file";
         this->setDevice(&xmlFile);
 
-        qDebug() << "Begin reading";
+        // qDebug() << "Begin reading";
         while(!this->atEnd()) {
 
             // get the type of xml element currently being read
@@ -57,7 +57,7 @@ QXmlStreamReader::Error DescriptionFileReader::readFile(QString filepath)
             // prints every line read in the xml file
             QString tString = (this->tokenString().replace("Characters", "String") +
                                (this->tokenString().contains("Element") ? " " : "") + this->name().toString());
-            qDebug() << ">> Found Token (not in function):" << tString;
+            // qDebug() << ">> Found Token (not in function):" << tString;
             */
 
             // start of element
@@ -76,31 +76,19 @@ QXmlStreamReader::Error DescriptionFileReader::readFile(QString filepath)
                 }
                 else if(currentTag == "meta") {         // meta tag
                     // qDebug() << "calling readMetaData function"<<endl;
-                    if(this->readMetaData() != NoError) {
-                        qDebug() << this->errorString();
-                        return this->error();
-                    }
+                    this->currentError = this->readMetaData();
                 }
                 else if(currentTag == "blocks") {       // blocks tag
                     // qDebug() << "do blocks stuff";
-                    if(this->readBlocks() != NoError) {
-                        qDebug() << this->errorString();
-                        return this->error();
-                    }
+                    this->currentError = this->readBlocks();
                 }
                 else if(currentTag == "gates") {        // gates tag
                     // qDebug() << "do gates stuff";
-                    if(this->readGates() != NoError) {
-                        qDebug() << this->errorString();
-                        return this->error();
-                    }
+                    this->currentError = this->readGates();
                 }
-                else if(currentTag == "subdiagrams") { // status types tag
+                else if(currentTag == "subdiagrams") {  // subdiagrams tag
                     // qDebug() << "do subdiagram stuff";
-                    if(this->readSubdiagrams() != NoError) {
-                        qDebug() << this->errorString();
-                        return this->error();
-                    }
+                    this->currentError = this->readSubdiagrams();
                 }
             }
         }
@@ -110,7 +98,10 @@ QXmlStreamReader::Error DescriptionFileReader::readFile(QString filepath)
         this->raiseError("File not found '" + filepath + "'");
     }
 
-    qDebug() << this->errorString();
+    if(this->hasError()) {
+        qDebug() << this->errorString() << "at line" << this->lineNumber();
+        this->currentError = this->error();
+    }
 
     return this->error();
 }
@@ -672,7 +663,7 @@ QMap<QString, DiagramItemData> DescriptionFileReader::getStatusInfo()
             }
 
             /* print data in current diagramitem data object
-            qDebug() << "Data for" << currentForStatusID
+            // qDebug() << "Data for" << currentForStatusID
                      << data.title << data.description
                      << data.hovertext
                      << data.titleQuery << data.descriptionQuery

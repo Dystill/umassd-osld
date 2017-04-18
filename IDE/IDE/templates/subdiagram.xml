@@ -1,0 +1,16 @@
+		<subdiagram root_item_id="" main_diagram="">
+			<subdiagram_data  source="">
+				<name query=""></name>
+				<description query=""></description>
+				<root_item_location>
+					<X></X>
+					<Y></Y>
+				</root_item_location>
+			</subdiagram_data>
+			<connections>
+				<connect>
+					<output></output>
+					<input></input>
+				</connect>
+			</connections>
+		</subdiagram>

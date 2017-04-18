@@ -14,18 +14,71 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTextEdit" name="textEdit">
-       <property name="cursor" stdset="0">
-        <cursorShape>IBeamCursor</cursorShape>
-       </property>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayoutText">
+        <item>
+         <widget class="QTextEdit" name="textEdit">
+          <property name="cursor" stdset="0">
+           <cursorShape>IBeamCursor</cursorShape>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayoutTextButtons">
+          <item>
+           <spacer name="horizontalSpacerTextButtons">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>30</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
-      <widget class="QGraphicsView" name="graphicsView"/>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayoutGraphics">
+        <item>
+         <widget class="QGraphicsView" name="graphicsView"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayoutGraphicsButtons">
+          <item>
+           <spacer name="horizontalSpacerGraphicsButtons">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="updateButton">
+            <property name="text">
+             <string>Update</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -45,6 +98,8 @@
     </property>
     <addaction name="actionNew_Description_File"/>
     <addaction name="actionLoad_Description_File"/>
+    <addaction name="actionSave_Description_File"/>
+    <addaction name="actionSave_Description_File_As"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -120,6 +175,22 @@
   <action name="actionActionSave_Description_File">
    <property name="text">
     <string>actionSave_Description_File</string>
+   </property>
+  </action>
+  <action name="actionSave_Description_File">
+   <property name="text">
+    <string>Save Description File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_Description_File_As">
+   <property name="text">
+    <string>Save Description File As...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save The Current Description File Under A Different Name</string>
    </property>
   </action>
  </widget>

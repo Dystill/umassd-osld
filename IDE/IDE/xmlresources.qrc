@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>templates/new.xml</file>
+        <file>templates/block.xml</file>
+        <file>templates/gate.xml</file>
+        <file>templates/subdiagram.xml</file>
+        <file>templates/example.xml</file>
+    </qresource>
+</RCC>
