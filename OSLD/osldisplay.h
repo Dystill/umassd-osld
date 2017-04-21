@@ -28,19 +28,19 @@ private slots:
     void resizeEvent(QResizeEvent *event);
     void showEvent(QShowEvent *event);
 
-    void on_actionShowGrid_triggered();
-
     void on_closeButton_clicked();
 
     void on_actionFitDiagramToWindow_triggered();
-
-    void on_actionHideButtons_triggered();
 
     void on_actionHideBlockTitles_triggered(bool checked);
 
     void on_actionSwitchOrientation_triggered();
 
     void on_actionOpenDescriptionFile_triggered();
+
+    void on_actionHideButtons_triggered(bool checked);
+
+    void on_actionShowGrid_triggered(bool checked);
 
 private:
     Ui::OSLDisplay *ui;
@@ -53,13 +53,14 @@ private:
     bool initScaleFix = false;  // cannot figure out why the scene becomes really small initially, so this helps fix it
 
     void prepareGraphicsView();
-    void prepareRootView();
+    void prepareRootView(QString orientation);
     void enterFullScreen();
     void exitFullScreen();
     void zoom(int px);
     void fitDiagramAndRootToWindow();
     void addMenuBarActionsToDisplay();
     void displayDiagram();
+    void readEnvironmentVariables();
 
 public slots:
     void fitDiagramToWindow();

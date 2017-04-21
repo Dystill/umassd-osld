@@ -13,12 +13,16 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
 
     // create an instance of the OSLD graphics engine
+    // scene = new OSLDGraphicsEngine("", ui->graphicsView, false, "horizontal", true, false, true);
     scene = new OSLDGraphicsEngine("", ui->graphicsView);
 
     // set flags and event filters for the graphicsView
     this->prepareGraphicsView();
 
     this->displayDiagram();
+
+    // adjust display based on environment variables
+    this->readEnvironmentVariables();
 
     // starts the application in full screen mode
     //enterFullScreen();
@@ -54,25 +58,47 @@ void OSLDisplay::prepareGraphicsView()
     ui->graphicsView->viewport()->installEventFilter(this);
 }
 
-void OSLDisplay::prepareRootView() {
-    // set which scrollbars to remove
-    ui->rootHGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->rootVGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    ui->rootHGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    ui->rootVGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-
-    // hide the horizontal root view on start
-    ui->rootHGraphicsView->hide();
+void OSLDisplay::prepareRootView(QString orientation) {
 
     // get the root scene from the OSLDgraphicsengine
     this->rootScene = scene->getRootScene();
 
-    // put the root scene into the vertical root view
-    ui->rootVGraphicsView->setScene(this->rootScene);
+    // set which scrollbars to show and remove
+    ui->rootHGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->rootVGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->rootHGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->rootVGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
-    // send the vertical root view to the root scene
-    this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
+    if(orientation.startsWith('v',Qt::CaseInsensitive)) {
+        // hide the horizontal root view on start
+        ui->rootHGraphicsView->hide();
+
+        this->rootScene->alignVertically();
+
+        // put the root scene into the vertical root view
+        ui->rootVGraphicsView->setScene(this->rootScene);
+
+        // send the vertical root view to the root scene
+        this->rootScene->setParentGraphicsView(ui->rootVGraphicsView);
+    }
+    else if(orientation.startsWith('h',Qt::CaseInsensitive)) {
+
+        // hide the horizontal root view on start
+        ui->rootVGraphicsView->hide();
+
+        this->rootScene->alignHorizontally();
+
+        // put the root scene into the vertical root view
+        ui->rootHGraphicsView->setScene(this->rootScene);
+
+        // send the vertical root view to the root scene
+        this->rootScene->setParentGraphicsView(ui->rootHGraphicsView);
+    }
+    else {
+        // hide both views
+        ui->rootHGraphicsView->hide();
+        ui->rootVGraphicsView->hide();
+    }
 }
 
 void OSLDisplay::displayDiagram() {
@@ -82,11 +108,31 @@ void OSLDisplay::displayDiagram() {
     // display the scene from the graphics engine in the graphicsView
     ui->graphicsView->setScene(scene);
 
-    // prepare the root list view
-    this->prepareRootView();
+    this->prepareRootView(scene->getRootViewOrientation());
 
     // resize the scene to fit in the window
     this->fitDiagramAndRootToWindow();
+}
+
+void OSLDisplay::readEnvironmentVariables()
+{
+    // show or hide the controls
+    this->on_actionHideButtons_triggered(scene->getHideControls());
+
+    // show or hide block titles
+    this->on_actionHideBlockTitles_triggered(scene->getHideBlockTitles());
+
+    // set to fullscreen
+    if(scene->getFullscreen()) {
+        this->enterFullScreen();
+    }
+    else {
+        this->exitFullScreen();
+    }
+
+    // show the grid
+    ui->actionShowGrid->setChecked(scene->getShowGridBackground());
+    this->on_actionShowGrid_triggered(scene->getShowGridBackground());
 }
 
 void OSLDisplay::enterFullScreen()
@@ -118,6 +164,7 @@ void OSLDisplay::fitDiagramAndRootToWindow() {
 
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
+
     rootScene->fitToView();
 }
 
@@ -236,15 +283,6 @@ void OSLDisplay::on_actionFullScreen_triggered()
     }
 }
 
-// when the show grid button is pressed
-void OSLDisplay::on_actionShowGrid_triggered()
-{
-    scene->showGrid(ui->actionShowGrid->isChecked(),
-                    QRectF(ui->graphicsView->mapToScene(
-                               ui->graphicsView->rect()).boundingRect()));
-    ui->graphicsView->viewport()->update();
-}
-
 // when the close window button is pressed
 void OSLDisplay::on_closeButton_clicked()
 {
@@ -260,21 +298,6 @@ void OSLDisplay::mouseMoveEvent(QMouseEvent *event) {
     if(event->pos().y() <= 50 && !ui->menuBar->isVisible()) {
         ui->menuBar->setVisible(true);
     }
-}
-
-void OSLDisplay::on_actionHideButtons_triggered()
-{
-    if(ui->menuBar->isVisible()) {
-        ui->closeButton->setVisible(false);
-        ui->titleLabel->setVisible(false);
-        ui->menuBar->setVisible(false);
-    }
-    else {
-        ui->closeButton->setVisible(true);
-        ui->titleLabel->setVisible(true);
-        ui->menuBar->setVisible(true);
-    }
-    this->fitDiagramAndRootToWindow();
 }
 
 void OSLDisplay::on_actionFitDiagramToWindow_triggered()
@@ -332,4 +355,27 @@ void OSLDisplay::on_actionOpenDescriptionFile_triggered()
     scene->readFileAndRunOSLD(filePath);
 
     this->displayDiagram();
+}
+
+void OSLDisplay::on_actionHideButtons_triggered(bool checked)
+{
+    if(checked) {
+        ui->closeButton->setVisible(false);
+        ui->titleLabel->setVisible(false);
+        ui->menuBar->setVisible(false);
+    }
+    else {
+        ui->closeButton->setVisible(true);
+        ui->titleLabel->setVisible(true);
+        ui->menuBar->setVisible(true);
+    }
+    this->fitDiagramAndRootToWindow();
+}
+
+void OSLDisplay::on_actionShowGrid_triggered(bool checked)
+{
+    scene->showGrid(checked,
+                    QRectF(ui->graphicsView->mapToScene(
+                               ui->graphicsView->rect()).boundingRect()));
+    ui->graphicsView->viewport()->update();
 }

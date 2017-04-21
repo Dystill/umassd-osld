@@ -45,6 +45,13 @@ class OSLDGraphicsEngine : public QGraphicsScene
     Q_OBJECT
 
 private:
+    // environment variables
+    bool hideControls = false;
+    QString rootViewOrientation = "v";
+    bool hideBlockTitles = false;
+    bool fullscreen = false;
+    bool showGridBackground = false;
+
     QMap<QString, CommonSource> sources;    // maps source ids to their name and type
     QMap<QString, StatusTypes> statuses;    // maps status names to different colors
 
@@ -66,7 +73,6 @@ private:
     QVarLengthArray<QPointF> backgroundDots;
 
     int gridUnitSize = 20;
-    bool showGridBackground = false;
     QColor backgroundColor = QColor("#fafafa");
 
     QGraphicsItem *pressedItem;
@@ -84,7 +90,13 @@ private:
     QString xmlErrorString;
 
 public:
-    OSLDGraphicsEngine(QString filePath = "", QWidget *parent = 0);
+    OSLDGraphicsEngine(QString filePath = "",
+                       QWidget *parent = 0,
+                       bool hideControls = 0,
+                       QString rootViewOrientation = "v",
+                       bool hideBlockTitles = 0,
+                       bool fullscreen = 0,
+                       bool showGrid = 0);
 
     QMap<QString, CommonSource> getSources() const { return sources; }
     void setSources(const QMap<QString, CommonSource> &value) { sources = value; }
@@ -127,7 +139,6 @@ public:
 
     void readFileAndRunOSLD(QString filePath);
 
-
     QXmlStreamReader::Error getXmlError() const;
 
     QString getXmlErrorString() const;
@@ -136,20 +147,20 @@ public:
 
     QList<Gate *> getAllGates() const;
 
+    // environment vairable getter methods
+
+    bool getHideControls() const;
+
+    QString getRootViewOrientation() const;
+
+    bool getHideBlockTitles() const;
+
+    bool getFullscreen() const;
+
+    bool getShowGridBackground() const;
+
 public slots:
     void updateStatus(StatusData statusData);
-    // change environment variables - global variables
-
-    // xml
-    // specialized data structures
-    // not super in depth/ what it is/examples/writing to accept information
-    // different cpp/h files - parent/child graph class diagram & description of what classes hold
-    // required qt libraries
-
-    // documentation
-    // code
-    // presentation
-
 
 signals:
     void subdiagramChanged();
