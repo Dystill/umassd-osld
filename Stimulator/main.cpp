@@ -7,8 +7,5 @@ int main(int argc, char *argv[]) {
   MainWindow w;
   w.show();
 
-  stimulator::Stimulator stim;
-  qDebug() << stim.getItemData("ABC123")["a"].toString();
-
   return a.exec();
 }

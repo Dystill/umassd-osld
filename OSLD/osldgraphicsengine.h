@@ -14,9 +14,30 @@ struct OSLDDataObject {
     QList<Subdiagram *> subdiagrams;  // a list of all of the subdiagrams
     QList<Block *> blocks;       // a list of all of the blocks in the diagram
     QList<Gate *> gates;         // a list of all of the gates in the diagram
-    QList<DiagramItem *> blocksAndGates;  // a list of both blocks and gates
+    QMap<QString, DiagramItem *> blocksAndGates;  // maps item ids to their respective objects
     QMap<QString, CommonSource> sourceMap;    // maps source ids to their name and type
     QMap<QString, StatusTypes> statusMap;    // maps status names to different colors
+};
+
+/*!
+ * \struct StatusData
+ * \brief Provides the necessary members to communicate status data between the
+ * OSLD and an external system.
+ * \note The OSLD must send the id and ref_id of the item it wishes to retrieve
+ * an updated status for.
+ * The external system must fill out the entire struct with the updated status
+ * data.
+ */
+struct StatusData {
+    QString id;
+    QString ref_id;
+    QString status;
+    QString title;
+    QString description;
+    QString hovertext;
+    QString titleQuery;
+    QString descriptionQuery;
+    QString hovertextQuery;
 };
 
 class OSLDGraphicsEngine : public QGraphicsScene
@@ -31,10 +52,12 @@ private:
 
     QString diagramName;
     QString diagramDescription;
-    QList<Subdiagram *> allSubdiagrams;     // a list of all of the subdiagrams
-    QList<Block *> allBlocks;               // a list of all of the blocks in the diagram
-    QList<Gate *> allGates;                 // a list of all of the gates in the diagram
-    QList<DiagramItem *> allItems;          // a list of both blocks and gates
+    QList<Subdiagram *> allSubdiagrams;         // a list of all of the subdiagrams
+    QList<Block *> allBlocks;                   // a list of all of the blocks in the diagram
+    QList<Gate *> allGates;                     // a list of all of the gates in the diagram
+    QMap<QString, DiagramItem *> allItems;      // maps item ids to their respective objects
+
+    void retrieveStatusData();
 
     RootItemPathScene *rootScene;
     QList<Block *> rootPathList;    // holds the chain of root items to the current subdiagram
@@ -60,7 +83,6 @@ private:
     QXmlStreamReader::Error xmlError;
     QString xmlErrorString;
 
-
 public:
     OSLDGraphicsEngine(QString filePath = "", QWidget *parent = 0);
 
@@ -85,7 +107,7 @@ public:
 
     QList<Block *> getRootPathList() const;
 
-    QList<DiagramItem *> getAllItems() const;
+    QMap<QString, DiagramItem *> getAllItems() const;
 
     void hideAllItemTitleText(bool b);
 
@@ -110,12 +132,29 @@ public:
 
     QString getXmlErrorString() const;
 
+    QList<Block *> getAllBlocks() const;
+
+    QList<Gate *> getAllGates() const;
+
 public slots:
-    void updateStatus(OSLDDataObject object);
+    void updateStatus(StatusData statusData);
+    // change environment variables - global variables
+
+    // xml
+    // specialized data structures
+    // not super in depth/ what it is/examples/writing to accept information
+    // different cpp/h files - parent/child graph class diagram & description of what classes hold
+    // required qt libraries
+
+    // documentation
+    // code
+    // presentation
+
 
 signals:
     void subdiagramChanged();
     void retrieveStatusData(OSLDDataObject object);
+    void statusDataQuery(StatusData statusData);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
