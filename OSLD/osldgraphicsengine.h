@@ -52,10 +52,10 @@ private:
 
     QString diagramName;
     QString diagramDescription;
-    QList<Subdiagram *> allSubdiagrams;     // a list of all of the subdiagrams
-    QList<Block *> allBlocks;               // a list of all of the blocks in the diagram
-    QList<Gate *> allGates;                 // a list of all of the gates in the diagram
-    QMap<QString, DiagramItem *> allItems;  // maps item ids to their respective objects
+    QList<Subdiagram *> allSubdiagrams;         // a list of all of the subdiagrams
+    QList<Block *> allBlocks;                   // a list of all of the blocks in the diagram
+    QList<Gate *> allGates;                     // a list of all of the gates in the diagram
+    QMap<QString, DiagramItem *> allItems;      // maps item ids to their respective objects
 
     void retrieveStatusData();
 
@@ -132,8 +132,24 @@ public:
 
     QString getXmlErrorString() const;
 
+    QList<Block *> getAllBlocks() const;
+
+    QList<Gate *> getAllGates() const;
+
 public slots:
     void updateStatus(StatusData statusData);
+    // change environment variables - global variables
+
+    // xml
+    // specialized data structures
+    // not super in depth/ what it is/examples/writing to accept information
+    // different cpp/h files - parent/child graph class diagram & description of what classes hold
+    // required qt libraries
+
+    // documentation
+    // code
+    // presentation
+
 
 signals:
     void subdiagramChanged();

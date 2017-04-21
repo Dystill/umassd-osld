@@ -14,6 +14,16 @@ void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
 }
 
 // Emits a signal asking for the status data for all items.
+QList<Block *> OSLDGraphicsEngine::getAllBlocks() const
+{
+    return allBlocks;
+}
+
+QList<Gate *> OSLDGraphicsEngine::getAllGates() const
+{
+    return allGates;
+}
+
 void OSLDGraphicsEngine::retrieveStatusData()
 {
     // QMap of queried items.
@@ -57,7 +67,7 @@ void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 
     // Pass updated data to item.
     item->setStatus(statusData.status, statuses);
-    item->updateStatusInfo(statusInfo);
+    item->updateStatusInfo(/*statusInfo*/);
 }
 
 // read a description file and return the data object
