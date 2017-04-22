@@ -46,6 +46,7 @@ class OSLDGraphicsEngine : public QGraphicsScene
 
 private:
     // environment variables
+    int pollingRate = 1000;
     bool hideControls = false;
     QString rootViewOrientation = "v";
     bool hideBlockTitles = false;
@@ -92,6 +93,7 @@ private:
 public:
     OSLDGraphicsEngine(QString filePath = "",
                        QWidget *parent = 0,
+                       int pollingRate = 1000,
                        bool hideControls = 0,
                        QString rootViewOrientation = "v",
                        bool hideBlockTitles = 0,
@@ -159,12 +161,13 @@ public:
 
     bool getShowGridBackground() const;
 
+    int getPollingRate() const;
+
 public slots:
     void updateStatus(StatusData statusData);
 
 signals:
     void subdiagramChanged();
-    void retrieveStatusData(OSLDDataObject object);
     void statusDataQuery(StatusData statusData);
 
 protected:

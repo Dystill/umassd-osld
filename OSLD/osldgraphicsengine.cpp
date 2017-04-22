@@ -2,6 +2,7 @@
 
 OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
                                        QWidget *parent,
+                                       int pollingRate,
                                        bool hideControls,
                                        QString rootViewOrientation,
                                        bool hideBlockTitles,
@@ -11,6 +12,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
 {
 
     this->hideControls = hideControls;
+    this->pollingRate = pollingRate;
     this->rootViewOrientation = rootViewOrientation;
     this->hideBlockTitles = hideBlockTitles;
     this->fullscreen = fullscreen;
@@ -60,6 +62,11 @@ bool OSLDGraphicsEngine::getFullscreen() const
 bool OSLDGraphicsEngine::getShowGridBackground() const
 {
     return showGridBackground;
+}
+
+int OSLDGraphicsEngine::getPollingRate() const
+{
+    return pollingRate;
 }
 
 void OSLDGraphicsEngine::retrieveStatusData()
@@ -160,13 +167,17 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
     rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
 
     // print counts for each Qlist
-    qDebug() << "OSLD blocks" << this->allBlocks.count();
-    qDebug() << "OSLD gates" << this->allGates.count();
-    qDebug() << "OSLD items" << this->allItems.count();
-    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
+    // qDebug() << "OSLD blocks" << this->allBlocks.count();
+    // qDebug() << "OSLD gates" << this->allGates.count();
+    // qDebug() << "OSLD items" << this->allItems.count();
+    // qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
+
+    // call function to retrieve status data
+    this->retrieveStatusData();
 
     for (QString key : allItems.keys()) {
-        allItems[key]->update();
+        allItems[key]->startPollTimer(this->pollingRate);    // start timer to regularly send polling signal
+        allItems[key]->update();    // update item
     }
 }
 

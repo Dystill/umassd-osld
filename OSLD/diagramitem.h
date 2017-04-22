@@ -48,6 +48,8 @@ struct DiagramItemData {
 
 class DiagramItem : public QGraphicsWidget
 {
+    Q_OBJECT
+
 private:
     static bool transparentTitle;
 
@@ -182,6 +184,8 @@ public:
 
     void printQueries() const;
 
+    void startPollTimer(int ms = 1000);
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
 
@@ -209,6 +213,16 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+
+private slots:
+    void pollEmitter();
+
+signals:
+    // connect(DiagramItem, SIGNAL(poll(itemId)), externalSystem, SLOT(function(itemId)));
+    void pollTitle(QString itemId, QString titleQuery);
+    void pollDescription(QString itemId, QString descQuery);
+    void pollHovertext(QString itemId, QString hoverQuery);
+    void pollStatus(QString itemId);
 };
 
 #endif // DIAGRAMITEM_H

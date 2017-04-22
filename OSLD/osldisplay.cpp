@@ -13,7 +13,7 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
 
     // create an instance of the OSLD graphics engine
-    // scene = new OSLDGraphicsEngine("", ui->graphicsView, false, "horizontal", true, false, true);
+    // scene = new OSLDGraphicsEngine("", ui->graphicsView, 1000, false, "horizontal", true, false, true);
     scene = new OSLDGraphicsEngine("", ui->graphicsView);
 
     // set flags and event filters for the graphicsView

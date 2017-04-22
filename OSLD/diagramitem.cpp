@@ -8,7 +8,7 @@ bool DiagramItem::transparentTitle = false;
 
 DiagramItem::DiagramItem()
 {
-    
+
 }
 
 DiagramItem::DiagramItem(QString id, QPointF loc)
@@ -219,6 +219,41 @@ void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 }
 
 
+void DiagramItem::startPollTimer(int ms)
+{
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(pollEmitter()));
+    timer->start(ms);
+}
+
+void DiagramItem::pollEmitter()
+{
+    // ask for status using ref id if available
+    emit pollStatus(!this->ref_id().isEmpty() ? this->ref_id() : this->id());
+
+    // if there is a title query string, ask for title data
+    if(!this->currentStatusInfo.titleQuery.isNull())
+        emit pollTitle(this->id(), this->currentStatusInfo.titleQuery);
+
+    // if there is a description query string, ask for description data
+    if(!this->currentStatusInfo.descriptionQuery.isNull())
+        emit pollDescription(this->id(), this->currentStatusInfo.descriptionQuery);
+
+    // if there is a hovertext query string, ask for hovertext data
+    if(!this->currentStatusInfo.hovertextQuery.isNull())
+        emit pollHovertext(this->id(), this->currentStatusInfo.hovertextQuery);
+
+    // qDebug() << this->getTitle() << this->id() << "is polling";
+}
+
+void DiagramItem::printQueries() const
+{
+    qDebug() << this->currentStatusInfo.titleQuery
+             << this->currentStatusInfo.descriptionQuery
+             << this->currentStatusInfo.hovertextQuery;
+}
+
+
 /*
  *  ATTRIBUTE GETTERS AND SETTERS
  */
@@ -325,13 +360,6 @@ void DiagramItem::setLineLength(int value)
 void DiagramItem::setStatusInfoDataList(const QMap<QString, DiagramItemData> &value)
 {
     statusInfoDataList = value;
-}
-
-void DiagramItem::printQueries() const
-{
-    qDebug() << this->currentStatusInfo.titleQuery
-             << this->currentStatusInfo.descriptionQuery
-             << this->currentStatusInfo.hovertextQuery;
 }
 
 // text color
