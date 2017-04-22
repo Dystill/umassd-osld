@@ -8,7 +8,7 @@ Block::Block(QString id, QPointF loc, QString t, QString desc, QString ht)
     : DiagramItem(id, loc)
 {
     this->setMaxWidth(256);
-    this->setTitleSize(16);
+    this->setTitleSize(20);
 
     this->setTitle(t);
     this->setDescription(desc);
@@ -116,19 +116,21 @@ void Block::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     // draw the block
     if(this->getChildSubdiagram() == 0) {
-        painter->drawRect(rect);
+        painter->drawRect(rect);    // draw nornmally
     }
-    else {
+    else {  // if the block has a subdiagram
+
         // reset the painter so there's no brush color
         painter->setBrush(QBrush(Qt::transparent));
 
         // prepare a gradient going down the block
         QLinearGradient gradient(rect.center().x(), rect.top(), rect.center().x(), rect.bottom());
-            gradient.setColorAt(0, this->getColor().lighter(175));
-            gradient.setColorAt(0.45, this->getColor());
-            gradient.setColorAt(0.65, this->getColor());
-            gradient.setColorAt(1, this->getColor().darker(200));
+            gradient.setColorAt(0, this->getColor().lighter(200));
+            gradient.setColorAt(0.5, this->getColor());
+            gradient.setColorAt(0.5, this->getColor());
+            gradient.setColorAt(1, this->getColor().darker(250));
 
+        // draw the rect with the gradient as a background
         painter->fillRect(rect, gradient);
         painter->drawRect(rect);
     }

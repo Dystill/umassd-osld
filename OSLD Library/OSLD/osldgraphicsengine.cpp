@@ -1,39 +1,153 @@
 #include "osldgraphicsengine.h"
 
-OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent)
+OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
+                                       QWidget *parent,
+                                       int pollingRate,
+                                       bool hideControls,
+                                       QString rootViewOrientation,
+                                       bool hideBlockTitles,
+                                       bool fullscreen,
+                                       bool showGridBackground) :
+    QGraphicsScene(parent)
 {
-    this->setParent(parent);
+    qDebug() << "starting osldgraphicsengine";
+
+    this->hideControls = hideControls;
+    this->pollingRate = pollingRate;
+    this->rootViewOrientation = rootViewOrientation;
+    this->hideBlockTitles = hideBlockTitles;
+    this->fullscreen = fullscreen;
+    this->showGridBackground = showGridBackground;
+
+    qDebug() << "variables set";
+
+    this->readFileAndRunOSLD(filePath);
+}
+
+void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
+{
+    qDebug() << "osld read and run start";
 
     // process description file and display the graphics
     this->runGraphics(this->readDescriptionFile(filePath));
-
-    // print counts for each Qlist
-    qDebug() << "OSLD blocks" << this->allBlocks.count();
-    qDebug() << "OSLD gates" << this->allGates.count();
-    qDebug() << "OSLD items" << this->allItems.count();
-    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
 }
+
+// Emits a signal asking for the status data for all items.
+void OSLDGraphicsEngine::retrieveStatusData()
+{
+    // QMap of queried items.
+    QMap<QString, bool> queried;
+
+    for (DiagramItem *diagramItem : allItems.values()) {
+
+        // Check if item has a source.
+        if (!diagramItem->getSourceId().isEmpty()) {
+            QString queriedId;
+            StatusData statusData;
+
+            statusData.id = diagramItem->id();
+            statusData.ref_id = diagramItem->ref_id();
+
+            // Determine which item id to fetch information for.
+            queriedId = (statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id;
+
+            // Emit signal if not already queried.
+            if (!queried.contains(queriedId)) {
+                emit statusDataQuery(statusData);
+                queried[queriedId] = true;
+            }
+        }
+    }
+}
+
+// Updates a status with the recieved status data.
+void OSLDGraphicsEngine::updateStatus(StatusData statusData)
+{
+    DiagramItem *item = allItems[(statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id];
+    DiagramItemData statusInfo = item->getStatusInfo();
+
+    // Update status info from recieved data if not null.
+    statusInfo.title = (statusData.title.isNull()) ? statusInfo.title : statusData.title;
+    statusInfo.titleQuery = (statusData.titleQuery.isNull()) ? statusInfo.titleQuery : statusData.titleQuery;
+    statusInfo.description = (statusData.description.isNull()) ? statusInfo.description : statusData.description;
+    statusInfo.descriptionQuery = (statusData.descriptionQuery.isNull()) ? statusInfo.descriptionQuery : statusData.descriptionQuery;
+    statusInfo.hovertext = (statusData.hovertext.isNull()) ? statusInfo.hovertext : statusData.hovertext;
+    statusInfo.hovertextQuery = (statusData.hovertextQuery.isNull()) ? statusInfo.hovertextQuery : statusData.hovertextQuery;
+
+    // Pass updated data to item.
+    item->updateStatusInfo(statusInfo);
+    item->setStatus(statusData.status, statuses);
+}
+
+void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *view)
+{
+    qDebug() << "osld aligning root scene";
+
+    if(alignment == Vertical) {
+        rootScene->alignVertically();
+    }
+    else {
+        rootScene->alignHorizontally();
+    }
+
+    qDebug() << "osld setting parent";
+    rootScene->setParentGraphicsView(view);
+
+    qDebug() << "osld aligned root scene";
+}
+
+void OSLDGraphicsEngine::fitRootSceneToView()
+{
+    qDebug() << "osld fitting to view";
+
+    rootScene->fitToView();
+
+    qDebug() << "osld fit to view";
+}
+
+void OSLDGraphicsEngine::resizeRootScenePadding(int padding)
+{
+    qDebug() << "osld setting scene rect";
+
+    rootScene->setSceneRect(
+            rootScene->itemsBoundingRect().adjusted(-padding, -padding, padding, padding));
+
+    qDebug() << "osld scene rect set";
+}
+
+
 
 // read a description file and return the data object
 OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
     DescriptionFileReader descriptionFile(filePath);        // run the description file reader
 
-    OSLDDataObject data;
-    data.name = descriptionFile.getDiagramName();           // obtain name of full diagram
-    data.description = descriptionFile.getDescription();    // obtain description for full diagram
-    data.blocks = descriptionFile.getAllBlocks();           // obtain QList of all the blocks in the diagram
-    data.gates = descriptionFile.getAllGates();             // obtain QList of all the gates in the diagram
-    data.blocksAndGates = descriptionFile.getAllItems();    // obtain QList containing both blocks and gates (may not be necessary?)
-    data.subdiagrams = descriptionFile.getAllSubdiagrams(); // obtain QList of all Subdiagrams
+    // save errors
+    this->xmlError = descriptionFile.error();
+    this->xmlErrorString = descriptionFile.errorString() + "\nLine number " + QString::number(descriptionFile.lineNumber()) + ".";
 
-    data.sourceMap = descriptionFile.getSources();   // QMap of source:CommonSource pairs
-    data.statusMap = descriptionFile.getStatuses(); // QMap of status:StatusTypes pairs
+    OSLDDataObject data;
+    if(this->xmlError == QXmlStreamReader::NoError) {
+        data.name = descriptionFile.getDiagramName();           // obtain name of full diagram
+        data.description = descriptionFile.getDescription();    // obtain description for full diagram
+        data.blocks = descriptionFile.getAllBlocks();           // obtain QList of all the blocks in the diagram
+        data.gates = descriptionFile.getAllGates();             // obtain QList of all the gates in the diagram
+        data.blocksAndGates = descriptionFile.getAllItems();    // obtain QList containing both blocks and gates (may not be necessary?)
+        data.subdiagrams = descriptionFile.getAllSubdiagrams(); // obtain QList of all Subdiagrams
+
+        data.sourceMap = descriptionFile.getSources();   // QMap of source:CommonSource pairs
+        data.statusMap = descriptionFile.getStatuses(); // QMap of status:StatusTypes pairs
+    }
 
     return data;
 }
 
 // use a data object to display the graphics
 void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
+
+    // remove all currently displayed items
+    this->hideSubdiagramItems(currentSubdiagram);
+    this->rootPathList.clear();
+
     // get all information from description file reader
     this->diagramName = data.name;   // name of full diagram
     this->diagramDescription = data.description;    // description for full diagram
@@ -53,6 +167,20 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
 
     // create a path scene
     rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
+
+    // print counts for each Qlist
+    // qDebug() << "OSLD blocks" << this->allBlocks.count();
+    // qDebug() << "OSLD gates" << this->allGates.count();
+    // qDebug() << "OSLD items" << this->allItems.count();
+    // qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
+
+    // call function to retrieve status data
+    this->retrieveStatusData();
+
+    for (QString key : allItems.keys()) {
+        allItems[key]->startPollTimer(this->pollingRate);    // start timer to regularly send polling signal
+        allItems[key]->update();    // update item
+    }
 }
 
 
@@ -102,7 +230,6 @@ void OSLDGraphicsEngine::mousePressEvent(QGraphicsSceneMouseEvent *event)
     pressedItem = itemAt(event->scenePos(), QTransform());  // store the item that was clicked down on
     pressPosition = event->scenePos();                      // store the position of the click
     QGraphicsScene::mousePressEvent(event);
-    update();
 }
 
 void OSLDGraphicsEngine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -154,13 +281,13 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         if((pressedItem = dynamic_cast<DiagramItem *>(releaseItem))) {   // store pointer to the item that was clicked
 
-            QMessageBox::information(event->widget(),pressedItem->getTitle(),pressedItem->getDescription());
+            if(!(pressedItem->getDescription().isEmpty()))
+                QMessageBox::information(event->widget(),pressedItem->getTitle(),pressedItem->getDescription());
 
         }
     }
 
     QGraphicsScene::mouseReleaseEvent(event);
-    update();
 }
 
 void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
@@ -180,6 +307,7 @@ void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
     if(rootBlockListIndex == -1) {
         rootPathList.append(rootBlock); // add new block to the end
     }
+
     // else if found
     else {
         // start from end of rootPathList and remove blocks up to the saved index
@@ -190,7 +318,6 @@ void OSLDGraphicsEngine::goToSubdiagram(Block *rootBlock) {
 
     // draw rootBlock's subdiagram
     this->drawSubdiagramItems(rootBlock->getChildSubdiagram());
-
     rootScene->setList(rootPathList);
 }
 
@@ -204,9 +331,10 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
     }
 
     // draw all of the items except for the rootBlock
+    DiagramItem *item;
     for(int i = 0; i < sub->getInputItems().count(); i++) {
         //qDebug() << "Drawing Block" << i;
-        DiagramItem *item = sub->getInputItems().at(i);
+        item = sub->getInputItems().at(i);
         item->setPos(item->getLocation());
         this->addItem(item);
     }
@@ -221,22 +349,27 @@ void OSLDGraphicsEngine::drawSubdiagramItems(Subdiagram *sub)
 
     this->addItem(root);
     currentSubdiagram = sub;
+
+    this->update();
+    emit subdiagramChanged();
 }
 
 void OSLDGraphicsEngine::hideSubdiagramItems(Subdiagram *sub)
 {
-    for(int i = 0; i < sub->getConnectors().count(); i++) {
-        //qDebug() << "Drawing Connector" << i;
-        this->removeItem(sub->getConnectors().at(i));
+    if(sub != 0) {
+        for(int i = 0; i < sub->getConnectors().count(); i++) {
+            //qDebug() << "Drawing Connector" << i;
+            this->removeItem(sub->getConnectors().at(i));
+        }
+        for(int i = 0; i < sub->getInputItems().count(); i++) {
+            //qDebug() << "Drawing Block" << i;
+            this->removeItem(sub->getInputItems().at(i));
+        }
+        Block *root = sub->getRoot();
+        root->setCurrentlyRoot(false);
+        this->removeItem(root);
+        currentSubdiagram = 0;
     }
-    for(int i = 0; i < sub->getInputItems().count(); i++) {
-        //qDebug() << "Drawing Block" << i;
-        this->removeItem(sub->getInputItems().at(i));
-    }
-    Block *root = sub->getRoot();
-    root->setCurrentlyRoot(false);
-    this->removeItem(root);
-    currentSubdiagram = 0;
 }
 
 // create a gate with random information
@@ -245,7 +378,7 @@ QList<Block *> OSLDGraphicsEngine::getRootPathList() const
     return rootPathList;
 }
 
-QList<DiagramItem *> OSLDGraphicsEngine::getAllItems() const
+QMap<QString, DiagramItem *> OSLDGraphicsEngine::getAllItems() const
 {
     return allItems;
 }
@@ -285,6 +418,46 @@ QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
     return allSubdiagrams;
 }
 
+QList<Block *> OSLDGraphicsEngine::getAllBlocks() const
+{
+    return allBlocks;
+}
+
+QList<Gate *> OSLDGraphicsEngine::getAllGates() const
+{
+    return allGates;
+}
+
+bool OSLDGraphicsEngine::getHideControls() const
+{
+    return hideControls;
+}
+
+QString OSLDGraphicsEngine::getRootViewOrientation() const
+{
+    return rootViewOrientation;
+}
+
+bool OSLDGraphicsEngine::getHideBlockTitles() const
+{
+    return hideBlockTitles;
+}
+
+bool OSLDGraphicsEngine::getFullscreen() const
+{
+    return fullscreen;
+}
+
+bool OSLDGraphicsEngine::getShowGridBackground() const
+{
+    return showGridBackground;
+}
+
+int OSLDGraphicsEngine::getPollingRate() const
+{
+    return pollingRate;
+}
+
 void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {
     showGridBackground = show;
     this->invalidate(area, BackgroundLayer);
@@ -310,8 +483,8 @@ Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
 
 void OSLDGraphicsEngine::hideAllItemTitleText(bool b) {
     DiagramItem::setTransparent(b);
-    for(int i = 0; i < allItems.count(); i++) {
-        allItems.at(i)->update();
+    for (QString key : allItems.keys()) {
+        allItems[key]->update();
     }
     this->update();
 }
@@ -346,7 +519,7 @@ void OSLDGraphicsEngine::randomlyGenerateSubdiagrams(int numSubs)
         }
         block->setRootLocation(rootPoint);  // set the root block's root location
         allBlocks.append(block);
-        allItems.append(block);
+        allItems[block->id()] = block;
 
         // add items
         QPointF itemPoints;
@@ -355,18 +528,18 @@ void OSLDGraphicsEngine::randomlyGenerateSubdiagrams(int numSubs)
 
         Gate *gate = createRandomGate(itemPoints);
         allGates.append(gate);
-        allItems.append(gate);
+        allItems[gate->id()] = gate;
 
         itemPoints.setX(itemPoints.x() - 400);
         itemPoints.setY(itemPoints.y() - 100);
         Block *block1 = createRandomBlock(itemPoints);
         allBlocks.append(block1);
-        allItems.append(block1);
+        allItems[block1->id()] = block1;
 
         itemPoints.setY(itemPoints.y() + 200);
         Block *block2 = createRandomBlock(itemPoints);
         allBlocks.append(block2);
-        allItems.append(block2);
+        allItems[block2->id()] = block2;
 
         // set subdiagram nam and description
         QString name = QString("Subdiagram %1").arg(i);
@@ -470,6 +643,16 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, QMap<QString
     // qDebug() << data[status].textColor;
 
     return block;
+}
+
+QString OSLDGraphicsEngine::getXmlErrorString() const
+{
+    return xmlErrorString;
+}
+
+QXmlStreamReader::Error OSLDGraphicsEngine::getXmlError() const
+{
+    return xmlError;
 }
 
 Gate *OSLDGraphicsEngine::createRandomGate(QPointF pos) {

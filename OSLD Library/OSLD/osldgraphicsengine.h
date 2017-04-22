@@ -4,6 +4,7 @@
 #include <QtCore>
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
+#include "osld_global.h"
 #include "subdiagram.h"
 #include "rootitempathscene.h"
 #include "descriptionfilereader.h"
@@ -40,7 +41,7 @@ struct StatusData {
     QString hovertextQuery;
 };
 
-class OSLDGraphicsEngine : public QGraphicsScene
+class OSLDSHARED_EXPORT OSLDGraphicsEngine : public QGraphicsScene
 {
     Q_OBJECT
 
@@ -149,7 +150,7 @@ public:
 
     QList<Gate *> getAllGates() const;
 
-    // environment vairable getter methods
+    // environment variable getter methods
 
     bool getHideControls() const;
 
