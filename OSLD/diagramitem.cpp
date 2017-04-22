@@ -6,6 +6,11 @@ bool DiagramItem::transparentTitle = false;
  *  CONSTRUCTOR
  */
 
+QMap<QString, DiagramItemData> DiagramItem::getStatusInfoDataList() const
+{
+    return statusInfoDataList;
+}
+
 DiagramItem::DiagramItem()
 {
     

@@ -182,6 +182,8 @@ public:
 
     void printQueries() const;
 
+    QMap<QString, DiagramItemData> getStatusInfoDataList() const;
+
 protected:
     void setItemSizing(QString title);          // private function used to generate a size for this block that contains the title text
 

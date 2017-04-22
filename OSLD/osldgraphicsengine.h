@@ -29,15 +29,14 @@ struct OSLDDataObject {
  * data.
  */
 struct StatusData {
-    QString id;
-    QString ref_id;
-    QString status;
-    QString title;
-    QString description;
-    QString hovertext;
+    QString forStatus;
+
     QString titleQuery;
     QString descriptionQuery;
     QString hovertextQuery;
+    QString newTitle;
+    QString newDescription;
+    QString newHovertext;
 };
 
 class OSLDGraphicsEngine : public QGraphicsScene
@@ -85,6 +84,8 @@ private:
     // stores any caught errors after reading a description file
     QXmlStreamReader::Error xmlError;
     QString xmlErrorString;
+
+    void startDataPolling();
 
 public:
     OSLDGraphicsEngine(QString filePath = "",
@@ -144,7 +145,7 @@ public:
 
     QList<Gate *> getAllGates() const;
 
-    // environment vairable getter methods
+    // environment variable getter methods
 
     bool getHideControls() const;
 
@@ -157,12 +158,12 @@ public:
     bool getShowGridBackground() const;
 
 public slots:
-    void setAllItemData(QMap<QString, StatusData>);
-
+    void setItemData(QString itemID, QMap<QString, DiagramItemData> statusInfoDataList);
+    void setItemStatus(QString itemID, QString status);
 
 signals:
     void subdiagramChanged();
-    void queryAllItemData();
+    void queryItemData(QString itemID, QMap<QString, DiagramItemData> statusInfoDataList);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

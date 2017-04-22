@@ -17,6 +17,13 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
     this->showGridBackground = showGridBackground;
 
     this->readFileAndRunOSLD(filePath);
+
+    for(int i = 0; i < allGates.count(); i++) {
+        emit queryItemData(allGates.at(i)->id(), allGates.at(i)->getStatusInfoDataList());
+    }
+    for(int i = 0; i < allBlocks.count(); i++) {
+        emit queryItemData(allBlocks.at(i)->id(), allBlocks.at(i)->getStatusInfoDataList());
+    }
 }
 
 void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
@@ -62,9 +69,34 @@ bool OSLDGraphicsEngine::getShowGridBackground() const
     return showGridBackground;
 }
 
-void OSLDGraphicsEngine::setAllItemData(QMap<QString, StatusData>)
+void OSLDGraphicsEngine::setItemData(QString itemID, QMap<QString, DiagramItemData> statusInfoDataList)
 {
+    for(int i = 0; i < allGates.count(); i++) {
+        if(allGates.at(i)->id().compare(itemID) == 0) {
+            allGates.at(i)->setStatusInfoDataList(statusInfoDataList);
+        }
+    }
+    for(int i = 0; i < allBlocks.count(); i++) {
+        if(allBlocks.at(i)->id().compare(itemID) == 0) {
+            allBlocks.at(i)->setStatusInfoDataList(statusInfoDataList);
+        }
+    }
+}
 
+void OSLDGraphicsEngine::setItemStatus(QString itemID, QString status)
+{
+    for(int i = 0; i < allGates.count(); i++) {
+        if(allGates.at(i)->id().compare(itemID) == 0) {
+            allGates.at(i)->setStatus(status, this->statuses);
+            allGates.at(i)->update();
+        }
+    }
+    for(int i = 0; i < allBlocks.count(); i++) {
+        if(allBlocks.at(i)->id().compare(itemID) == 0) {
+            allBlocks.at(i)->setStatus(status, this->statuses);
+            allGates.at(i)->update();
+        }
+    }
 }
 
 // read a description file and return the data object
@@ -537,6 +569,11 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, QMap<QString
     // qDebug() << data[status].textColor;
 
     return block;
+}
+
+void OSLDGraphicsEngine::startDataPolling()
+{
+
 }
 
 QString OSLDGraphicsEngine::getXmlErrorString() const

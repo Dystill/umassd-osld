@@ -29,6 +29,8 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
 
     connect(scene, SIGNAL(subdiagramChanged()), this, SLOT(fitDiagramToWindow()));
+
+
 }
 
 OSLDisplay::~OSLDisplay()
