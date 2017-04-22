@@ -104,8 +104,8 @@ void OSLDGraphicsEngine::updateStatus(StatusData statusData)
     statusInfo.hovertextQuery = (statusData.hovertextQuery.isNull()) ? statusInfo.hovertextQuery : statusData.hovertextQuery;
 
     // Pass updated data to item.
+    item->updateStatusInfo(statusInfo);
     item->setStatus(statusData.status, statuses);
-    item->updateStatusInfo(/*statusInfo*/);
 }
 
 // read a description file and return the data object
