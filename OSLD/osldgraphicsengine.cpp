@@ -1,19 +1,67 @@
 #include "osldgraphicsengine.h"
 
-OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath, QWidget *parent) :
+OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
+                                       QWidget *parent,
+                                       bool hideControls,
+                                       QString rootViewOrientation,
+                                       bool hideBlockTitles,
+                                       bool fullscreen,
+                                       bool showGridBackground) :
     QGraphicsScene(parent)
 {
+
+    this->hideControls = hideControls;
+    this->rootViewOrientation = rootViewOrientation;
+    this->hideBlockTitles = hideBlockTitles;
+    this->fullscreen = fullscreen;
+    this->showGridBackground = showGridBackground;
+
     this->readFileAndRunOSLD(filePath);
 }
 
-void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath) {
+void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
+{
 
     // process description file and display the graphics
     this->runGraphics(this->readDescriptionFile(filePath));
-
 }
 
 // Emits a signal asking for the status data for all items.
+QList<Block *> OSLDGraphicsEngine::getAllBlocks() const
+{
+    return allBlocks;
+}
+
+QList<Gate *> OSLDGraphicsEngine::getAllGates() const
+{
+    return allGates;
+}
+
+bool OSLDGraphicsEngine::getHideControls() const
+{
+    return hideControls;
+}
+
+QString OSLDGraphicsEngine::getRootViewOrientation() const
+{
+    return rootViewOrientation;
+}
+
+bool OSLDGraphicsEngine::getHideBlockTitles() const
+{
+    return hideBlockTitles;
+}
+
+bool OSLDGraphicsEngine::getFullscreen() const
+{
+    return fullscreen;
+}
+
+bool OSLDGraphicsEngine::getShowGridBackground() const
+{
+    return showGridBackground;
+}
+
 void OSLDGraphicsEngine::retrieveStatusData()
 {
     // QMap of queried items.
