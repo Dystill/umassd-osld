@@ -2,6 +2,7 @@
 
 OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
                                        QWidget *parent,
+                                       int pollingRate,
                                        bool hideControls,
                                        QString rootViewOrientation,
                                        bool hideBlockTitles,
@@ -11,19 +12,13 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
 {
 
     this->hideControls = hideControls;
+    this->pollingRate = pollingRate;
     this->rootViewOrientation = rootViewOrientation;
     this->hideBlockTitles = hideBlockTitles;
     this->fullscreen = fullscreen;
     this->showGridBackground = showGridBackground;
 
     this->readFileAndRunOSLD(filePath);
-
-    for(int i = 0; i < allGates.count(); i++) {
-        emit queryItemData(allGates.at(i)->id(), allGates.at(i)->getStatusInfoDataList());
-    }
-    for(int i = 0; i < allBlocks.count(); i++) {
-        emit queryItemData(allBlocks.at(i)->id(), allBlocks.at(i)->getStatusInfoDataList());
-    }
 }
 
 void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
@@ -149,10 +144,20 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
     // create a path scene
     rootScene = new RootItemPathScene(this, this->getRootPathList(), Vertical);
 
+    // set signals for all items
+    for(int i = 0; i < allGates.count(); i++) {
+        emit queryItemData(allGates.at(i)->id(), allGates.at(i)->getStatusInfoDataList());
+        allGates.at(i)->startPollTimer(this->pollingRate);
+    }
+    for(int i = 0; i < allBlocks.count(); i++) {
+        emit queryItemData(allBlocks.at(i)->id(), allBlocks.at(i)->getStatusInfoDataList());
+        allBlocks.at(i)->startPollTimer(this->pollingRate);
+    }
+
     // print counts for each Qlist
-    qDebug() << "OSLD blocks" << this->allBlocks.count();
-    qDebug() << "OSLD gates" << this->allGates.count();
-    qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
+    // qDebug() << "OSLD blocks" << this->allBlocks.count();
+    // qDebug() << "OSLD gates" << this->allGates.count();
+    // qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
 }
 
 
@@ -571,11 +576,6 @@ Block *OSLDGraphicsEngine::buildBlock(QString id, QPointF position, QMap<QString
     return block;
 }
 
-void OSLDGraphicsEngine::startDataPolling()
-{
-
-}
-
 QString OSLDGraphicsEngine::getXmlErrorString() const
 {
     return xmlErrorString;
@@ -584,6 +584,11 @@ QString OSLDGraphicsEngine::getXmlErrorString() const
 QXmlStreamReader::Error OSLDGraphicsEngine::getXmlError() const
 {
     return xmlError;
+}
+
+int OSLDGraphicsEngine::getPollingRate() const
+{
+    return pollingRate;
 }
 
 Gate *OSLDGraphicsEngine::createRandomGate(QPointF pos) {

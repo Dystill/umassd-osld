@@ -45,6 +45,7 @@ class OSLDGraphicsEngine : public QGraphicsScene
 
 private:
     // environment variables
+    int pollingRate = 1000;
     bool hideControls = false;
     QString rootViewOrientation = "v";
     bool hideBlockTitles = false;
@@ -85,16 +86,15 @@ private:
     QXmlStreamReader::Error xmlError;
     QString xmlErrorString;
 
-    void startDataPolling();
-
 public:
     OSLDGraphicsEngine(QString filePath = "",
                        QWidget *parent = 0,
-                       bool hideControls = 0,
+                       int pollingRate = 1000,
+                       bool hideControls = false,
                        QString rootViewOrientation = "v",
-                       bool hideBlockTitles = 0,
-                       bool fullscreen = 0,
-                       bool showGrid = 0);
+                       bool hideBlockTitles = false,
+                       bool fullscreen = false,
+                       bool showGrid = false);
 
     QMap<QString, CommonSource> getSources() const { return sources; }
     void setSources(const QMap<QString, CommonSource> &value) { sources = value; }
@@ -156,6 +156,8 @@ public:
     bool getFullscreen() const;
 
     bool getShowGridBackground() const;
+
+    int getPollingRate() const;
 
 public slots:
     void setItemData(QString itemID, QMap<QString, DiagramItemData> statusInfoDataList);
