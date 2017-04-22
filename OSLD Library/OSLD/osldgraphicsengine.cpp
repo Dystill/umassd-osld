@@ -10,6 +10,7 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
                                        bool showGridBackground) :
     QGraphicsScene(parent)
 {
+    qDebug() << "starting osldgraphicsengine";
 
     this->hideControls = hideControls;
     this->pollingRate = pollingRate;
@@ -18,57 +19,20 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
     this->fullscreen = fullscreen;
     this->showGridBackground = showGridBackground;
 
+    qDebug() << "variables set";
+
     this->readFileAndRunOSLD(filePath);
 }
 
 void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
 {
+    qDebug() << "osld read and run start";
 
     // process description file and display the graphics
     this->runGraphics(this->readDescriptionFile(filePath));
 }
 
 // Emits a signal asking for the status data for all items.
-QList<Block *> OSLDGraphicsEngine::getAllBlocks() const
-{
-    return allBlocks;
-}
-
-QList<Gate *> OSLDGraphicsEngine::getAllGates() const
-{
-    return allGates;
-}
-
-bool OSLDGraphicsEngine::getHideControls() const
-{
-    return hideControls;
-}
-
-QString OSLDGraphicsEngine::getRootViewOrientation() const
-{
-    return rootViewOrientation;
-}
-
-bool OSLDGraphicsEngine::getHideBlockTitles() const
-{
-    return hideBlockTitles;
-}
-
-bool OSLDGraphicsEngine::getFullscreen() const
-{
-    return fullscreen;
-}
-
-bool OSLDGraphicsEngine::getShowGridBackground() const
-{
-    return showGridBackground;
-}
-
-int OSLDGraphicsEngine::getPollingRate() const
-{
-    return pollingRate;
-}
-
 void OSLDGraphicsEngine::retrieveStatusData()
 {
     // QMap of queried items.
@@ -114,6 +78,44 @@ void OSLDGraphicsEngine::updateStatus(StatusData statusData)
     item->updateStatusInfo(statusInfo);
     item->setStatus(statusData.status, statuses);
 }
+
+void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *view)
+{
+    qDebug() << "osld aligning root scene";
+
+    if(alignment == Vertical) {
+        rootScene->alignVertically();
+    }
+    else {
+        rootScene->alignHorizontally();
+    }
+
+    qDebug() << "osld setting parent";
+    rootScene->setParentGraphicsView(view);
+
+    qDebug() << "osld aligned root scene";
+}
+
+void OSLDGraphicsEngine::fitRootSceneToView()
+{
+    qDebug() << "osld fitting to view";
+
+    rootScene->fitToView();
+
+    qDebug() << "osld fit to view";
+}
+
+void OSLDGraphicsEngine::resizeRootScenePadding(int padding)
+{
+    qDebug() << "osld setting scene rect";
+
+    rootScene->setSceneRect(
+            rootScene->itemsBoundingRect().adjusted(-padding, -padding, padding, padding));
+
+    qDebug() << "osld scene rect set";
+}
+
+
 
 // read a description file and return the data object
 OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
@@ -414,6 +416,46 @@ void OSLDGraphicsEngine::setDiagramDescription(const QString &value)
 QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
 {
     return allSubdiagrams;
+}
+
+QList<Block *> OSLDGraphicsEngine::getAllBlocks() const
+{
+    return allBlocks;
+}
+
+QList<Gate *> OSLDGraphicsEngine::getAllGates() const
+{
+    return allGates;
+}
+
+bool OSLDGraphicsEngine::getHideControls() const
+{
+    return hideControls;
+}
+
+QString OSLDGraphicsEngine::getRootViewOrientation() const
+{
+    return rootViewOrientation;
+}
+
+bool OSLDGraphicsEngine::getHideBlockTitles() const
+{
+    return hideBlockTitles;
+}
+
+bool OSLDGraphicsEngine::getFullscreen() const
+{
+    return fullscreen;
+}
+
+bool OSLDGraphicsEngine::getShowGridBackground() const
+{
+    return showGridBackground;
+}
+
+int OSLDGraphicsEngine::getPollingRate() const
+{
+    return pollingRate;
 }
 
 void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {

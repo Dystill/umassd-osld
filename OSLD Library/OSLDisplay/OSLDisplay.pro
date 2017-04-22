@@ -29,9 +29,9 @@ HEADERS  += osldisplay.h
 
 FORMS    += osldisplay.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-OSLD-Desktop_Qt_5_7_1_MinGW_32bit-Debug/release/ -lOSLD
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-OSLD-Desktop_Qt_5_7_1_MinGW_32bit-Debug/debug/ -lOSLD
-else:unix: LIBS += -L$$PWD/../build-OSLD-Desktop_Qt_5_7_1_MinGW_32bit-Debug/ -lOSLD
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Debug/release/ -lOSLD
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Debug/debug/ -lOSLD
+else:unix: LIBS += -L$$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Debug/ -lOSLD
 
-INCLUDEPATH += $$PWD/../build-OSLD-Desktop_Qt_5_7_1_MinGW_32bit-Debug/debug
-DEPENDPATH += $$PWD/../build-OSLD-Desktop_Qt_5_7_1_MinGW_32bit-Debug/debug
+INCLUDEPATH += $$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Debug/debug
+DEPENDPATH += $$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Debug/debug
