@@ -62,50 +62,9 @@ bool OSLDGraphicsEngine::getShowGridBackground() const
     return showGridBackground;
 }
 
-void OSLDGraphicsEngine::retrieveStatusData()
+void OSLDGraphicsEngine::setAllItemData(QMap<QString, StatusData>)
 {
-    // QMap of queried items.
-    QMap<QString, bool> queried;
 
-    for (DiagramItem *diagramItem : allItems.values()) {
-
-        // Check if item has a source.
-        if (!diagramItem->getSourceId().isEmpty()) {
-            QString queriedId;
-            StatusData statusData;
-
-            statusData.id = diagramItem->id();
-            statusData.ref_id = diagramItem->ref_id();
-
-            // Determine which item id to fetch information for.
-            queriedId = (statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id;
-
-            // Emit signal if not already queried.
-            if (!queried.contains(queriedId)) {
-                emit statusDataQuery(statusData);
-                queried[queriedId] = true;
-            }
-        }
-    }
-}
-
-// Updates a status with the recieved status data.
-void OSLDGraphicsEngine::updateStatus(StatusData statusData)
-{
-    DiagramItem *item = allItems[(statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id];
-    DiagramItemData statusInfo = item->getStatusInfo();
-
-    // Update status info from recieved data if not null.
-    statusInfo.title = (statusData.title.isNull()) ? statusInfo.title : statusData.title;
-    statusInfo.titleQuery = (statusData.titleQuery.isNull()) ? statusInfo.titleQuery : statusData.titleQuery;
-    statusInfo.description = (statusData.description.isNull()) ? statusInfo.description : statusData.description;
-    statusInfo.descriptionQuery = (statusData.descriptionQuery.isNull()) ? statusInfo.descriptionQuery : statusData.descriptionQuery;
-    statusInfo.hovertext = (statusData.hovertext.isNull()) ? statusInfo.hovertext : statusData.hovertext;
-    statusInfo.hovertextQuery = (statusData.hovertextQuery.isNull()) ? statusInfo.hovertextQuery : statusData.hovertextQuery;
-
-    // Pass updated data to item.
-    item->setStatus(statusData.status, statuses);
-    item->updateStatusInfo(/*statusInfo*/);
 }
 
 // read a description file and return the data object
@@ -144,7 +103,6 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
     this->diagramDescription = data.description;    // description for full diagram
     this->allBlocks = data.blocks;   // QList of all the blocks in the diagram
     this->allGates = data.gates; // QList of all the gates in the diagram
-    this->allItems = data.blocksAndGates; // QList containing both blocks and gates (may not be necessary?)
     this->allSubdiagrams = data.subdiagrams; // QList of all Subdiagrams
 
     this->sources = data.sourceMap;   // QMap of source:CommonSource pairs
@@ -162,12 +120,7 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
     // print counts for each Qlist
     qDebug() << "OSLD blocks" << this->allBlocks.count();
     qDebug() << "OSLD gates" << this->allGates.count();
-    qDebug() << "OSLD items" << this->allItems.count();
     qDebug() << "OSLD subdiagrams" << this->allSubdiagrams.count();
-
-    for (QString key : allItems.keys()) {
-        allItems[key]->update();
-    }
 }
 
 
@@ -365,11 +318,6 @@ QList<Block *> OSLDGraphicsEngine::getRootPathList() const
     return rootPathList;
 }
 
-QMap<QString, DiagramItem *> OSLDGraphicsEngine::getAllItems() const
-{
-    return allItems;
-}
-
 RootItemPathScene *OSLDGraphicsEngine::getRootScene() const
 {
     return rootScene;
@@ -430,8 +378,11 @@ Block *OSLDGraphicsEngine::retrieveBlock(QString id) {
 
 void OSLDGraphicsEngine::hideAllItemTitleText(bool b) {
     DiagramItem::setTransparent(b);
-    for (QString key : allItems.keys()) {
-        allItems[key]->update();
+    for(int i = 0; i < allBlocks.count(); i++) {
+        allBlocks.at(i)->update();
+    }
+    for(int i = 0; i < allGates.count(); i++) {
+        allGates.at(i)->update();
     }
     this->update();
 }
@@ -466,7 +417,6 @@ void OSLDGraphicsEngine::randomlyGenerateSubdiagrams(int numSubs)
         }
         block->setRootLocation(rootPoint);  // set the root block's root location
         allBlocks.append(block);
-        allItems[block->id()] = block;
 
         // add items
         QPointF itemPoints;
@@ -475,18 +425,15 @@ void OSLDGraphicsEngine::randomlyGenerateSubdiagrams(int numSubs)
 
         Gate *gate = createRandomGate(itemPoints);
         allGates.append(gate);
-        allItems[gate->id()] = gate;
 
         itemPoints.setX(itemPoints.x() - 400);
         itemPoints.setY(itemPoints.y() - 100);
         Block *block1 = createRandomBlock(itemPoints);
         allBlocks.append(block1);
-        allItems[block1->id()] = block1;
 
         itemPoints.setY(itemPoints.y() + 200);
         Block *block2 = createRandomBlock(itemPoints);
         allBlocks.append(block2);
-        allItems[block2->id()] = block2;
 
         // set subdiagram nam and description
         QString name = QString("Subdiagram %1").arg(i);

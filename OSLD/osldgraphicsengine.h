@@ -62,9 +62,6 @@ private:
     QList<Subdiagram *> allSubdiagrams;         // a list of all of the subdiagrams
     QList<Block *> allBlocks;                   // a list of all of the blocks in the diagram
     QList<Gate *> allGates;                     // a list of all of the gates in the diagram
-    QMap<QString, DiagramItem *> allItems;      // maps item ids to their respective objects
-
-    void retrieveStatusData();
 
     RootItemPathScene *rootScene;
     QList<Block *> rootPathList;    // holds the chain of root items to the current subdiagram
@@ -160,12 +157,12 @@ public:
     bool getShowGridBackground() const;
 
 public slots:
-    void updateStatus(StatusData statusData);
+    void setAllItemData(QMap<QString, StatusData>);
+
 
 signals:
     void subdiagramChanged();
-    void retrieveStatusData(OSLDDataObject object);
-    void statusDataQuery(StatusData statusData);
+    void queryAllItemData();
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
