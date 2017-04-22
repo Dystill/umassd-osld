@@ -17,4 +17,11 @@ void MainWindow::on_actionOpen_Diagram_triggered() {
 
   osld->readFileAndRunOSLD(filePath);
   ui->graphicsView->setScene(osld);
+  DiagramItem *item = osld->getAllItems()["missileenabled"];
+  qDebug() << item->getStatus() << "- STATUS UPDATE...";
+  StatusData statusData;
+  statusData.id = "missileenabled";
+  statusData.status = "Unknown";
+  osld->updateStatus(statusData);
+  qDebug() << item->getStatus() << "- STATUS UPDATED";
 }
