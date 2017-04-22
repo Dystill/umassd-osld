@@ -20,7 +20,7 @@ private:
     QList<Subdiagram *> allSubdiagrams;  // a list of all of the subdiagrams
     QList<Block *> allBlocks;       // a list of all of the blocks in the diagram
     QList<Gate *> allGates;         // a list of all of the gates in the diagram
-    QList<DiagramItem *> allItems;  // a list of both blocks and gates
+    QMap<QString, DiagramItem *> allItems;  // maps item ids to their respective objects
 
     QMap<QString, int> getDimensions();
     QPointF getLocationPoint(QString tagName);
@@ -31,7 +31,7 @@ private:
     Error currentError = NoError;
 
 public:
-    DescriptionFileReader(QString filePath = "", QWidget *parent = 0);
+    DescriptionFileReader(QString filePath = "");
     ~DescriptionFileReader();
 
     //Methods
@@ -45,8 +45,6 @@ public:
 
     bool stringToBool (QString boolString);
 
-    DiagramItem *findDiagramItemById(QString itemid);
-
     Error readMetaData();
     Error readBlocks();
     Error readGates();
@@ -58,7 +56,7 @@ public:
 
     QList<Gate *> getAllGates() const;
 
-    QList<DiagramItem *> getAllItems() const;
+    QMap<QString, DiagramItem *> getAllItems() const;
     QMap<QString, CommonSource> getSources() const;
     QMap<QString, StatusTypes> getStatuses() const;
 };

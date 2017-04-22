@@ -6,11 +6,6 @@ bool DiagramItem::transparentTitle = false;
  *  CONSTRUCTOR
  */
 
-void DiagramItem::setStatusInfoDataList(const QMap<QString, DiagramItemData> &value)
-{
-    statusInfoDataList = value;
-}
-
 DiagramItem::DiagramItem()
 {
 
@@ -31,11 +26,6 @@ DiagramItem::DiagramItem(QString id, QPointF loc)
 QFont DiagramItem::getFont() const
 {
     return font;
-}
-
-void DiagramItem::setFont(const QFont &value)
-{
-    font = value;
 }
 
 void DiagramItem::setTitleSize(int size)
@@ -229,6 +219,41 @@ void DiagramItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 }
 
 
+void DiagramItem::startPollTimer(int ms)
+{
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(pollEmitter()));
+    timer->start(ms);
+}
+
+void DiagramItem::pollEmitter()
+{
+    // ask for status using ref id if available
+    emit pollStatus(!this->ref_id().isEmpty() ? this->ref_id() : this->id());
+
+    // if there is a title query string, ask for title data
+    if(!this->currentStatusInfo.titleQuery.isNull())
+        emit pollTitle(this->id(), this->currentStatusInfo.titleQuery);
+
+    // if there is a description query string, ask for description data
+    if(!this->currentStatusInfo.descriptionQuery.isNull())
+        emit pollDescription(this->id(), this->currentStatusInfo.descriptionQuery);
+
+    // if there is a hovertext query string, ask for hovertext data
+    if(!this->currentStatusInfo.hovertextQuery.isNull())
+        emit pollHovertext(this->id(), this->currentStatusInfo.hovertextQuery);
+
+    // qDebug() << this->getTitle() << this->id() << "is polling";
+}
+
+void DiagramItem::printQueries() const
+{
+    qDebug() << this->currentStatusInfo.titleQuery
+             << this->currentStatusInfo.descriptionQuery
+             << this->currentStatusInfo.hovertextQuery;
+}
+
+
 /*
  *  ATTRIBUTE GETTERS AND SETTERS
  */
@@ -243,6 +268,18 @@ QString DiagramItem::id() const
 void DiagramItem::setItemId(const QString &value)
 {
     itemId = value;
+}
+
+// reference id
+
+QString DiagramItem::ref_id() const
+{
+    return referenceId;
+}
+
+void DiagramItem::setReferenceId(const QString &value)
+{
+    referenceId = value;
 }
 
 // width
@@ -320,6 +357,11 @@ void DiagramItem::setLineLength(int value)
 
 // setters and getters for statusInfoData
 
+void DiagramItem::setStatusInfoDataList(const QMap<QString, DiagramItemData> &value)
+{
+    statusInfoDataList = value;
+}
+
 // text color
 QColor DiagramItem::getTextColor() const
 {
@@ -372,6 +414,10 @@ void DiagramItem::setStatus(const QString &value, QMap<QString, StatusTypes> col
     this->updateStatusInfo();
 }
 
+DiagramItemData DiagramItem::getStatusInfo() {
+    return currentStatusInfo;
+}
+
 void DiagramItem::updateStatusInfo() {
     this->setTitle(currentStatusInfo.title);
     this->setDescription(currentStatusInfo.description);
@@ -380,6 +426,10 @@ void DiagramItem::updateStatusInfo() {
     this->setItalics(currentStatusInfo.italics);
     this->setUnderline(currentStatusInfo.underline);
     this->setBold(currentStatusInfo.bold);
+}
+
+void DiagramItem::updateStatusInfo(DiagramItemData statusInfo) {
+    currentStatusInfo = statusInfo;
 }
 
 QColor DiagramItem::getColor() const

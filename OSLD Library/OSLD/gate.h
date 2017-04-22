@@ -19,9 +19,9 @@ private:
     GateType gateType;  // holds this gate's type (AND, OR, NOT)
     int defaultSize = 64;
 
-    QPainterPath *drawANDGatePath(int width, int height);    // returns a path to draw the shape of an AND gate
-    QPainterPath *drawORGatePath(int width, int height);     //                  "   "                 OR gate
-    QPainterPath *drawNOTGatePath(int width, int height);    //                  "   "                 NOT gate
+    QPainterPath drawANDGatePath(int width, int height);    // returns a path to draw the shape of an AND gate
+    QPainterPath drawORGatePath(int width, int height);     //                  "   "                 OR gate
+    QPainterPath drawNOTGatePath(int width, int height);    //                  "   "                 NOT gate
 
 
 public:

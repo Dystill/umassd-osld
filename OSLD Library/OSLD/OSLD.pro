@@ -1,16 +1,16 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-03-31T20:08:14
+# Project created by QtCreator 2017-04-22T16:17:43
 #
 #-------------------------------------------------
 
 QT       += widgets
 
-TARGET = OSLDGraphicsEngine
+TARGET = OSLD
 TEMPLATE = lib
-CONFIG += plugin
 
-DEFINES += OSLDGRAPHICSENGINE_LIBRARY
+DEFINES += OSLD_LIBRARY
+CONFIG += plugin
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -33,7 +33,7 @@ SOURCES += osldgraphicsengine.cpp \
     subdiagram.cpp
 
 HEADERS += osldgraphicsengine.h\
-        osldgraphicsengine_global.h \
+        osld_global.h \
     block.h \
     connector.h \
     descriptionfilereader.h \
@@ -47,5 +47,4 @@ unix {
     INSTALLS += target
 }
 
-DISTFILES += \
-    OSLDGraphicsEngine.pro.user
+DISTFILES +=
