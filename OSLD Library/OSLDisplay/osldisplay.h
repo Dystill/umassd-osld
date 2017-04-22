@@ -45,7 +45,6 @@ private slots:
 private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
-    RootItemPathScene *rootScene;
 
     qreal windowSizePercent = 0.50;
     qreal rootViewWidth = 1.8;

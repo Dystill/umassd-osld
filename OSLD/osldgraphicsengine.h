@@ -165,6 +165,9 @@ public:
 
 public slots:
     void updateStatus(StatusData statusData);
+    void alignRootScene(PathAlignment alignment, QGraphicsView *view = 0);
+    void fitRootSceneToView();
+    void resizeRootScenePadding(int padding);
 
 signals:
     void subdiagramChanged();

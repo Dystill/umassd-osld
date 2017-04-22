@@ -46,6 +46,8 @@ private:
     Ui::OSLDisplay *ui;
     OSLDGraphicsEngine *scene;
 
+    PathAlignment rootAlignment;
+
     qreal windowSizePercent = 0.50;
     qreal rootViewWidth = 1.8;
     qreal scaleAmount = 100;
@@ -63,6 +65,11 @@ private:
 
 public slots:
     void fitDiagramToWindow();
+
+signals:
+    void updateRootList(PathAlignment,QGraphicsView*);
+    void fitRootList();
+    void setRootListPadding(int);
 
 };
 

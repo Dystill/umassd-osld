@@ -73,7 +73,7 @@ void OSLDisplay::prepareRootView(QString orientation) {
         scene->getRootScene()->alignVertically();
 
         // put the root scene into the vertical root view
-        ui->rootVGraphicsView->setScene(this->rootScene);
+        ui->rootVGraphicsView->setScene(scene->getRootScene());
 
         // send the vertical root view to the root scene
         scene->getRootScene()->setParentGraphicsView(ui->rootVGraphicsView);
@@ -86,7 +86,7 @@ void OSLDisplay::prepareRootView(QString orientation) {
         scene->getRootScene()->alignHorizontally();
 
         // put the root scene into the vertical root view
-        ui->rootHGraphicsView->setScene(this->rootScene);
+        ui->rootHGraphicsView->setScene(scene->getRootScene());
 
         // send the vertical root view to the root scene
         scene->getRootScene()->setParentGraphicsView(ui->rootHGraphicsView);
@@ -204,8 +204,8 @@ void OSLDisplay::showEvent(QShowEvent *event)
 
     this->fitDiagramAndRootToWindow();
 
-    rootScene->setSceneRect(rootScene->itemsBoundingRect().adjusted(-8, -8, 8, 8));
-    ui->rootVGraphicsView->fitInView(rootScene->sceneRect(), Qt::KeepAspectRatio);
+    scene->getRootScene()->setSceneRect(scene->getRootScene()->itemsBoundingRect().adjusted(-8, -8, 8, 8));
+    ui->rootVGraphicsView->fitInView(scene->getRootScene()->sceneRect(), Qt::KeepAspectRatio);
 }
 
 // code executed when a specific key is pressed

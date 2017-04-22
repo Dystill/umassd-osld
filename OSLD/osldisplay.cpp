@@ -28,7 +28,14 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     //enterFullScreen();
     QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
 
+    // signal slot to change subdiagrams on block press
     connect(scene, SIGNAL(subdiagramChanged()), this, SLOT(fitDiagramToWindow()));
+
+    // signal slots to update root view
+    connect(this, SIGNAL(updateRootList(PathAlignment,QGraphicsView*)),
+            scene, SLOT(alignRootScene(PathAlignment,QGraphicsView*)));
+    connect(this, SIGNAL(fitRootList()), scene, SLOT(fitRootSceneToView()));
+    connect(this, SIGNAL(setRootListPadding(int)), scene, SLOT(resizeRootScenePadding(int)));
 }
 
 OSLDisplay::~OSLDisplay()
@@ -70,26 +77,26 @@ void OSLDisplay::prepareRootView(QString orientation) {
         // hide the horizontal root view on start
         ui->rootHGraphicsView->hide();
 
-        scene->getRootScene()->alignVertically();
+        // signal OSLDGraphicsEngine to realign root view
+        emit updateRootList(Vertical, ui->rootVGraphicsView);
 
         // put the root scene into the vertical root view
         ui->rootVGraphicsView->setScene(scene->getRootScene());
 
-        // send the vertical root view to the root scene
-        scene->getRootScene()->setParentGraphicsView(ui->rootVGraphicsView);
+        rootAlignment = Vertical;
     }
     else if(orientation.startsWith('h',Qt::CaseInsensitive)) {
 
         // hide the horizontal root view on start
         ui->rootVGraphicsView->hide();
 
-        scene->getRootScene()->alignHorizontally();
+        // signal OSLDGraphicsEngine to realign root view
+        emit updateRootList(Horizontal, ui->rootHGraphicsView);
 
         // put the root scene into the vertical root view
         ui->rootHGraphicsView->setScene(scene->getRootScene());
 
-        // send the vertical root view to the root scene
-        scene->getRootScene()->setParentGraphicsView(ui->rootHGraphicsView);
+        rootAlignment = Horizontal;
     }
     else {
         // hide both views
@@ -162,7 +169,8 @@ void OSLDisplay::fitDiagramAndRootToWindow() {
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 
-    scene->getRootScene()->fitToView();
+    // fit root list to graphics view
+    emit fitRootList();
 }
 
 void OSLDisplay::fitDiagramToWindow()
@@ -193,7 +201,8 @@ void OSLDisplay::resizeEvent(QResizeEvent *event)
     ui->rootHGraphicsView->setMinimumHeight(this->size().height() * 0.15);
     ui->rootHGraphicsView->setMaximumHeight(this->size().height() * 0.15);
 
-    scene->getRootScene()->fitToView();
+    // fit root list to graphics view
+    emit fitRootList();
 
     // this->fitDiagramAndRootToWindow();
 }
@@ -202,10 +211,9 @@ void OSLDisplay::showEvent(QShowEvent *event)
 {
     QMainWindow::showEvent(event);
 
-    this->fitDiagramAndRootToWindow();
+    emit setRootListPadding(8);
 
-    scene->getRootScene()->setSceneRect(scene->getRootScene()->itemsBoundingRect().adjusted(-8, -8, 8, 8));
-    ui->rootVGraphicsView->fitInView(scene->getRootScene()->sceneRect(), Qt::KeepAspectRatio);
+    this->fitDiagramAndRootToWindow();
 }
 
 // code executed when a specific key is pressed
@@ -309,32 +317,28 @@ void OSLDisplay::on_actionHideBlockTitles_triggered(bool checked)
 
 void OSLDisplay::on_actionSwitchOrientation_triggered()
 {
-    PathAlignment current = scene->getRootScene()->getCurrentAlignment();
-
     // hide the horizontal root view on start
-    if(current == Vertical) {
+    if(rootAlignment == Vertical) {
         ui->rootVGraphicsView->hide();
 
-        // put the root scene into the vertical root view
+        // put the root scene into the horizontal root view
         ui->rootHGraphicsView->setScene(scene->getRootScene());
 
-        // send the vertical root view to the root scene
-        scene->getRootScene()->setParentGraphicsView(ui->rootHGraphicsView);
-
-        scene->getRootScene()->alignHorizontally();
+        // send the horizontal root view to the root scene
+        emit updateRootList(Horizontal, ui->rootHGraphicsView);
+        rootAlignment = Horizontal;
 
         ui->rootHGraphicsView->show();
     }
-    else {
+    else if(rootAlignment == Horizontal) {
         ui->rootHGraphicsView->hide();
 
         // put the root scene into the vertical root view
         ui->rootVGraphicsView->setScene(scene->getRootScene());
 
         // send the vertical root view to the root scene
-        scene->getRootScene()->setParentGraphicsView(ui->rootVGraphicsView);
-
-        scene->getRootScene()->alignVertically();
+        emit updateRootList(Vertical, ui->rootHGraphicsView);
+        rootAlignment = Vertical;
 
         ui->rootVGraphicsView->show();
     }

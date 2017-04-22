@@ -115,6 +115,31 @@ void OSLDGraphicsEngine::updateStatus(StatusData statusData)
     item->setStatus(statusData.status, statuses);
 }
 
+void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *view)
+{
+    if(alignment == Vertical) {
+        rootScene->alignVertically();
+    }
+    else {
+        rootScene->alignHorizontally();
+    }
+
+    rootScene->setParentGraphicsView(view);
+}
+
+void OSLDGraphicsEngine::fitRootSceneToView()
+{
+    rootScene->fitToView();
+}
+
+void OSLDGraphicsEngine::resizeRootScenePadding(int padding)
+{
+    rootScene->setSceneRect(
+            rootScene->itemsBoundingRect().adjusted(-padding, -padding, padding, padding));
+}
+
+
+
 // read a description file and return the data object
 OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
     DescriptionFileReader descriptionFile(filePath);        // run the description file reader
