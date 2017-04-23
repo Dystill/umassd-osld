@@ -229,19 +229,7 @@ void DiagramItem::startPollTimer(int ms)
 void DiagramItem::pollEmitter()
 {
     // ask for status using ref id if available
-    emit pollStatus(!this->ref_id().isEmpty() ? this->ref_id() : this->id());
-
-    // if there is a title query string, ask for title data
-    if(!this->currentStatusInfo.titleQuery.isNull())
-        emit pollTitle(this->id(), this->currentStatusInfo.titleQuery);
-
-    // if there is a description query string, ask for description data
-    if(!this->currentStatusInfo.descriptionQuery.isNull())
-        emit pollDescription(this->id(), this->currentStatusInfo.descriptionQuery);
-
-    // if there is a hovertext query string, ask for hovertext data
-    if(!this->currentStatusInfo.hovertextQuery.isNull())
-        emit pollHovertext(this->id(), this->currentStatusInfo.hovertextQuery);
+    emit pollStatus(this->id(), this->ref_id());
 
     // qDebug() << this->getTitle() << this->id() << "is polling";
 }

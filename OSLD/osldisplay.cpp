@@ -180,8 +180,6 @@ void OSLDisplay::fitDiagramToWindow()
 
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
-
-    qDebug() << "testing fit";
 }
 
 /*

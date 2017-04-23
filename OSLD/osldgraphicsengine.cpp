@@ -10,7 +10,6 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
                                        bool showGridBackground) :
     QGraphicsScene(parent)
 {
-
     this->hideControls = hideControls;
     this->pollingRate = pollingRate;
     this->rootViewOrientation = rootViewOrientation;
@@ -23,52 +22,11 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
 
 void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
 {
-
     // process description file and display the graphics
     this->runGraphics(this->readDescriptionFile(filePath));
 }
 
 // Emits a signal asking for the status data for all items.
-QList<Block *> OSLDGraphicsEngine::getAllBlocks() const
-{
-    return allBlocks;
-}
-
-QList<Gate *> OSLDGraphicsEngine::getAllGates() const
-{
-    return allGates;
-}
-
-bool OSLDGraphicsEngine::getHideControls() const
-{
-    return hideControls;
-}
-
-QString OSLDGraphicsEngine::getRootViewOrientation() const
-{
-    return rootViewOrientation;
-}
-
-bool OSLDGraphicsEngine::getHideBlockTitles() const
-{
-    return hideBlockTitles;
-}
-
-bool OSLDGraphicsEngine::getFullscreen() const
-{
-    return fullscreen;
-}
-
-bool OSLDGraphicsEngine::getShowGridBackground() const
-{
-    return showGridBackground;
-}
-
-int OSLDGraphicsEngine::getPollingRate() const
-{
-    return pollingRate;
-}
-
 void OSLDGraphicsEngine::retrieveStatusData()
 {
     // QMap of queried items.
@@ -96,10 +54,21 @@ void OSLDGraphicsEngine::retrieveStatusData()
     }
 }
 
+void OSLDGraphicsEngine::retrieveStatusDataForItem(QString itemId, QString refId)
+{
+    StatusData statusData;
+
+    statusData.id = itemId;
+    statusData.ref_id = refId;
+
+    // qDebug() << "querying data for" << itemId;
+    emit statusDataQuery(statusData);
+}
+
 // Updates a status with the recieved status data.
 void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 {
-    DiagramItem *item = allItems[(statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id];
+    DiagramItem *item = allItems[statusData.id];
     DiagramItemData statusInfo = item->getStatusInfo();
 
     // Update status info from recieved data if not null.
@@ -202,6 +171,8 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
 
     for (QString key : allItems.keys()) {
         allItems[key]->startPollTimer(this->pollingRate);    // start timer to regularly send polling signal
+        connect(allItems[key], SIGNAL(pollStatus(QString,QString)),
+                this, SLOT(retrieveStatusDataForItem(QString,QString)));
         allItems[key]->update();    // update item
     }
 }
@@ -439,6 +410,46 @@ void OSLDGraphicsEngine::setDiagramDescription(const QString &value)
 QList<Subdiagram *> OSLDGraphicsEngine::getAllSubdiagrams() const
 {
     return allSubdiagrams;
+}
+
+QList<Block *> OSLDGraphicsEngine::getAllBlocks() const
+{
+    return allBlocks;
+}
+
+QList<Gate *> OSLDGraphicsEngine::getAllGates() const
+{
+    return allGates;
+}
+
+bool OSLDGraphicsEngine::getHideControls() const
+{
+    return hideControls;
+}
+
+QString OSLDGraphicsEngine::getRootViewOrientation() const
+{
+    return rootViewOrientation;
+}
+
+bool OSLDGraphicsEngine::getHideBlockTitles() const
+{
+    return hideBlockTitles;
+}
+
+bool OSLDGraphicsEngine::getFullscreen() const
+{
+    return fullscreen;
+}
+
+bool OSLDGraphicsEngine::getShowGridBackground() const
+{
+    return showGridBackground;
+}
+
+int OSLDGraphicsEngine::getPollingRate() const
+{
+    return pollingRate;
 }
 
 void OSLDGraphicsEngine::showGrid(bool show, QRectF area) {

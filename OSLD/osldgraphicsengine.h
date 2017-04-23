@@ -149,7 +149,7 @@ public:
 
     QList<Gate *> getAllGates() const;
 
-    // environment vairable getter methods
+    // environment variable getter methods
 
     bool getHideControls() const;
 
@@ -165,6 +165,7 @@ public:
 
 public slots:
     void updateStatus(StatusData statusData);
+    void retrieveStatusDataForItem(QString itemId, QString refId);
     void alignRootScene(PathAlignment alignment, QGraphicsView *view = 0);
     void fitRootSceneToView();
     void resizeRootScenePadding(int padding);
