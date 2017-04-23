@@ -82,6 +82,7 @@ void OSLDGraphicsEngine::updateStatus(StatusData statusData)
     // Pass updated data to item.
     item->updateStatusInfo(statusInfo);
     item->setStatus(statusData.status, statuses);
+    this->update();
 }
 
 void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *view)
@@ -246,9 +247,12 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             Block *pressedBlock;    // to store a pointer to the clicked block
 
             // Emit a signal for the clicked item.
-            itemSelected(dynamic_cast<DiagramItem *>(releaseItem));
+            if (DiagramItem *item = dynamic_cast<DiagramItem *>(releaseItem)) {
+                emit itemSelected(item);
+            }
 
-            if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
+            if(QApplication::keyboardModifiers() != Qt::KeyboardModifier::ControlModifier && // only select if control was not held down
+               (pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
                 // check if the block has a subdiagram
                 if(pressedBlock->hasChildSubdiagram()) {
