@@ -165,7 +165,7 @@ void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *
     if(alignment == Vertical) {
         rootScene->alignVertically();
     }
-    else {
+    else if(alignment == Horizontal) {
         rootScene->alignHorizontally();
     }
 
