@@ -35,3 +35,10 @@ else:unix: LIBS += -L$$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Debu
 
 INCLUDEPATH += $$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Debug/debug
 DEPENDPATH += $$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Debug/debug
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Release/release/ -lOSLD
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Release/debug/ -lOSLD
+else:unix: LIBS += -L$$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Release/ -lOSLD
+
+INCLUDEPATH += $$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Release/release
+DEPENDPATH += $$PWD/../build-OSLDisplay-Desktop_Qt_5_7_1_MinGW_32bit-Release/release

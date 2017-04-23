@@ -10,8 +10,6 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
                                        bool showGridBackground) :
     QGraphicsScene(parent)
 {
-    qDebug() << "starting osldgraphicsengine";
-
     this->hideControls = hideControls;
     this->pollingRate = pollingRate;
     this->rootViewOrientation = rootViewOrientation;
@@ -19,15 +17,11 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
     this->fullscreen = fullscreen;
     this->showGridBackground = showGridBackground;
 
-    qDebug() << "variables set";
-
     this->readFileAndRunOSLD(filePath);
 }
 
 void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
 {
-    qDebug() << "osld read and run start";
-
     // process description file and display the graphics
     this->runGraphics(this->readDescriptionFile(filePath));
 }
@@ -60,10 +54,21 @@ void OSLDGraphicsEngine::retrieveStatusData()
     }
 }
 
+void OSLDGraphicsEngine::retrieveStatusDataForItem(QString itemId, QString refId)
+{
+    StatusData statusData;
+
+    statusData.id = itemId;
+    statusData.ref_id = refId;
+
+    // qDebug() << "querying data for" << itemId;
+    emit statusDataQuery(statusData);
+}
+
 // Updates a status with the recieved status data.
 void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 {
-    DiagramItem *item = allItems[(statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id];
+    DiagramItem *item = allItems[statusData.id];
     DiagramItemData statusInfo = item->getStatusInfo();
 
     // Update status info from recieved data if not null.
@@ -81,8 +86,6 @@ void OSLDGraphicsEngine::updateStatus(StatusData statusData)
 
 void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *view)
 {
-    qDebug() << "osld aligning root scene";
-
     if(alignment == Vertical) {
         rootScene->alignVertically();
     }
@@ -90,29 +93,18 @@ void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *
         rootScene->alignHorizontally();
     }
 
-    qDebug() << "osld setting parent";
     rootScene->setParentGraphicsView(view);
-
-    qDebug() << "osld aligned root scene";
 }
 
 void OSLDGraphicsEngine::fitRootSceneToView()
 {
-    qDebug() << "osld fitting to view";
-
     rootScene->fitToView();
-
-    qDebug() << "osld fit to view";
 }
 
 void OSLDGraphicsEngine::resizeRootScenePadding(int padding)
 {
-    qDebug() << "osld setting scene rect";
-
     rootScene->setSceneRect(
             rootScene->itemsBoundingRect().adjusted(-padding, -padding, padding, padding));
-
-    qDebug() << "osld scene rect set";
 }
 
 
@@ -179,6 +171,8 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
 
     for (QString key : allItems.keys()) {
         allItems[key]->startPollTimer(this->pollingRate);    // start timer to regularly send polling signal
+        connect(allItems[key], SIGNAL(pollStatus(QString,QString)),
+                this, SLOT(retrieveStatusDataForItem(QString,QString)));
         allItems[key]->update();    // update item
     }
 }

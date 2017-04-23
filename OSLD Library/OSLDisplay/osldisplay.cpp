@@ -12,13 +12,9 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     // resize the window to be a certain amount smaller than the screen
     this->resize(QDesktopWidget().availableGeometry(this).size() * windowSizePercent);
 
-    qDebug() << "creating scene";
-
     // create an instance of the OSLD graphics engine
     // scene = new OSLDGraphicsEngine("", ui->graphicsView, 1000, false, "horizontal", true, false, true);
     scene = new OSLDGraphicsEngine("", ui->graphicsView);
-
-    qDebug() << "scene created";
 
     // set flags and event filters for the graphicsView
     this->prepareGraphicsView();
@@ -31,8 +27,6 @@ OSLDisplay::OSLDisplay(QWidget *parent) :
     // starts the application in full screen mode
     //enterFullScreen();
     QMainWindow::setWindowTitle("Operational Sequence Logic Diagram");
-
-    qDebug() << "connecting";
 
     // signal slot to change subdiagrams on block press
     connect(scene, SIGNAL(subdiagramChanged()), this, SLOT(fitDiagramToWindow()));
@@ -186,8 +180,6 @@ void OSLDisplay::fitDiagramToWindow()
 
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
-
-    qDebug() << "testing fit";
 }
 
 /*
