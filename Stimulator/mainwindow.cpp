@@ -6,6 +6,9 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
 
   osld = new OSLDGraphicsEngine();
+
+  connect(osld, SIGNAL(itemSelected(DiagramItem *)), this,
+          SLOT(onItemSelected(DiagramItem *)));
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -17,11 +20,17 @@ void MainWindow::on_actionOpen_Diagram_triggered() {
 
   osld->readFileAndRunOSLD(filePath);
   ui->graphicsView->setScene(osld);
-  DiagramItem *item = osld->getAllItems()["missileenabled"];
-  qDebug() << item->getStatus() << "- STATUS UPDATE...";
+}
+
+void MainWindow::onItemSelected(DiagramItem *item) {
+  selectedItem = item;
+  ui->lineEditStatus->setText(item->getStatus());
+  ui->labelItemName->setText("'" + item->id() + "' Selected");
+}
+
+void MainWindow::on_pushButtonUpdate_clicked() {
   StatusData statusData;
-  statusData.id = "missileenabled";
-  statusData.status = "Unknown";
+  statusData.id = selectedItem->id();
+  statusData.status = ui->lineEditStatus->text();
   osld->updateStatus(statusData);
-  qDebug() << item->getStatus() << "- STATUS UPDATED";
 }

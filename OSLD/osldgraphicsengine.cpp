@@ -245,6 +245,9 @@ void OSLDGraphicsEngine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
             Block *pressedBlock;    // to store a pointer to the clicked block
 
+            // Emit a signal for the clicked item.
+            itemSelected(dynamic_cast<DiagramItem *>(releaseItem));
+
             if((pressedBlock = dynamic_cast<Block *>(releaseItem))) {   // store pointer if the item was a block
 
                 // check if the block has a subdiagram
