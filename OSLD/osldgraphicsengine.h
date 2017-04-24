@@ -173,6 +173,7 @@ public slots:
 signals:
     void subdiagramChanged();
     void statusDataQuery(StatusData statusData);
+    void itemSelected(DiagramItem *item);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
