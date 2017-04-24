@@ -13,8 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(osld, SIGNAL(itemSelected(DiagramItem *)), this,
           SLOT(onItemSelected(DiagramItem *)));
-  connect(ui->lineEditStatus, SIGNAL(returnPressed()), this,
-          SLOT(on_pushButtonUpdate_clicked()));
   connect(ui->comboBoxStatus, SIGNAL(currentIndexChanged(const QString &)),
           this, SLOT(on_pushButtonUpdate_clicked()));
 
