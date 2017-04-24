@@ -428,6 +428,10 @@ void DiagramItem::updateStatusInfo(DiagramItemData statusInfo) {
     currentStatusInfo = statusInfo;
 }
 
+const QStringList DiagramItem::getStatuses() {
+    return statusInfoDataList.uniqueKeys();
+}
+
 QColor DiagramItem::getColor() const
 {
     return currentStatusInfo.color;

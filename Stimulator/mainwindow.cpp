@@ -13,8 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(osld, SIGNAL(itemSelected(DiagramItem *)), this,
           SLOT(onItemSelected(DiagramItem *)));
-  connect(ui->lineEditStatus, SIGNAL(returnPressed()), this,
-          SLOT(on_pushButtonUpdate_clicked()));
+  connect(ui->comboBoxStatus, SIGNAL(currentIndexChanged(const QString &)),
+          this, SLOT(on_pushButtonUpdate_clicked()));
 
   this->setWindowTitle("The Stimulator Status Testing System");
 
@@ -48,16 +48,32 @@ void MainWindow::on_actionOpen_Diagram_triggered() {
 
 // Updates the selectedItem and provides it's id and status.
 void MainWindow::onItemSelected(DiagramItem *item) {
-  selectedItem = item;
-  ui->lineEditStatus->setText(item->getStatus());
-  ui->labelItemName->setText("'" + item->id() + "' Selected");
+  // Do not send signals while updating the combo box for the selected item.
+  ui->comboBoxStatus->blockSignals(true);
+  ui->comboBoxStatus->clear();
+  ui->comboBoxStatus->addItems(item->getStatuses());
+  ui->comboBoxStatus->setCurrentText(item->getStatus());
+  ui->comboBoxStatus->blockSignals(false);
+
+  // Specify selected item's id.
+  ui->lineEditId->setText(item->id());
 }
 
 // Update the selected status.
 void MainWindow::on_pushButtonUpdate_clicked() {
-  StatusData statusData;
-  statusData.id = selectedItem->id();
-  statusData.status = ui->lineEditStatus->text();
+  if (DiagramItem *selectedItem = osld->getAllItems()[ui->lineEditId->text()]) {
+    StatusData statusData;
+    statusData.id = selectedItem->id();
+    statusData.status = ui->comboBoxStatus->currentText();
+    osld->updateStatus(statusData);
+  }
+}
 
-  osld->updateStatus(statusData);
+// Update selected item if valid item has been typed.
+void MainWindow::on_lineEditId_textChanged(const QString &text) {
+  if (DiagramItem *item = osld->getAllItems()[text]) {
+    this->onItemSelected(item);
+  } else {
+    ui->comboBoxStatus->clear();
+  }
 }
