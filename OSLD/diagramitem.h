@@ -175,6 +175,8 @@ public:
     void updateStatusInfo();
     void updateStatusInfo(DiagramItemData statusInfo);
 
+    const QStringList getStatuses();
+
     QString getSourceId() const;
     void setSourceId(const QString &value);
 

@@ -21,14 +21,13 @@ class MainWindow : public QMainWindow {
  private slots:
   void on_actionOpen_Diagram_triggered();
   void onItemSelected(DiagramItem *item);
-
   void on_pushButtonUpdate_clicked();
+
+  void on_lineEditId_textChanged(const QString &text);
 
  private:
   Ui::MainWindow *ui;
-
   OSLDGraphicsEngine *osld;
-  DiagramItem *selectedItem;
 };
 
 #endif  // MAINWINDOW_H
