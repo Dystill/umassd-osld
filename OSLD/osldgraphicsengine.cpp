@@ -20,96 +20,6 @@ OSLDGraphicsEngine::OSLDGraphicsEngine(QString filePath,
     this->readFileAndRunOSLD(filePath);
 }
 
-void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
-{
-    // process description file and display the graphics
-    this->runGraphics(this->readDescriptionFile(filePath));
-}
-
-// Emits a signal asking for the status data for all items.
-void OSLDGraphicsEngine::retrieveStatusData()
-{
-    // QMap of queried items.
-    QMap<QString, bool> queried;
-
-    for (DiagramItem *diagramItem : allItems.values()) {
-
-        // Check if item has a source.
-        if (!diagramItem->getSourceId().isEmpty()) {
-            QString queriedId;
-            StatusData statusData;
-
-            statusData.id = diagramItem->id();
-            statusData.ref_id = diagramItem->ref_id();
-
-            // Determine which item id to fetch information for.
-            queriedId = (statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id;
-
-            // Emit signal if not already queried.
-            if (!queried.contains(queriedId)) {
-                emit statusDataQuery(statusData);
-                queried[queriedId] = true;
-            }
-        }
-    }
-}
-
-void OSLDGraphicsEngine::retrieveStatusDataForItem(QString itemId, QString refId)
-{
-    StatusData statusData;
-
-    statusData.id = itemId;
-    statusData.ref_id = refId;
-
-    // qDebug() << "querying data for" << itemId;
-    emit statusDataQuery(statusData);
-}
-
-// Updates a status with the recieved status data.
-void OSLDGraphicsEngine::updateStatus(StatusData statusData)
-{
-    DiagramItem *item = allItems[statusData.id];
-    DiagramItemData statusInfo = item->getStatusInfo();
-
-    // Update status info from recieved data if not null.
-    statusInfo.title = (statusData.title.isNull()) ? statusInfo.title : statusData.title;
-    statusInfo.titleQuery = (statusData.titleQuery.isNull()) ? statusInfo.titleQuery : statusData.titleQuery;
-    statusInfo.description = (statusData.description.isNull()) ? statusInfo.description : statusData.description;
-    statusInfo.descriptionQuery = (statusData.descriptionQuery.isNull()) ? statusInfo.descriptionQuery : statusData.descriptionQuery;
-    statusInfo.hovertext = (statusData.hovertext.isNull()) ? statusInfo.hovertext : statusData.hovertext;
-    statusInfo.hovertextQuery = (statusData.hovertextQuery.isNull()) ? statusInfo.hovertextQuery : statusData.hovertextQuery;
-
-    // Pass updated data to item.
-    item->updateStatusInfo(statusInfo);
-    item->setStatus(statusData.status, statuses);
-    this->update();
-}
-
-void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *view)
-{
-    if(alignment == Vertical) {
-        rootScene->alignVertically();
-    }
-    else {
-        rootScene->alignHorizontally();
-    }
-
-    rootScene->setParentGraphicsView(view);
-}
-
-void OSLDGraphicsEngine::fitRootSceneToView()
-{
-    rootScene->fitToView();
-}
-
-void OSLDGraphicsEngine::resizeRootScenePadding(int padding)
-{
-    rootScene->setSceneRect(
-            rootScene->itemsBoundingRect().adjusted(-padding, -padding, padding, padding));
-}
-
-
-
 // read a description file and return the data object
 OSLDDataObject OSLDGraphicsEngine::readDescriptionFile(QString filePath) {
     DescriptionFileReader descriptionFile(filePath);        // run the description file reader
@@ -172,12 +82,107 @@ void OSLDGraphicsEngine::runGraphics(OSLDDataObject data) {
 
     for (QString key : allItems.keys()) {
         allItems[key]->startPollTimer(this->pollingRate);    // start timer to regularly send polling signal
-        connect(allItems[key], SIGNAL(pollStatus(QString,QString)),
-                this, SLOT(retrieveStatusDataForItem(QString,QString)));
+
+        connect(allItems[key], SIGNAL(pollStatus(QString,QString,QString,QString,QString)),
+                this, SLOT(retrieveStatusDataForItem(QString,QString,QString,QString,QString)));    // connect item polling to graphicsengine slot
+
         allItems[key]->update();    // update item
     }
 }
 
+void OSLDGraphicsEngine::readFileAndRunOSLD(QString filePath)
+{
+    // process description file and display the graphics
+    this->runGraphics(this->readDescriptionFile(filePath));
+}
+
+// Emits a signal asking for the status data for all items.
+void OSLDGraphicsEngine::retrieveStatusData()
+{
+    // QMap of queried items.
+    QMap<QString, bool> queried;
+
+    for (DiagramItem *diagramItem : allItems.values()) {
+
+        // Check if item has a source.
+        if (!diagramItem->getSourceId().isEmpty()) {
+            QString queriedId;
+            StatusData statusData;
+
+            statusData.id = diagramItem->id();
+            statusData.ref_id = diagramItem->ref_id();
+            statusData.titleQuery = diagramItem->getStatusInfo().titleQuery;
+            statusData.descriptionQuery = diagramItem->getStatusInfo().descriptionQuery;
+            statusData.hovertextQuery = diagramItem->getStatusInfo().hovertextQuery;
+
+            // Determine which item id to fetch information for.
+            queriedId = (statusData.ref_id.isEmpty()) ? statusData.id : statusData.ref_id;
+
+            // Emit signal if not already queried.
+            if (!queried.contains(queriedId)) {
+                emit statusDataQuery(statusData);
+                queried[queriedId] = true;
+            }
+        }
+    }
+}
+
+void OSLDGraphicsEngine::retrieveStatusDataForItem(QString itemId, QString refId, QString titleQuery, QString descQuery, QString hoverQuery)
+{
+    StatusData statusData;
+
+    statusData.id = itemId;
+    statusData.ref_id = refId;
+    statusData.titleQuery = titleQuery;
+    statusData.descriptionQuery = descQuery;
+    statusData.hovertextQuery = hoverQuery;
+
+    // qDebug() << "querying data for" << itemId << statusData.titleQuery << statusData.descriptionQuery << statusData.hovertextQuery;
+    emit statusDataQuery(statusData);
+}
+
+// Updates a status with the recieved status data.
+void OSLDGraphicsEngine::updateStatus(StatusData statusData)
+{
+    DiagramItem *item = allItems[statusData.id];
+    DiagramItemData statusInfo = item->getStatusInfo();
+
+    // Update status info from recieved data if not null.
+    statusInfo.title = (statusData.title.isNull()) ? statusInfo.title : statusData.title;
+    statusInfo.titleQuery = (statusData.titleQuery.isNull()) ? statusInfo.titleQuery : statusData.titleQuery;
+    statusInfo.description = (statusData.description.isNull()) ? statusInfo.description : statusData.description;
+    statusInfo.descriptionQuery = (statusData.descriptionQuery.isNull()) ? statusInfo.descriptionQuery : statusData.descriptionQuery;
+    statusInfo.hovertext = (statusData.hovertext.isNull()) ? statusInfo.hovertext : statusData.hovertext;
+    statusInfo.hovertextQuery = (statusData.hovertextQuery.isNull()) ? statusInfo.hovertextQuery : statusData.hovertextQuery;
+
+    // Pass updated data to item.
+    item->updateStatusInfo(statusInfo);
+    item->setStatus(statusData.status, statuses);
+    this->update();
+}
+
+void OSLDGraphicsEngine::alignRootScene(PathAlignment alignment, QGraphicsView *view)
+{
+    if(alignment == Vertical) {
+        rootScene->alignVertically();
+    }
+    else if(alignment == Horizontal) {
+        rootScene->alignHorizontally();
+    }
+
+    rootScene->setParentGraphicsView(view);
+}
+
+void OSLDGraphicsEngine::fitRootSceneToView()
+{
+    rootScene->fitToView();
+}
+
+void OSLDGraphicsEngine::resizeRootScenePadding(int padding)
+{
+    rootScene->setSceneRect(
+            rootScene->itemsBoundingRect().adjusted(-padding, -padding, padding, padding));
+}
 
 // overrides to draw a grid for the background
 void OSLDGraphicsEngine::drawBackground(QPainter *painter, const QRectF &rect)

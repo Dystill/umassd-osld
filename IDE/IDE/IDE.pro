@@ -26,29 +26,20 @@ INCLUDEPATH += ../../OSLD/
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ../../OSLD/block.cpp \
-    ../../OSLD/connector.cpp \
-    ../../OSLD/descriptionfilereader.cpp \
-    ../../OSLD/diagramitem.cpp \
-    ../../OSLD/gate.cpp \
-    ../../OSLD/osldgraphicsengine.cpp \
-    ../../OSLD/rootitempathscene.cpp \
-    ../../OSLD/subdiagram.cpp \
-    copydialog.cpp
+        copydialog.cpp
 
 HEADERS  += mainwindow.h \
-    ../../OSLD/block.h \
-    ../../OSLD/connector.h \
-    ../../OSLD/descriptionfilereader.h \
-    ../../OSLD/diagramitem.h \
-    ../../OSLD/gate.h \
-    ../../OSLD/osldgraphicsengine.h \
-    ../../OSLD/rootitempathscene.h \
-    ../../OSLD/subdiagram.h \
-    copydialog.h
+        copydialog.h
 
 FORMS    += mainwindow.ui \
-    copydialog.ui
+        copydialog.ui
 
 RESOURCES += \
-    xmlresources.qrc
+        xmlresources.qrc
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/release/ -lOSLD
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/debug/ -lOSLD
+else:unix: LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/ -lOSLD
+
+INCLUDEPATH += $$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/release
+DEPENDPATH += $$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/release

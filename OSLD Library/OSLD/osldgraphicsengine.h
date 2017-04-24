@@ -166,7 +166,7 @@ public:
 
 public slots:
     void updateStatus(StatusData statusData);
-    void retrieveStatusDataForItem(QString itemId, QString refId);
+    void retrieveStatusDataForItem(QString itemId, QString refId, QString titleQuery, QString descQuery, QString hoverQuery);
     void alignRootScene(PathAlignment alignment, QGraphicsView *view = 0);
     void fitRootSceneToView();
     void resizeRootScenePadding(int padding);
