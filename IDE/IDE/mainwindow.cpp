@@ -10,6 +10,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    ui->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
+
     osld = new OSLDGraphicsEngine();
 
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);

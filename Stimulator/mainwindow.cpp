@@ -5,12 +5,18 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+  ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+  ui->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
+
   osld = new OSLDGraphicsEngine();
 
   connect(osld, SIGNAL(itemSelected(DiagramItem *)), this,
           SLOT(onItemSelected(DiagramItem *)));
   connect(ui->lineEditStatus, SIGNAL(returnPressed()), this,
           SLOT(on_pushButtonUpdate_clicked()));
+
+  this->setWindowTitle("The Stimulator Status Testing System");
 
   // center osld when changing subdiagrams
   connect(osld, SIGNAL(subdiagramChanged()), this, SLOT(fitDiagramToWindow()));
