@@ -24,7 +24,9 @@ class MainWindow : public QMainWindow {
 
   void on_pushButtonUpdate_clicked();
 
- private:
+  void fitDiagramToWindow();
+
+private:
   Ui::MainWindow *ui;
 
   OSLDGraphicsEngine *osld;

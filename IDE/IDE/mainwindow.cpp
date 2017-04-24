@@ -105,7 +105,7 @@ void MainWindow::fitDiagramToWindow()
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(osld->sceneRect(), Qt::KeepAspectRatio);
 
-    qDebug() << "testing fit";
+    // qDebug() << "testing fit";
 }
 
 void MainWindow::displayCopyTextWindow(QString filePath)

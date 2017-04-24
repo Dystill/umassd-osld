@@ -399,6 +399,11 @@ void DiagramItem::setStatus(const QString &value, QMap<QString, StatusTypes> col
     currentStatusInfo.bold = colorMap[currentStatus].bold;
     currentStatusInfo.underline = colorMap[currentStatus].underline;
 
+    // update output connector colors to match
+    for(int i = 0; i < this->outputConnector().count(); i++) {
+        this->outputConnector().at(i)->setColor(currentStatusInfo.color);
+    }
+
     this->updateStatusInfo();
 }
 
