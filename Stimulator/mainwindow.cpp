@@ -5,17 +5,38 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+  ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+  ui->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
+
   osld = new OSLDGraphicsEngine();
 
   connect(osld, SIGNAL(itemSelected(DiagramItem *)), this,
           SLOT(onItemSelected(DiagramItem *)));
-  connect(ui->lineEditId, SIGNAL(returnPressed()), this,
+  connect(ui->lineEditStatus, SIGNAL(returnPressed()), this,
           SLOT(on_pushButtonUpdate_clicked()));
   connect(ui->comboBoxStatus, SIGNAL(currentIndexChanged(const QString &)),
           this, SLOT(on_pushButtonUpdate_clicked()));
+
+  this->setWindowTitle("The Stimulator Status Testing System");
+
+  // center osld when changing subdiagrams
+  connect(osld, SIGNAL(subdiagramChanged()), this, SLOT(fitDiagramToWindow()));
+
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::fitDiagramToWindow()
+{
+    // update scene rect to fit the items
+    osld->setSceneRect(osld->itemsBoundingRect().adjusted(-36, -36, 36, 36));
+
+    // resize the view contents to match the window size
+    ui->graphicsView->fitInView(osld->sceneRect(), Qt::KeepAspectRatio);
+
+    // qDebug() << "testing fit";
+}
 
 void MainWindow::on_actionOpen_Diagram_triggered() {
   QString filePath = QFileDialog::getOpenFileName(
@@ -24,6 +45,7 @@ void MainWindow::on_actionOpen_Diagram_triggered() {
 
   osld->readFileAndRunOSLD(filePath);
   ui->graphicsView->setScene(osld);
+  this->fitDiagramToWindow();
 }
 
 // Updates the selectedItem and provides it's id and status.

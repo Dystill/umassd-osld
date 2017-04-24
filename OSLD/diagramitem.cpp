@@ -229,7 +229,10 @@ void DiagramItem::startPollTimer(int ms)
 void DiagramItem::pollEmitter()
 {
     // ask for status using ref id if available
-    emit pollStatus(this->id(), this->ref_id());
+    emit pollStatus(this->id(), this->ref_id(),
+                    this->currentStatusInfo.titleQuery,
+                    this->currentStatusInfo.descriptionQuery,
+                    this->currentStatusInfo.hovertextQuery);
 
     // qDebug() << this->getTitle() << this->id() << "is polling";
 }
@@ -398,6 +401,11 @@ void DiagramItem::setStatus(const QString &value, QMap<QString, StatusTypes> col
     currentStatusInfo.italics = colorMap[currentStatus].italics;
     currentStatusInfo.bold = colorMap[currentStatus].bold;
     currentStatusInfo.underline = colorMap[currentStatus].underline;
+
+    // update output connector colors to match
+    for(int i = 0; i < this->outputConnector().count(); i++) {
+        this->outputConnector().at(i)->setColor(currentStatusInfo.color);
+    }
 
     this->updateStatusInfo();
 }

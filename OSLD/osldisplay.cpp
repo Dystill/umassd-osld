@@ -335,7 +335,7 @@ void OSLDisplay::on_actionSwitchOrientation_triggered()
         ui->rootVGraphicsView->setScene(scene->getRootScene());
 
         // send the vertical root view to the root scene
-        emit updateRootList(Vertical, ui->rootHGraphicsView);
+        emit updateRootList(Vertical, ui->rootVGraphicsView);
         rootAlignment = Vertical;
 
         ui->rootVGraphicsView->show();

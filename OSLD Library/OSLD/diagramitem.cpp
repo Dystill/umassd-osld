@@ -229,7 +229,10 @@ void DiagramItem::startPollTimer(int ms)
 void DiagramItem::pollEmitter()
 {
     // ask for status using ref id if available
-    emit pollStatus(this->id(), this->ref_id());
+    emit pollStatus(this->id(), this->ref_id(),
+                    this->currentStatusInfo.titleQuery,
+                    this->currentStatusInfo.descriptionQuery,
+                    this->currentStatusInfo.hovertextQuery);
 
     // qDebug() << this->getTitle() << this->id() << "is polling";
 }

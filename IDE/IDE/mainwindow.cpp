@@ -10,6 +10,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    ui->graphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    ui->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
+
     osld = new OSLDGraphicsEngine();
 
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
@@ -105,7 +109,7 @@ void MainWindow::fitDiagramToWindow()
     // resize the view contents to match the window size
     ui->graphicsView->fitInView(osld->sceneRect(), Qt::KeepAspectRatio);
 
-    qDebug() << "testing fit";
+    // qDebug() << "testing fit";
 }
 
 void MainWindow::displayCopyTextWindow(QString filePath)

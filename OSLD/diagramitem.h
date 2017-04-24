@@ -221,7 +221,7 @@ private slots:
 
 signals:
     // connect(DiagramItem, SIGNAL(poll(itemId)), externalSystem, SLOT(function(itemId)));
-    void pollStatus(QString itemId, QString refId);
+    void pollStatus(QString itemId, QString refId, QString titleQuery, QString descQuery, QString hoverQuery);
 };
 
 #endif // DIAGRAMITEM_H
