@@ -179,11 +179,6 @@ void MainWindow::on_actionSave_Description_File_As_triggered()
     file.write(ui->textEdit->toPlainText().toUtf8());
 }
 
-void MainWindow::on_saveButton_clicked()
-{
-
-}
-
 void MainWindow::on_updateButton_pressed()
 {
     QFile file(currentFile);

@@ -22,8 +22,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += ../../OSLD/
-
 SOURCES += main.cpp\
         mainwindow.cpp \
         copydialog.cpp
@@ -37,9 +35,13 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
         xmlresources.qrc
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/release/ -lOSLD
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/debug/ -lOSLD
-else:unix: LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/ -lOSLD
+unix:{
+    QMAKE_LFLAGS    += '-Wl,-rpath,\'\$$ORIGIN\''
+}
 
-INCLUDEPATH += $$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/release
-DEPENDPATH += $$PWD/../build-IDE-Desktop_Qt_5_7_1_MinGW_32bit-Release/release
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release/release/ -lOSLD
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release/debug/ -lOSLD
+else:unix: LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release/ -lOSLD
+
+INCLUDEPATH += $$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release
+DEPENDPATH += $$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release

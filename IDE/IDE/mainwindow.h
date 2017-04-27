@@ -36,9 +36,6 @@ private slots:
 
     void on_actionShow_Subdiagram_XML_triggered();
 
-    void on_saveButton_clicked();
-
-
     void on_updateButton_clicked();
 
     void on_actionShow_Template_triggered();

@@ -41,10 +41,3 @@ HEADERS += osldgraphicsengine.h\
     gate.h \
     rootitempathscene.h \
     subdiagram.h
-
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
-
-DISTFILES +=
