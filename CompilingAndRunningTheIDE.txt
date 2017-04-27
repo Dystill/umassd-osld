@@ -1,0 +1,12 @@
+Compiling the IDE
+
+1. Run qmake for the OSLD.
+1. Compile the OSLD to obtain the libOSLD.so library.
+2. Run qmake for the IDE.
+3. Attempt to compile the IDE to create the build directory - This should fail.
+4. Copy libOSLD.so and all .h files (9) from the OSLD project to the created IDE build directory.
+5. Add the libOSLD.so file to the IDE Qt project in Qt Creator.
+6. Rebuild the IDE - This should build successfully this time.
+7. Open terminal in the build directory and run the IDE using ./IDE
+
+Same basic process should apply for the OSLDisplay and Stimulator as well.
