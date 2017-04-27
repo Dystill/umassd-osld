@@ -257,4 +257,3 @@ Makefile*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
-IDE/mainwindow.ui
