@@ -38,10 +38,3 @@ RESOURCES += \
 unix:{
     QMAKE_LFLAGS    += '-Wl,-rpath,\'\$$ORIGIN\''
 }
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release/release/ -lOSLD
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release/debug/ -lOSLD
-else:unix: LIBS += -L$$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release/ -lOSLD
-
-INCLUDEPATH += $$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release
-DEPENDPATH += $$PWD/../build-IDE-Desktop_Qt_5_6_2_GCC_64bit-Release
